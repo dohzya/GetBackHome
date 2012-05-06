@@ -30,7 +30,7 @@ GetHomeBack.drawer = (function(){
 
     drawer.redraw = function(){
         drawer.drawBackground();
-        for(var i=0; i<drawer.drawables.length; i++){
+        for(var i in drawer.drawables){
             drawer.drawables[i].draw(drawer.ctx);
         }
     };

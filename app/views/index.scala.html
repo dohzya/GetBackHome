@@ -48,7 +48,26 @@
           var status = {
             selected: document.getElementById("cursor")
           };
+          var zones = [
+            {
+              x: 50,
+              y: 50,
+              dx: 50,
+              dy: 50,
+              color: "red",
+              infos: {"Type": "montains"}
+            },
+            {
+              x: 200,
+              y: 200,
+              dx: 50,
+              dy: 50,
+              color: "blue",
+              infos: {"Type": "city"}
+            }
+          ];
           GetHomeBack.init(canvas, status);
+          GetHomeBack.addZones(zones);
           GetHomeBack.start();
       });
       // ]]>

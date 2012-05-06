@@ -8,23 +8,14 @@ var GetHomeBack = (function(){
     };
 
     GetHomeBack.start = function(){
-        GetHomeBack.drawer.addZone(GetHomeBack.Zone({
-            x: 50,
-            y: 50,
-            dx: 50,
-            dy: 50,
-            color: "red",
-            infos: {"Type": "montains"}
-        }));
-        GetHomeBack.drawer.addZone(GetHomeBack.Zone({
-            x: 200,
-            y: 200,
-            dx: 50,
-            dy: 50,
-            color: "blue",
-            infos: {"Type": "city"}
-        }));
+
         GetHomeBack.game.start();
+    };
+
+    GetHomeBack.addZones = function(zones){
+        for(var i in zones){
+            GetHomeBack.drawer.addZone(GetHomeBack.Zone(zones[i]));
+        }
     };
 
     return GetHomeBack;
