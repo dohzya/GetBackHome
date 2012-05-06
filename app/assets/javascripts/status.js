@@ -5,6 +5,7 @@ GetHomeBack.status = (function(){
         status.selected = $(containers.selected);
         status.selectedTitle = $(status.selected.find(".title")[0]);
         status.selectedFields = $(status.selected.find(".fields")[0]);
+        status.displayNothing();
     };
 
     status.displayZone = function(zone){
@@ -19,12 +20,18 @@ GetHomeBack.status = (function(){
     };
 
     status.displaySelected = function(name, div){
-        console.log(status.selectedTitle.html());
-        status.selectedTitle.empty(); // empty && add title && div
+        status.selectedTitle.empty();
         status.selectedTitle.append(name);
         status.selectedFields.empty();
         status.selectedFields.append(div);
     };
+
+    status.displayNothing = function(name, div){
+        status.selectedTitle.empty();
+        status.selectedTitle.append("Selection");
+        status.selectedFields.empty();
+    };
+
 
     return status;
 })();

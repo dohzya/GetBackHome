@@ -59,8 +59,15 @@ GetHomeBack.drawer = (function(){
     };
 
     drawer.onClick = function(e){
-        var selected = drawer.getDrawable(e.x, e.y);
-        var res = selected ? selected.onClick(e) : true;
+        var selected, res;
+        selected = drawer.getDrawable(e.x, e.y);
+        if(selected){
+            res = selected.onClick(e);
+        }
+        else {
+            res = true;
+            GetHomeBack.status.displayNothing();
+        }
         return res;
     };
 
