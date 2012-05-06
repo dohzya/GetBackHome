@@ -1,7 +1,19 @@
-@(message: String)
+@()(implicit lang: Lang)
 
-@main("Welcome to Play 2.0") {
-    
-    @play20.welcome(message)
-    
+@main() {
+
+    <h1>@Messages("index.wellcome")</h1>
+
+    <canvas id="mainDrawer" class="drawer" height="600px" width="800px"></canvas>
+
+    <script type="text/javascript">
+      // <![CDATA[
+      $(function(){
+          var canvas = document.getElementById("mainDrawer");
+          GetHomeBack.init(canvas);
+          GetHomeBack.start();
+      });
+      // ]]>
+    </script>
+
 }
