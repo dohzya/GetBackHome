@@ -8,25 +8,16 @@
 
       <canvas id="mainDrawer" class="drawer" height="600px" width="800px"></canvas>
 
-      <div id="sidebar" class="sidebar">
-        <div id="status" class="status">
-          <div class="title">Status</div>
+      <div id="status" class="sidebar">
+        <div id="global" class="status">
+          <div class="title">Global</div>
           <div class="fields">
             <dl>
-              <dt>Zones</dt><dd>30</dd>
-            </dl>
-            <dl>
-              <dt>Guys</dt><dd>30</dd>
-            </dl>
-            <dl>
-              <dt>Items</dt><dd>30</dd>
-            </dl>
-            <dl>
-              <dt>Buildings</dt><dd>30</dd>
+              <dt>Killed Zombies</dt><dd>3,000</dd>
             </dl>
           </div>
         </div>
-        <div id="zone" class="zone">
+        <div id="zones" class="status">
           <div class="title">Zone <span class="number">30</span></div>
           <div class="fields">
             <dl>
@@ -34,12 +25,17 @@
             </dl>
           </div>
         </div>
-        <div id="guy" class="guy">
+        <div id="guys" class="status">
           <div class="title">Guy <span class="number">30</span></div>
-          <div class="fields"></div>
+          <div class="fields">
             <dl>
               <dt>Dis Gail</dt><dd>10 / 150</dd>
             </dl>
+          </div>
+        </div>
+        <div id="cursor" class="status">
+          <div class="title">Selected</div>
+          <div class="fields">
           </div>
         </div>
       </div>
@@ -50,7 +46,10 @@
       // <![CDATA[
       $(function(){
           var canvas = document.getElementById("mainDrawer");
-          GetHomeBack.init(canvas);
+          var status = {
+            selected: document.getElementById("cursor")
+          };
+          GetHomeBack.init(canvas, status);
           GetHomeBack.start();
       });
       // ]]>

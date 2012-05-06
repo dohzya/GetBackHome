@@ -1,11 +1,12 @@
-GetHomeBack.Zone = function(x, y, color){
+GetHomeBack.Zone = function(zn){
     var zone = {};
 
-    zone.x = x;
-    zone.y = y;
-    zone.dx = 50;
-    zone.dy = 50;
-    zone.color = color;
+    zone.x = zn.x;
+    zone.y = zn.y;
+    zone.dx = zn.dx;
+    zone.dy = zn.dy;
+    zone.color = zn.color;
+    zone.infos = zn.infos;
 
     zone.draw = function(ctx){
         ctx.fillStyle = zone.color;
@@ -14,6 +15,7 @@ GetHomeBack.Zone = function(x, y, color){
 
     zone.onClick = function(e){
         return zone.drawClick(function(){
+            GetHomeBack.status.displayZone(zone);
             e.drawer.redraw();
         });
     };
