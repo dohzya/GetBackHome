@@ -1,7 +1,7 @@
 GetHomeBack.drawer = (function(){
     var drawer = {};
 
-    drawer.init = function(canvas){
+    drawer.init = function(canvas, opts){
         drawer.canvas = canvas;
         drawer.offsetTop = canvas.offsetTop;
         drawer.offsetLeft = canvas.offsetLeft;
@@ -12,7 +12,7 @@ GetHomeBack.drawer = (function(){
         drawer.width = canvas.width;
         drawer.drawables = [];
         drawer.zones = [];
-        GetHomeBack.Cursor.init(drawer);
+        GetHomeBack.Cursor.init(drawer, opts.cursor);
     };
 
     drawer.start = function(){

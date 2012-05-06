@@ -1,4 +1,9 @@
-@()(implicit lang: Lang)
+@(zones: Seq[com.dohzya.gethomeback.models.Zone])(implicit lang: Lang)
+
+@import com.dohzya.gethomeback._
+@import com.dohzya.gethomeback.models._
+@import com.dohzya.gethomeback.models.ZoneJsonFormatter._
+@import play.api.libs.json._
 
 @main() {
 
@@ -41,33 +46,29 @@
 
     </div>
 
+    <img id="cursorImg" src="@routes.Assets.at("images/cursor.png")" style="display:none" />
+    <img id="cursorSelectedImg" src="@routes.Assets.at("images/cursorSelected.png")" style="display:none" />
+
     <script type="text/javascript">
       // <![CDATA[
       $(function(){
           var canvas = document.getElementById("mainDrawer");
           var status = {
-            selected: document.getElementById("cursor")
+              selected: document.getElementById("cursor")
           };
-          var zones = [
-            {
-              x: 50,
-              y: 50,
-              dx: 50,
-              dy: 50,
-              color: "red",
-              infos: {"Type": "montains"}
-            },
-            {
-              x: 200,
-              y: 200,
-              dx: 50,
-              dy: 50,
-              color: "blue",
-              infos: {"Type": "city"}
-            }
-          ];
-          GetHomeBack.init(canvas, status);
-          GetHomeBack.addZones(zones);
+          GetHomeBack.init(
+              canvas,
+              status,
+              {
+                  cursor: {
+                    normal: document.getElementById("cursorImg"),
+                    selected: document.getElementById("cursorSelectedImg")
+                  },
+                  zones: [
+                      @Html(zones.map(Json.toJson(_)).mkString(","))
+                  ]
+              }
+          );
           GetHomeBack.start();
       });
       // ]]>

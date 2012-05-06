@@ -1,7 +1,7 @@
 GetHomeBack.status = (function(){
     var status = {};
 
-    status.init = function(containers){
+    status.init = function(containers, opts){
         status.selected = $(containers.selected);
         status.selectedTitle = $(status.selected.find(".title")[0]);
         status.selectedFields = $(status.selected.find(".fields")[0]);

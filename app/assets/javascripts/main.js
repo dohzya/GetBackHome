@@ -1,14 +1,14 @@
 var GetHomeBack = (function(){
     var GetHomeBack = {};
 
-    GetHomeBack.init = function(canvas, status){
-        GetHomeBack.drawer.init(canvas);
-        GetHomeBack.status.init(status);
-        GetHomeBack.game.init();
+    GetHomeBack.init = function(canvas, status, opts){
+        GetHomeBack.drawer.init(canvas, opts);
+        GetHomeBack.status.init(status, opts);
+        GetHomeBack.game.init(opts);
+        if (opts.zones) GetHomeBack.addZones(opts.zones);
     };
 
     GetHomeBack.start = function(){
-
         GetHomeBack.game.start();
     };
 

@@ -1,7 +1,7 @@
 GetHomeBack.game = (function(){
     var game = {};
 
-    game.init = function(drawer){
+    game.init = function(drawer, opts){
     };
 
     game.start = function(){

@@ -1,13 +1,15 @@
 GetHomeBack.Cursor = (function(){
     var cursor = {};
 
-    cursor.init = function(drawer){
+    cursor.init = function(drawer, opts){
         cursor.drawer = drawer;
         cursor.x = 100;
         cursor.y = 100;
-        cursor.dx = 10;
-        cursor.dy = 10;
-        cursor.color = "yellow";
+        cursor.dx = 20;
+        cursor.dy = 20;
+        cursor.normal = opts.normal;
+        cursor.selected = opts.selected;
+        cursor.mode = "normal";
     };
 
     cursor.start = function(){
@@ -16,14 +18,14 @@ GetHomeBack.Cursor = (function(){
     };
 
     cursor.getX = function(e){
-        x = e.pageX - (cursor.dx/2);
+        x = e.pageX + 1;
         x = cursor.drawer.globalToRelativeX(x);
         if (x < 0) x = 0;
         return x;
     };
 
     cursor.getY = function(e){
-        y = e.pageY - (cursor.dy/2);
+        y = e.pageY + 1;
         y = cursor.drawer.globalToRelativeY(y);
         if (y < 0) y = 0;
         return y;
@@ -52,18 +54,33 @@ GetHomeBack.Cursor = (function(){
     };
 
     cursor.drawClick = function(f){
-        var old, res;
-        old = cursor.color;
-        cursor.color = "red";
+        var res;
+        cursor.mode = "selected";
         cursor.drawer.redraw();
         res = f();
-        cursor.color = old;
+        cursor.mode = "normal";
         return res;
     };
 
     cursor.draw = function(ctx){
-        ctx.fillStyle = cursor.color;
-        ctx.fillRect(cursor.x, cursor.y, cursor.dx, cursor.dy);
+        if (cursor.mode === "normal") {
+            if (cursor.normal) {
+                ctx.drawImage(cursor.normal, cursor.x, cursor.y);
+            }
+            else {
+                ctx.fillStyle = "yellow";
+                ctx.fillRect(cursor.x, cursor.y, cursor.dx, cursor.dy);
+            }
+        }
+        else if (cursor.mode === "selected") {
+            if (cursor.selected) {
+                ctx.drawImage(cursor.selected, cursor.x, cursor.y);
+            }
+            else {
+                ctx.fillStyle = "red";
+                ctx.fillRect(cursor.x, cursor.y, cursor.dx, cursor.dy);
+            }
+        }
     };
 
     return cursor;
