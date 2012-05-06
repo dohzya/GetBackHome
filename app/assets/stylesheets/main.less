@@ -1,3 +1,56 @@
+.game {
+  overflow: auto;
+}
+
 .drawer {
   text-align: center;
+  float: left;
+  margin-left: 25px;
+}
+
+.sidebar {
+  margin-left: 850px;
+  border-radius: 2px;
+  padding: 5px;
+  background: lightgray;
+  width: 174px;
+
+  .title {
+    background: lightyellow;
+    font-weight: bold;
+    padding: 3px;
+    border-radius: 3px;
+    width: 96%;
+    overflow: auto;
+    height: 20px;
+    vertical-align: middle;
+
+    .number {
+      display: block;
+      padding: 2px;
+      padding-top: 5px;
+      font-weight: normal;
+      font-size: 80%;
+      height: 15px;
+      width: 50px;
+      float: right;
+      text-align: right;
+    }
+  }
+
+  dl {
+    overflow: auto;
+    width: 100%;
+
+    dt {
+      float: left;
+      width: 80px;
+    }
+
+    dd {
+      margin-left: 84px;
+    }
+
+  }
+
 }

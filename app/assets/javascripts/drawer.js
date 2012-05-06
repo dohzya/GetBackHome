@@ -11,6 +11,14 @@ GetHomeBack.Zone = function(x, y, color){
         ctx.fillRect(zone.x, zone.y, zone.dx, zone.dy);
     };
 
+    zone.onClick = function(e){
+        old = zone.color;
+        zone.color = "yellow";
+        GetHomeBack.drawer.draw();
+        zone.color = old;
+        return true;
+    };
+
     return zone;
 };
 
@@ -52,7 +60,7 @@ GetHomeBack.Cursor = (function(){
         var old = cursor.color;
         cursor.color = "red";
         GetHomeBack.drawer.draw();
-        var res = GetHomeBack.drawer.click({
+        var res = GetHomeBack.drawer.onClick({
             x: cursor.x,
             y: cursor.y
         });
@@ -143,16 +151,10 @@ GetHomeBack.drawer = (function(){
         return null;
     };
 
-    drawer.click = function(e){
+    drawer.onClick = function(e){
         var selected = GetHomeBack.drawer.getDrawable(e.x, e.y);
-        console.log(selected);
-        if (selected) {
-            old = selected.color;
-            selected.color = "yellow";
-            GetHomeBack.drawer.draw();
-            selected.color = old;
-        }
-        return true;
+        var res = selected ? selected.onClick() : true;
+        return res;
     };
 
     return drawer;
