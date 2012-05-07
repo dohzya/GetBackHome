@@ -1,3 +1,5 @@
+"use strict";
+
 GetHomeBack.drawer = (function(){
     var drawer = {};
 

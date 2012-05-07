@@ -1,3 +1,5 @@
+"use strict";
+
 GetHomeBack.Cursor = (function(){
     var cursor = {};
 
@@ -18,14 +20,14 @@ GetHomeBack.Cursor = (function(){
     };
 
     cursor.getX = function(e){
-        x = e.pageX + 1;
+        var x = e.pageX + 1;
         x = cursor.drawer.globalToRelativeX(x);
         if (x < 0) x = 0;
         return x;
     };
 
     cursor.getY = function(e){
-        y = e.pageY + 1;
+        var y = e.pageY + 1;
         y = cursor.drawer.globalToRelativeY(y);
         if (y < 0) y = 0;
         return y;

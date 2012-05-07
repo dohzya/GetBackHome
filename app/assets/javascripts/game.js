@@ -1,3 +1,5 @@
+"use strict";
+
 GetHomeBack.game = (function(){
     var game = {};
 

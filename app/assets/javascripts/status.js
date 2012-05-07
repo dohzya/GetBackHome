@@ -1,3 +1,5 @@
+"use strict";
+
 GetHomeBack.status = (function(){
     var status = {};
 
