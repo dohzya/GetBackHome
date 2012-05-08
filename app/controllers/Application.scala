@@ -2,30 +2,30 @@ package com.dohzya.gethomeback.controllers
 
 import play.api._
 import play.api.mvc._
+import com.dohzya.gethomeback.libs._
 import com.dohzya.gethomeback.models._
 
 object Application extends Controller {
 
+  val height = 600
+  val width = 800
+
   def index = Action { implicit request =>
-    val zones = Seq(
-      Zone(
-        x = 50,
-        y = 50,
-        dx = 50,
-        dy = 50,
-        color = "red",
-        infos = Zone.Infos(zoneType = "montains")
-      ),
-      Zone(
-        x = 200,
-        y = 200,
-        dx = 50,
-        dy = 50,
-        color = "blue",
-        infos = Zone.Infos(zoneType = "city")
-      )
-    )
-    Ok(views.html.index(zones))
+
+    val d = 50
+    val seed = new java.util.Random(System.currentTimeMillis()).nextInt;
+    val zones = for(x <- 0.to(width, d); y <- 0.to(height, d))
+     yield Zone(
+       x = x,
+       y = y,
+       dx = d,
+       dy = d,
+       infos = Zone.Infos(
+         zoneType = "montains",
+         infection = SimplexNoise.noise(x, y)
+       )
+     )
+    Ok(views.html.index(height, width, zones))
   }
 
 }

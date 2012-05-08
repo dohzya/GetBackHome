@@ -3,12 +3,30 @@
 GetHomeBack.Zone = function(zn){
     var zone = {};
 
+    zone.Infos = function(i){
+        var infos = {};
+
+        infos.zoneType = i.zoneType;
+        infos.infection = i.infection;
+
+        return infos;
+    };
+
     zone.x = zn.x;
     zone.y = zn.y;
     zone.dx = zn.dx;
     zone.dy = zn.dy;
-    zone.color = zn.color;
-    zone.infos = zn.infos;
+    zone.infos = zone.Infos(zn.infos);
+
+    if (zone.infos.zoneType == "montains") {
+        zone.color = "blue";
+    }
+    else if (zone.infos.zoneType == "city") {
+        zone.color = "red";
+    }
+    else {
+        zone.color = "green";
+    }
 
     zone.draw = function(ctx){
         ctx.fillStyle = zone.color;
@@ -16,19 +34,17 @@ GetHomeBack.Zone = function(zn){
     };
 
     zone.onClick = function(e){
-        return zone.drawClick(function(){
-            GetHomeBack.status.displayZone(zone);
-            e.drawer.redraw();
-        });
+        e.drawer.redraw();
     };
 
-    zone.drawClick = function(f){
-        var old, res;
-        old = zone.color;
+    zone.onSelected = function(){
+        zone.oldColor = zone.color;
         zone.color = "yellow";
-        res = f();
-        zone.color = old;
-        return res;
+        GetHomeBack.status.displayZone(zone);
+    };
+
+    zone.onUnSelected = function(){
+        zone.color = zone.oldColor;
     };
 
     return zone;

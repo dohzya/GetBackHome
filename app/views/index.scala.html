@@ -1,6 +1,7 @@
-@(zones: Seq[com.dohzya.gethomeback.models.Zone])(implicit lang: Lang)
+@(height: Int, width: Int, zones: Seq[com.dohzya.gethomeback.models.Zone])(implicit lang: Lang)
 
 @import com.dohzya.gethomeback._
+@import com.dohzya.gethomeback.libs._
 @import com.dohzya.gethomeback.models._
 @import com.dohzya.gethomeback.models.ZoneJsonFormatter._
 @import play.api.libs.json._
@@ -11,7 +12,7 @@
 
     <div class="game">
 
-      <canvas id="mainDrawer" class="drawer" height="600px" width="800px"></canvas>
+      <canvas id="mainDrawer" class="drawer" height="@(height)px" width="@(width)px"></canvas>
 
       <div id="status" class="sidebar">
         <div id="global" class="status">
@@ -65,7 +66,7 @@
                     selected: document.getElementById("cursorSelectedImg")
                   },
                   zones: [
-                      @Html(zones.map(Json.toJson(_)).mkString(","))
+                      @Html(zones.map(Json.toJson(_)).mkString(",\n                      "))
                   ]
               }
           );

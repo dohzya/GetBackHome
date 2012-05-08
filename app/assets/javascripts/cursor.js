@@ -17,6 +17,8 @@ GetHomeBack.Cursor = (function(){
     cursor.start = function(){
         cursor.drawer.canvas.onmousemove = cursor.onMouseMove;
         cursor.drawer.canvas.onclick = cursor.onClick;
+        cursor.drawer.canvas.onmousedown = cursor.onMouseDown;
+        cursor.drawer.canvas.onmouseup = cursor.onMouseUp;
     };
 
     cursor.getX = function(e){
@@ -36,32 +38,30 @@ GetHomeBack.Cursor = (function(){
     cursor.setXY = function(e){
         cursor.x = cursor.getX(e);
         cursor.y = cursor.getY(e);
+        cursor.e = {
+            x: cursor.x,
+            y: cursor.y,
+            drawer: cursor.drawer
+        };
     };
 
     cursor.onMouseMove = function(e){
         cursor.setXY(e);
-        cursor.drawer.redraw();
+        cursor.drawer.onMouseMove(cursor.e);
         return true;
     };
 
-    cursor.onClick = function(e){
-        cursor.setXY(e);
-        return cursor.drawClick(function(){
-            cursor.drawer.onClick({
-                x: cursor.x,
-                y: cursor.y,
-                drawer: cursor.drawer
-            });
-        });
+    cursor.onMouseDown = function(e){
+        cursor.mode = "selected";
+        cursor.drawer.onMouseDown(cursor.e);
+    };
+    cursor.onMouseUp = function(e){
+        cursor.mode = "normal";
+        cursor.drawer.onMouseUp(cursor.e);
     };
 
-    cursor.drawClick = function(f){
-        var res;
-        cursor.mode = "selected";
-        cursor.drawer.redraw();
-        res = f();
-        cursor.mode = "normal";
-        return res;
+    cursor.onClick = function(e){
+        cursor.drawer.onClick(cursor.e);
     };
 
     cursor.draw = function(ctx){

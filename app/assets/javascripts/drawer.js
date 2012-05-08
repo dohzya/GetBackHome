@@ -14,6 +14,7 @@ GetHomeBack.drawer = (function(){
         drawer.width = canvas.width;
         drawer.drawables = [];
         drawer.zones = [];
+        drawer.selected = null;
         GetHomeBack.Cursor.init(drawer, opts.cursor);
     };
 
@@ -32,7 +33,7 @@ GetHomeBack.drawer = (function(){
 
     drawer.redraw = function(){
         drawer.drawBackground();
-        for(var i in drawer.drawables){
+        for(var i in drawer.drawables) {
             drawer.drawables[i].draw(drawer.ctx);
         }
     };
@@ -49,27 +50,49 @@ GetHomeBack.drawer = (function(){
     };
 
     drawer.getDrawable = function(x, y){
-        for(var i=0; i<drawer.zones.length; i++){
+        for(var i in drawer.zones) {
             var zone = drawer.zones[i];
-            if (zone.x < x &&
-                zone.x + zone.dx > x &&
-                zone.y < y &&
-                zone.y + zone.dy > y)
+            if (zone.x <= x &&
+                zone.x + zone.dx >= x &&
+                zone.y <= y &&
+                zone.y + zone.dy >= y)
                     return zone;
         }
         return null;
     };
 
-    drawer.onClick = function(e){
-        var selected, res;
-        selected = drawer.getDrawable(e.x, e.y);
-        if(selected){
-            res = selected.onClick(e);
+    drawer.onMouseMove = function(e){
+        drawer.redraw();
+    };
+
+    drawer.onMouseDown = function(e){
+        var selected = drawer.getDrawable(e.x, e.y);
+        if (selected === drawer.selected) {
+            // no nothing
         }
         else {
-            res = true;
+            if (drawer.selected) {
+                drawer.selected.onUnSelected();
+            }
+            if (selected) {
+                selected.onSelected();
+            }
+            drawer.selected = selected;
+        }
+    };
+
+    drawer.onMouseUp = function(e){
+    };
+
+    drawer.onClick = function(e){
+        var res = true;
+        if(drawer.selected) {
+            res = drawer.selected.onClick(e);
+        }
+        else {
             GetHomeBack.status.displayNothing();
         }
+        drawer.redraw();
         return res;
     };
 

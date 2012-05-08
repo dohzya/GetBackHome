@@ -7,13 +7,13 @@ case class Zone(
   y: Int,
   dx: Int,
   dy: Int,
-  color: String,
   infos: Zone.Infos
 )
 object Zone {
 
   case class Infos(
-    zoneType: String
+    zoneType: String,
+    infection: Double
   )
 
 }
@@ -25,11 +25,13 @@ object ZoneJsonFormatter {
 
   implicit object InfosFormatter extends json.Format[Zone.Infos] {
     def reads(json: JsValue) = Zone.Infos(
-      zoneType = (json \ "type").as[String]
+      zoneType = (json \ "zoneType").as[String],
+      infection = (json \ "infection").as[Double]
     )
 
     def writes(o: Zone.Infos): JsValue = JsObject(List(
-      "type" -> JsString(o.zoneType)
+      "zoneType" -> JsString(o.zoneType),
+      "infection" -> JsNumber(o.infection)
     ))
   }
 
@@ -39,7 +41,6 @@ object ZoneJsonFormatter {
       (json \ "y").as[Int],
       (json \ "dx").as[Int],
       (json \ "dy").as[Int],
-      (json \ "color").as[String],
       (json \ "infos").as[Zone.Infos]
     )
 
@@ -48,8 +49,7 @@ object ZoneJsonFormatter {
       "y" -> JsNumber(o.y),
       "dx" -> JsNumber(o.dx),
       "dy" -> JsNumber(o.dy),
-      "color" -> JsString(o.color),
-      "infos" -> toJson(o.infos)
+        "infos" -> toJson(o.infos)
     ))
   }
 
