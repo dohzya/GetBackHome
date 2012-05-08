@@ -19,7 +19,7 @@ GetHomeBack.Zone = function(zn){
     zone.infos = zone.Infos(zn.infos);
 
     if (zone.infos.zoneType == "montains") {
-        zone.color = "blue";
+        zone.color = "rgba(0, 0, 200, "+zone.infos.infection+")";
     }
     else if (zone.infos.zoneType == "city") {
         zone.color = "red";

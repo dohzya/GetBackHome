@@ -13,7 +13,7 @@ object Application extends Controller {
   def index = Action { implicit request =>
 
     val d = 50
-    val seed = new java.util.Random(System.currentTimeMillis()).nextInt;
+    val seed = new java.util.Random(System.currentTimeMillis()).nextInt(100000);
     val zones = for(x <- 0.to(width, d); y <- 0.to(height, d))
      yield Zone(
        x = x,
@@ -22,7 +22,7 @@ object Application extends Controller {
        dy = d,
        infos = Zone.Infos(
          zoneType = "montains",
-         infection = SimplexNoise.noise(x, y)
+         infection = SimplexNoise.noise(x+seed, y+seed)
        )
      )
     Ok(views.html.index(height, width, zones))
