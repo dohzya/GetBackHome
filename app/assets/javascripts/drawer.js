@@ -39,7 +39,7 @@ GetHomeBack.drawer = (function(){
     };
 
     drawer.drawBackground = function(){
-        drawer.ctx.fillStyle = "rgba(0, 0, 0, 1)";
+        drawer.ctx.fillStyle = "rgb(0, 0, 0)";
         drawer.ctx.fillRect(0, 0, drawer.width, drawer.height);
     };
 

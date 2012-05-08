@@ -17,15 +17,24 @@ GetHomeBack.Zone = function(zn){
     zone.dx = zn.dx;
     zone.dy = zn.dy;
     zone.infos = zone.Infos(zn.infos);
+    zone.infectionAlpha = 1-(zone.infos.infection/1.5);
 
-    if (zone.infos.zoneType == "montains") {
-        zone.color = "rgba(0, 0, 200, "+zone.infos.infection+")";
+    if (zone.infos.zoneType == "city") {
+        zone.color = "rgba(127, 127, 127, "+zone.infectionAlpha+")";
     }
-    else if (zone.infos.zoneType == "city") {
-        zone.color = "red";
+    else if (zone.infos.zoneType == "field") {
+        zone.color = "rgba(191, 127, 15, "+zone.infectionAlpha+")";
     }
-    else {
-        zone.color = "green";
+    else if (zone.infos.zoneType == "water") {
+        zone.color = "rgba(0, 0, 127, "+zone.infectionAlpha+")";
+    }
+    else if (zone.infos.zoneType == "boue") {
+        zone.color = "rgba(127, 63, 31, "+zone.infectionAlpha+")";
+    }
+    else if (zone.infos.zoneType == "plaine") {
+        zone.color = "rgba(0, 127, 0, "+zone.infectionAlpha+")";
+    } else {
+        zone.color = "black";
     }
 
     zone.draw = function(ctx){
