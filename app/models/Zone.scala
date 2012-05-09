@@ -3,10 +3,8 @@ package com.dohzya.gethomeback.models
 import play.api.libs.json
 
 case class Zone(
-  x: Int,
-  y: Int,
-  dx: Int,
-  dy: Int,
+  pos: Position,
+  dim: Dimension,
   infos: Zone.Infos
 )
 object Zone {
@@ -23,7 +21,10 @@ object ZoneJsonFormatter {
   import play.api.libs.json._
   import play.api.libs.json.Json.toJson
 
-  implicit object InfosFormatter extends json.Format[Zone.Infos] {
+  import DimensionJsonFormatter._
+  import PositionJsonFormatter._
+
+  implicit object InfosFormatter extends Format[Zone.Infos] {
     def reads(json: JsValue) = Zone.Infos(
       zoneType = (json \ "zoneType").as[String],
       infection = (json \ "infection").as[Double]
@@ -35,20 +36,18 @@ object ZoneJsonFormatter {
     ))
   }
 
-  implicit object ZoneJsonFormatter extends json.Format[Zone] {
+  implicit object ZoneJsonFormatter extends Format[Zone] {
     def reads(json: JsValue) = Zone(
-      (json \ "x").as[Int],
-      (json \ "y").as[Int],
-      (json \ "dx").as[Int],
-      (json \ "dy").as[Int],
-      (json \ "infos").as[Zone.Infos]
+      pos = json.as[Position],
+      dim = json.as[Dimension],
+      infos = (json \ "infos").as[Zone.Infos]
     )
 
     def writes(o: Zone): JsValue = JsObject(List(
-      "x" -> JsNumber(o.x),
-      "y" -> JsNumber(o.y),
-      "dx" -> JsNumber(o.dx),
-      "dy" -> JsNumber(o.dy),
+      "x" -> JsNumber(o.pos.x),
+      "y" -> JsNumber(o.pos.y),
+      "height" -> JsNumber(o.dim.height),
+      "width" -> JsNumber(o.dim.width),
         "infos" -> toJson(o.infos)
     ))
   }

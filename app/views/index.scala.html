@@ -1,4 +1,4 @@
-@(height: Int, width: Int, zones: Seq[com.dohzya.gethomeback.models.Zone])(implicit lang: Lang)
+@(game: com.dohzya.gethomeback.models.Game)(implicit lang: Lang)
 
 @import com.dohzya.gethomeback._
 @import com.dohzya.gethomeback.libs._
@@ -12,7 +12,7 @@
 
     <div class="game">
 
-      <canvas id="mainDrawer" class="drawer" height="@(height)px" width="@(width)px"></canvas>
+      <canvas id="mainDrawer" class="drawer" height="@(game.dim.height)px" width="@(game.dim.width)px"></canvas>
 
       <div id="status" class="sidebar">
         <div id="global" class="status">
@@ -66,7 +66,7 @@
                     selected: document.getElementById("cursorSelectedImg")
                   },
                   zones: [
-                      @Html(zones.map(Json.toJson(_)).mkString(",\n                      "))
+                      @Html(game.zones.map(Json.toJson(_)).mkString(",\n                      "))
                   ]
               }
           );

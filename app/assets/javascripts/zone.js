@@ -14,8 +14,8 @@ GetHomeBack.Zone = function(zn){
 
     zone.x = zn.x;
     zone.y = zn.y;
-    zone.dx = zn.dx;
-    zone.dy = zn.dy;
+    zone.dx = zn.width;
+    zone.dy = zn.height;
     zone.infos = zone.Infos(zn.infos);
     zone.infectionAlpha = 1-(zone.infos.infection/1.5);
 
