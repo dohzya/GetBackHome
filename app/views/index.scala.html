@@ -47,9 +47,6 @@
 
     </div>
 
-    <img id="cursorImg" src="@routes.Assets.at("images/cursor.png")" style="display:none" />
-    <img id="cursorSelectedImg" src="@routes.Assets.at("images/cursorSelected.png")" style="display:none" />
-
     <script type="text/javascript">
       // <![CDATA[
       $(function(){
@@ -62,8 +59,8 @@
               status,
               {
                   cursor: {
-                    normal: document.getElementById("cursorImg"),
-                    selected: document.getElementById("cursorSelectedImg")
+                    normal: "@routes.Assets.at("images/cursor.png")",
+                    selected: "@routes.Assets.at("images/cursorSelected.png")"
                   },
                   zones: [
                       @Html(game.zones.map(Json.toJson(_)).mkString(",\n                      "))

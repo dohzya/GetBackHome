@@ -1,6 +1,6 @@
 "use strict";
 
-GetHomeBack.Cursor = (function(){
+GetHomeBack.Cursor = (function(GetHomeBack){
     var cursor = {};
 
     cursor.init = function(drawer, opts){
@@ -9,8 +9,10 @@ GetHomeBack.Cursor = (function(){
         cursor.y = 100;
         cursor.dx = 20;
         cursor.dy = 20;
-        cursor.normal = opts.normal;
-        cursor.selected = opts.selected;
+        cursor.normal = new Image();
+        cursor.normal.src = opts.normal;
+        cursor.selected = new Image();
+        cursor.selected.src = opts.selected;
         cursor.mode = "normal";
     };
 
@@ -86,4 +88,4 @@ GetHomeBack.Cursor = (function(){
     };
 
     return cursor;
-})();
+})(GetHomeBack);
