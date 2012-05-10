@@ -17,6 +17,7 @@ object Game {
         Zone(
           Position(x*zonesDim.width, y*zonesDim.height),
           Dimension(zonesDim.width, zonesDim.height),
+          ts = 0,
           infos = Zone.Infos(
             zoneType = if (typeInt < 20) "plaine"
                        else if (typeInt < 40) "city"

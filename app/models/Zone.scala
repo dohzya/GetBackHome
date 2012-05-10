@@ -5,7 +5,8 @@ import play.api.libs.json
 case class Zone(
   pos: Position,
   dim: Dimension,
-  infos: Zone.Infos
+  infos: Zone.Infos,
+  ts: Int
 )
 object Zone {
 
@@ -40,6 +41,7 @@ object ZoneJsonFormatter {
     def reads(json: JsValue) = Zone(
       pos = json.as[Position],
       dim = json.as[Dimension],
+      ts = (json \ "ts").as[Int],
       infos = (json \ "infos").as[Zone.Infos]
     )
 
@@ -48,7 +50,8 @@ object ZoneJsonFormatter {
       "y" -> JsNumber(o.pos.y),
       "height" -> JsNumber(o.dim.height),
       "width" -> JsNumber(o.dim.width),
-        "infos" -> toJson(o.infos)
+      "ts" -> JsNumber(o.ts),
+      "infos" -> toJson(o.infos)
     ))
   }
 
