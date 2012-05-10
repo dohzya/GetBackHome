@@ -1,4 +1,7 @@
-@(game: com.dohzya.gethomeback.models.Game)(implicit lang: Lang)
+@(
+  game: com.dohzya.gethomeback.models.Game,
+  player: com.dohzya.gethomeback.models.Player
+)(implicit lang: Lang)
 
 @import com.dohzya.gethomeback._
 @import com.dohzya.gethomeback.libs._
@@ -8,7 +11,7 @@
 
 @main() {
 
-    <h1>@Messages("index.welcome")</h1>
+    <h1>@Messages("index.welcomeplayer", player.name)</h1>
 
     <div class="game">
 
@@ -16,7 +19,7 @@
 
       <div id="status" class="sidebar">
         <div id="global" class="status">
-          <div class="title">Global</div>
+          <div class="title">@player.name</div>
           <div class="fields">
             <dl>
               <dt>Killed Zombies</dt><dd>3,000</dd>

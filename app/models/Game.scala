@@ -2,7 +2,20 @@ package com.dohzya.gethomeback.models
 
 import com.dohzya.gethomeback.libs._
 
-case class Game(dim: Dimension, zones: Seq[Zone])
+case class Game(
+  dim: Dimension,
+  zones: Seq[Zone],
+  players: Seq[Player]
+) {
+
+  def player(name: String): Player = {
+    players find {_.name == name} match {
+      case Some(p) => p
+      case None => Player(name)
+    }
+  }
+
+}
 object Game {
 
 
@@ -40,5 +53,8 @@ object Game {
       }
     Game(worldDim, zones)
   }
+
+  def apply(worldDim: Dimension, zones: Seq[Zone]): Game =
+    Game(worldDim, zones, List[Player]())
 
 }
