@@ -5,10 +5,19 @@ import com.dohzya.gethomeback.libs._
 case class Game(dim: Dimension, zones: Seq[Zone])
 object Game {
 
+
+  def apply(worldDim: Dimension, zonesDim: Dimension): Game = {
+    val seed = new java.util.Random(System.currentTimeMillis()).nextInt(1000000)
+    Game(worldDim, zonesDim, seed)
+  }
+  def apply(worldDim: Dimension, zonesDim: Dimension, seed: String): Game = {
+    val seedInt = seed.foldLeft(0)((t,c) => t+c)
+    Game(worldDim, zonesDim, seedInt)
+  }
   def apply(
     worldDim: Dimension,
     zonesDim: Dimension,
-    seed: Int = new java.util.Random(System.currentTimeMillis()).nextInt(1000000)
+    seed: Int
   ): Game = {
     val zones = for(x <- 0.to(worldDim.width/zonesDim.width); y <- 0.to(worldDim.height/zonesDim.height))
       yield {
