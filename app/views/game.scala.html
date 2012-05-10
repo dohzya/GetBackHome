@@ -1,0 +1,75 @@
+@(game: com.dohzya.gethomeback.models.Game)(implicit lang: Lang)
+
+@import com.dohzya.gethomeback._
+@import com.dohzya.gethomeback.libs._
+@import com.dohzya.gethomeback.models._
+@import com.dohzya.gethomeback.models.ZoneJsonFormatter._
+@import play.api.libs.json._
+
+@main() {
+
+    <h1>@Messages("index.welcome")</h1>
+
+    <div class="game">
+
+      <canvas id="mainDrawer" class="drawer" height="@(game.dim.height)px" width="@(game.dim.width)px"></canvas>
+
+      <div id="status" class="sidebar">
+        <div id="global" class="status">
+          <div class="title">Global</div>
+          <div class="fields">
+            <dl>
+              <dt>Killed Zombies</dt><dd>3,000</dd>
+            </dl>
+          </div>
+        </div>
+        <div id="zones" class="status">
+          <div class="title">Zone <span class="number">30</span></div>
+          <div class="fields">
+            <dl>
+              <dt>type</dt><dd>city</dd>
+            </dl>
+          </div>
+        </div>
+        <div id="guys" class="status">
+          <div class="title">Guy <span class="number">30</span></div>
+          <div class="fields">
+            <dl>
+              <dt>Dis Gail</dt><dd>10 / 150</dd>
+            </dl>
+          </div>
+        </div>
+        <div id="cursor" class="status">
+          <div class="title"></div>
+          <div class="fields"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <script type="text/javascript">
+      // <![CDATA[
+      $(function(){
+          var canvas = document.getElementById("mainDrawer");
+          var status = {
+              selected: document.getElementById("cursor")
+          };
+          GetHomeBack.init(
+              canvas,
+              status,
+              {
+                  cursor: {
+                    normal: "@routes.Assets.at("images/cursor.png")",
+                    selected: "@routes.Assets.at("images/cursorSelected.png")"
+                  },
+                  zones: [
+                      @Html(game.zones.map(Json.toJson(_)).mkString(",\n                      "))
+                  ]
+              }
+          );
+          GetHomeBack.start();
+      });
+      // ]]>
+    </script>
+
+}
