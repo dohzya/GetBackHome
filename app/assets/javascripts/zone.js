@@ -1,60 +1,66 @@
 "use strict";
 
-GetHomeBack.Zone = function(zn){
-    var zone = {};
+GetHomeBack.Zone = (function(GetHomeBack){
+    function Class(zn){
+        this.x = zn.x;
+        this.y = zn.y;
+        this.dx = zn.width;
+        this.dy = zn.height;
+        this.infos = Zone.Infos(zn.infos);
+        this.infectionAlpha = 1-(this.infos.infection/1.5);
 
-    zone.Infos = function(i){
-        var infos = {};
+        if (this.infos.zoneType == "city") {
+            this.color = "rgba(127, 127, 127, "+this.infectionAlpha+")";
+        }
+        else if (this.infos.zoneType == "field") {
+            this.color = "rgba(191, 127, 15, "+this.infectionAlpha+")";
+        }
+        else if (this.infos.zoneType == "water") {
+            this.color = "rgba(0, 0, 127, "+this.infectionAlpha+")";
+        }
+        else if (this.infos.zoneType == "boue") {
+            this.color = "rgba(127, 63, 31, "+this.infectionAlpha+")";
+        }
+        else if (this.infos.zoneType == "plaine") {
+            this.color = "rgba(0, 127, 0, "+this.infectionAlpha+")";
+        } else {
+            this.color = "black";
+        }
+    }
 
-        infos.zoneType = i.zoneType;
-        infos.infection = i.infection;
-
-        return infos;
+    Class.prototype.draw = function(ctx){
+        ctx.fillStyle = this.color;
+        ctx.fillRect(this.x, this.y, this.dx, this.dy);
     };
 
-    zone.x = zn.x;
-    zone.y = zn.y;
-    zone.dx = zn.width;
-    zone.dy = zn.height;
-    zone.infos = zone.Infos(zn.infos);
-    zone.infectionAlpha = 1-(zone.infos.infection/1.5);
-
-    if (zone.infos.zoneType == "city") {
-        zone.color = "rgba(127, 127, 127, "+zone.infectionAlpha+")";
-    }
-    else if (zone.infos.zoneType == "field") {
-        zone.color = "rgba(191, 127, 15, "+zone.infectionAlpha+")";
-    }
-    else if (zone.infos.zoneType == "water") {
-        zone.color = "rgba(0, 0, 127, "+zone.infectionAlpha+")";
-    }
-    else if (zone.infos.zoneType == "boue") {
-        zone.color = "rgba(127, 63, 31, "+zone.infectionAlpha+")";
-    }
-    else if (zone.infos.zoneType == "plaine") {
-        zone.color = "rgba(0, 127, 0, "+zone.infectionAlpha+")";
-    } else {
-        zone.color = "black";
-    }
-
-    zone.draw = function(ctx){
-        ctx.fillStyle = zone.color;
-        ctx.fillRect(zone.x, zone.y, zone.dx, zone.dy);
-    };
-
-    zone.onClick = function(e){
+    Class.prototype.onClick = function(e){
         e.drawer.redraw();
     };
 
-    zone.onSelected = function(){
-        zone.oldColor = zone.color;
-        zone.color = "yellow";
-        GetHomeBack.status.displayZone(zone);
+    Class.prototype.onSelected = function(){
+        this.oldColor = this.color;
+        this.color = "yellow";
+        GetHomeBack.status.displayZone(this);
     };
 
-    zone.onUnSelected = function(){
-        zone.color = zone.oldColor;
+    Class.prototype.onUnSelected = function(){
+        this.color = this.oldColor;
     };
 
-    return zone;
-};
+    function Zone(zn){
+        return new Class(zn);
+    }
+
+    Zone.Infos = (function(){
+        var Class = function(i){
+            this.zoneType = i.zoneType;
+            this.infection = i.infection;
+        };
+        function Infos(i){
+            return new Class(i);
+        }
+        return Infos;
+    })();
+
+    return Zone;
+})(GetHomeBack);
