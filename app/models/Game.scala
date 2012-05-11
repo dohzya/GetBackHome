@@ -3,6 +3,7 @@ package com.dohzya.gethomeback.models
 import com.dohzya.gethomeback.libs._
 
 case class Game(
+  name: String,
   dim: Dimension,
   zones: Seq[Zone],
   players: Seq[Player]
@@ -28,14 +29,14 @@ object Game {
     Game(worldDim, zonesDim, seedInt)
   }
   def apply(
+    name: String,
     worldDim: Dimension,
-    zonesDim: Dimension,
-    seed: Int
+    zonesDim: Dimension
   ): Game = {
     val zones = for(x <- 0.to(worldDim.width/zonesDim.width); y <- 0.to(worldDim.height/zonesDim.height))
       yield {
-        val infection = SimplexNoise.noise(x, y, 0, seed).abs
-        val typeInt = (SimplexNoise.noise(x, y, 1, seed)*100).toInt
+        val infection = SimplexNoise.noise(x, y, 0, name).abs
+        val typeInt = (SimplexNoise.noise(x, y, 1, name)*100).toInt
         Zone(
           Position(x*zonesDim.width, y*zonesDim.height),
           Dimension(zonesDim.width, zonesDim.height),
@@ -51,10 +52,10 @@ object Game {
           )
         )
       }
-    Game(worldDim, zones)
+    Game(name, worldDim, zones)
   }
 
-  def apply(worldDim: Dimension, zones: Seq[Zone]): Game =
-    Game(worldDim, zones, List[Player]())
+  def apply(name: String, worldDim: Dimension, zones: Seq[Zone]): Game =
+    Game(name, worldDim, zones, List[Player]())
 
 }
