@@ -1,6 +1,6 @@
 package com.dohzya.gethomeback.models
 
-import com.dohzya.gethomeback.libs._
+import com.dohzya.gethomeback.libs.Generator
 
 case class Game(
   name: String,
@@ -19,24 +19,18 @@ case class Game(
 }
 object Game {
 
-
-  def apply(worldDim: Dimension, zonesDim: Dimension): Game = {
-    val seed = new java.util.Random(System.currentTimeMillis()).nextInt(1000000)
-    Game(worldDim, zonesDim, seed)
-  }
-  def apply(worldDim: Dimension, zonesDim: Dimension, seed: String): Game = {
-    val seedInt = seed.foldLeft(0)((t,c) => t+c)
-    Game(worldDim, zonesDim, seedInt)
-  }
   def apply(
     name: String,
     worldDim: Dimension,
     zonesDim: Dimension
   ): Game = {
+    val gen = Generator(name)(_)
+    val infectionGen = gen(0)
+    val typeGen = gen(1)
     val zones = for(x <- 0.to(worldDim.width/zonesDim.width); y <- 0.to(worldDim.height/zonesDim.height))
       yield {
-        val infection = SimplexNoise.noise(x, y, 0, name).abs
-        val typeInt = (SimplexNoise.noise(x, y, 1, name)*100).toInt
+        val infection = infectionGen(x, y).abs
+        val typeInt = (typeGen(x, y) * 100).toInt
         Zone(
           Position(x*zonesDim.width, y*zonesDim.height),
           Dimension(zonesDim.width, zonesDim.height),
