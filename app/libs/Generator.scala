@@ -4,8 +4,22 @@ import com.dohzya.gethomeback.models.{ Game, Player }
 
 object Generator {
 
-  def apply(x: Int, y: Int, game: Int, kind: Int): Double =
-    SimplexNoise.noise(x, y, game, kind)
+  def apply(x: Int, y: Int, game: Int, kind: Int): Double = {
+    val nbs = List(
+      SimplexNoise.noise(game, kind, x-1, y-1),
+      SimplexNoise.noise(game, kind, x-1, y),
+      SimplexNoise.noise(game, kind, x-1, y+1),
+      SimplexNoise.noise(game, kind, x, y-1),
+      SimplexNoise.noise(game, kind, x, y),
+      SimplexNoise.noise(game, kind, x, y),
+      SimplexNoise.noise(game, kind, x, y),
+      SimplexNoise.noise(game, kind, x, y+1),
+      SimplexNoise.noise(game, kind, x+1, y-1),
+      SimplexNoise.noise(game, kind, x+1, y),
+      SimplexNoise.noise(game, kind, x+1, y+1)
+    )
+    nbs.reduce(_+_) / nbs.size
+  }
 
   def apply(game: Game, kind: Int)(x: Int, y: Int): Double =
     Generator(x, y, genSeed(game), kind)
