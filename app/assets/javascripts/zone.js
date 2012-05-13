@@ -6,7 +6,7 @@ GetHomeBack.Zone = (function(GetHomeBack){
         this.y = zn.y;
         this.dx = zn.width;
         this.dy = zn.height;
-        this.infos = Zone.Infos(zn.infos);
+        this.infos = zn.infos;
         this.infectionAlpha = 1-(this.infos.infection/1.5);
 
         if (this.infos.zoneType == "city") {
@@ -50,17 +50,6 @@ GetHomeBack.Zone = (function(GetHomeBack){
     function Zone(zn){
         return new Class(zn);
     }
-
-    Zone.Infos = (function(){
-        var Class = function(i){
-            this.zoneType = i.zoneType;
-            this.infection = i.infection;
-        };
-        function Infos(i){
-            return new Class(i);
-        }
-        return Infos;
-    })();
 
     return Zone;
 })(GetHomeBack);
