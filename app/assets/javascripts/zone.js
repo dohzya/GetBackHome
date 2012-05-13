@@ -23,7 +23,7 @@ GetHomeBack.Zone = (function(GetHomeBack){
         }
         else if (this.infos.zoneType == "plaine") {
             this.color = "rgba(0, 127, 0, "+this.infectionAlpha+")";
-        } else {
+        else {
             this.color = "black";
         }
     }
