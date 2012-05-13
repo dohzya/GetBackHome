@@ -6,17 +6,19 @@ object Generator {
 
   def apply(x: Int, y: Int, game: Int, kind: Int): Double = {
     val nbs = List(
+      SimplexNoise.noise(game, kind, x-2, y-2),
       SimplexNoise.noise(game, kind, x-1, y-1),
       SimplexNoise.noise(game, kind, x-1, y),
       SimplexNoise.noise(game, kind, x-1, y+1),
+      SimplexNoise.noise(game, kind, x-2, y+2),
       SimplexNoise.noise(game, kind, x, y-1),
-      SimplexNoise.noise(game, kind, x, y),
-      SimplexNoise.noise(game, kind, x, y),
       SimplexNoise.noise(game, kind, x, y),
       SimplexNoise.noise(game, kind, x, y+1),
       SimplexNoise.noise(game, kind, x+1, y-1),
+      SimplexNoise.noise(game, kind, x+2, y-2),
       SimplexNoise.noise(game, kind, x+1, y),
-      SimplexNoise.noise(game, kind, x+1, y+1)
+      SimplexNoise.noise(game, kind, x+1, y+1),
+      SimplexNoise.noise(game, kind, x+2, y+2)
     )
     nbs.reduce(_+_) / nbs.size
   }

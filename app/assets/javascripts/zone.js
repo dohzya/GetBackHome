@@ -8,21 +8,29 @@ GetHomeBack.Zone = (function(GetHomeBack){
         this.dy = zn.height;
         this.infos = zn.infos;
         this.infectionAlpha = 1-(this.infos.infection/1.5);
+        this.infos.infection = this.infos.infection.toPrecision(3);
 
-        if (this.infos.zoneType == "city") {
+        if (this.infos.type2 == "city"){
             this.color = "rgba(127, 127, 127, "+this.infectionAlpha+")";
         }
-        else if (this.infos.zoneType == "field") {
+        else if (this.infos.type2 == "forrest"){
+            this.color = "rgba(0, 127, 0, "+this.infectionAlpha+")";
+        }
+        else if (this.infos.type2 == "field"){
             this.color = "rgba(191, 127, 15, "+this.infectionAlpha+")";
         }
-        else if (this.infos.zoneType == "water") {
+        else if (this.infos.type1 == "water"){
             this.color = "rgba(0, 0, 127, "+this.infectionAlpha+")";
         }
-        else if (this.infos.zoneType == "boue") {
+        else if (this.infos.type1 == "boue"){
             this.color = "rgba(127, 63, 31, "+this.infectionAlpha+")";
         }
-        else if (this.infos.zoneType == "plaine") {
+        else if (this.infos.type1 == "plaine"){
             this.color = "rgba(0, 127, 0, "+this.infectionAlpha+")";
+        }
+        else if (this.infos.type1 == "montains"){
+            this.color = "rgba(0, 127, 0, "+this.infectionAlpha+")";
+        }
         else {
             this.color = "black";
         }

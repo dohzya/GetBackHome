@@ -11,7 +11,9 @@ case class Zone(
 object Zone {
 
   case class Infos(
-    zoneType: String,
+    height: Double,
+    type1: String,
+    type2: Option[String],
     infection: Double
   )
 
@@ -27,12 +29,16 @@ object ZoneJsonFormatter {
 
   implicit object InfosFormatter extends Format[Zone.Infos] {
     def reads(json: JsValue) = Zone.Infos(
-      zoneType = (json \ "zoneType").as[String],
+      height = (json \ "height").as[Double],
+      type1 = (json \ "type1").as[String],
+      type2 = (json \ "type2").asOpt[String],
       infection = (json \ "infection").as[Double]
     )
 
     def writes(o: Zone.Infos): JsValue = JsObject(List(
-      "zoneType" -> JsString(o.zoneType),
+      "height" -> JsNumber(o.height),
+      "type1" -> JsString(o.type1),
+      "type2" -> o.type2.map(JsString(_)).getOrElse(JsNull),
       "infection" -> JsNumber(o.infection)
     ))
   }
