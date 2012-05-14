@@ -4,21 +4,24 @@ import com.dohzya.gethomeback.models.{ Game, Player }
 
 object Generator {
 
+  def noise(a: Int, b: Int, c: Int, d: Int) =
+    SimplexNoise.noise(a, b, c, d)
+
   def apply(x: Int, y: Int, game: Int, kind: Int): Double = {
     val nbs = List(
-      SimplexNoise.noise(game, kind, x-2, y-2),
-      SimplexNoise.noise(game, kind, x-1, y-1),
-      SimplexNoise.noise(game, kind, x-1, y),
-      SimplexNoise.noise(game, kind, x-1, y+1),
-      SimplexNoise.noise(game, kind, x-2, y+2),
-      SimplexNoise.noise(game, kind, x, y-1),
-      SimplexNoise.noise(game, kind, x, y),
-      SimplexNoise.noise(game, kind, x, y+1),
-      SimplexNoise.noise(game, kind, x+1, y-1),
-      SimplexNoise.noise(game, kind, x+2, y-2),
-      SimplexNoise.noise(game, kind, x+1, y),
-      SimplexNoise.noise(game, kind, x+1, y+1),
-      SimplexNoise.noise(game, kind, x+2, y+2)
+      noise(game, kind, x-2, y-2),
+      noise(game, kind, x-1, y-1),
+      noise(game, kind, x-1, y),
+      noise(game, kind, x-1, y+1),
+      noise(game, kind, x-2, y+2),
+      noise(game, kind, x, y-1),
+      noise(game, kind, x, y),
+      noise(game, kind, x, y+1),
+      noise(game, kind, x+1, y-1),
+      noise(game, kind, x+2, y-2),
+      noise(game, kind, x+1, y),
+      noise(game, kind, x+1, y+1),
+      noise(game, kind, x+2, y+2)
     )
     nbs.reduce(_+_) / nbs.size
   }
