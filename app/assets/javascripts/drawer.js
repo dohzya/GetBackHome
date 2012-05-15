@@ -14,7 +14,6 @@ GetHomeBack.drawer = (function(){
         drawer.y = 0;
         drawer.height = canvas.height;
         drawer.width = canvas.width;
-        drawer.drawables = [];
         drawer.zones = [];
         drawer.selected = null;
         GetHomeBack.Cursor.init(drawer, opts.cursor);
@@ -35,9 +34,9 @@ GetHomeBack.drawer = (function(){
 
     drawer.redraw = function(){
         drawer.drawBackground();
-        for(var i in drawer.drawables) {
-            drawer.drawables[i].draw(drawer.ctx, drawer.x, drawer.y);
-        }
+        drawer.eachDrawables(function(d){
+            d.draw(drawer.ctx, drawer.x, drawer.y);
+        });
     };
 
     drawer.drawBackground = function(){
@@ -47,7 +46,6 @@ GetHomeBack.drawer = (function(){
 
     drawer.addZone = function(zone){
         drawer.zones.push(zone);
-        drawer.drawables = drawer.zones.concat(GetHomeBack.Cursor);
         return drawer;
     };
 
@@ -61,6 +59,23 @@ GetHomeBack.drawer = (function(){
                     return zone;
         }
         return null;
+    };
+
+    drawer.eachDrawables = function(f){
+        var res = [];
+        var x1 = drawer.x;
+        var x2 = x1 + drawer.width;
+        var y1 = drawer.y;
+        var y2 = y1 + drawer.height;
+        for(var i in drawer.zones) {
+            var zone = drawer.zones[i];
+            if (zone.x <= x2 &&
+                zone.x + zone.dx >= x1 &&
+                zone.y <= y2 &&
+                zone.y + zone.dy >= y1)
+                    f(zone);
+        }
+        f(GetHomeBack.Cursor);
     };
 
     drawer.onMouseMove = function(e){
