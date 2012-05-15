@@ -23,15 +23,23 @@ GetHomeBack.Cursor = (function(GetHomeBack){
         cursor.drawer.canvas.onmouseup = cursor.onMouseUp;
     };
 
+    cursor.getGlobalX = function(e){
+        return e.pageX + 1;
+    };
+
     cursor.getX = function(e){
-        var x = e.pageX + 1;
+        var x = cursor.getGlobalX(e);
         x = cursor.drawer.globalToRelativeX(x);
         if (x < 0) x = 0;
         return x;
     };
 
+    cursor.getGlobalY = function(e){
+        return e.pageY + 1;
+    };
+
     cursor.getY = function(e){
-        var y = e.pageY + 1;
+        var y = cursor.getGlobalY(e);
         y = cursor.drawer.globalToRelativeY(y);
         if (y < 0) y = 0;
         return y;
@@ -41,6 +49,8 @@ GetHomeBack.Cursor = (function(GetHomeBack){
         cursor.x = cursor.getX(e);
         cursor.y = cursor.getY(e);
         cursor.e = {
+            globalX: cursor.getGlobalX(e),
+            globalY: cursor.getGlobalY(e),
             x: cursor.x,
             y: cursor.y,
             drawer: cursor.drawer
