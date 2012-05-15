@@ -1,6 +1,6 @@
 "use strict";
 
-GetHomeBack.drawer = (function(){
+GetHomeBack.drawer = (function(GetHomeBack){
     var drawer = {};
 
     drawer.init = function(canvas, opts){
@@ -139,4 +139,4 @@ GetHomeBack.drawer = (function(){
     };
 
     return drawer;
-})();
+})(GetHomeBack);
