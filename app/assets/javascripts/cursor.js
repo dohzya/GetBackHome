@@ -66,23 +66,23 @@ GetHomeBack.Cursor = (function(GetHomeBack){
         cursor.drawer.onClick(cursor.e);
     };
 
-    cursor.draw = function(ctx){
+    cursor.draw = function(ctx, x, y){
         if (cursor.mode === "normal") {
             if (cursor.normal) {
-                ctx.drawImage(cursor.normal, cursor.x, cursor.y);
+                ctx.drawImage(cursor.normal, cursor.x-x, cursor.y-y);
             }
             else {
                 ctx.fillStyle = "yellow";
-                ctx.fillRect(cursor.x, cursor.y, cursor.dx, cursor.dy);
+                ctx.fillRect(cursor.x-x, cursor.y-y, cursor.dx, cursor.dy);
             }
         }
         else if (cursor.mode === "selected") {
             if (cursor.selected) {
-                ctx.drawImage(cursor.selected, cursor.x, cursor.y);
+                ctx.drawImage(cursor.selected, cursor.x-x, cursor.y-y);
             }
             else {
                 ctx.fillStyle = "red";
-                ctx.fillRect(cursor.x, cursor.y, cursor.dx, cursor.dy);
+                ctx.fillRect(cursor.x-x, cursor.y-y, cursor.dx, cursor.dy);
             }
         }
     };

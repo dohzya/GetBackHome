@@ -36,9 +36,9 @@ GetHomeBack.Zone = (function(GetHomeBack){
         }
     }
 
-    Class.prototype.draw = function(ctx){
+    Class.prototype.draw = function(ctx, x, y){
         ctx.fillStyle = this.color;
-        ctx.fillRect(this.x, this.y, this.dx, this.dy);
+        ctx.fillRect(this.x-x, this.y-y, this.dx, this.dy);
     };
 
     Class.prototype.onClick = function(e){

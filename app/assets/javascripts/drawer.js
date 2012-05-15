@@ -10,6 +10,8 @@ GetHomeBack.drawer = (function(){
         drawer.offsetRight = canvas.offsetRight;
         drawer.offsetBottom = canvas.offsetBottom;
         drawer.ctx = canvas.getContext("2d");
+        drawer.x = 0;
+        drawer.y = 0;
         drawer.height = canvas.height;
         drawer.width = canvas.width;
         drawer.drawables = [];
@@ -24,17 +26,17 @@ GetHomeBack.drawer = (function(){
     };
 
     drawer.globalToRelativeX = function(x){
-        return x - drawer.offsetLeft;
+        return x - drawer.offsetLeft + drawer.x;
     };
 
     drawer.globalToRelativeY = function(y){
-        return y - drawer.offsetTop;
+        return y - drawer.offsetTop + drawer.y;
     };
 
     drawer.redraw = function(){
         drawer.drawBackground();
         for(var i in drawer.drawables) {
-            drawer.drawables[i].draw(drawer.ctx);
+            drawer.drawables[i].draw(drawer.ctx, drawer.x, drawer.y);
         }
     };
 
