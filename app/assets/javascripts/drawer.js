@@ -1,6 +1,6 @@
 "use strict";
 
-GetHomeBack.drawer = (function(){
+GetHomeBack.drawer = (function(GetHomeBack){
     var drawer = {};
 
     drawer.init = function(canvas, opts){
@@ -10,9 +10,10 @@ GetHomeBack.drawer = (function(){
         drawer.offsetRight = canvas.offsetRight;
         drawer.offsetBottom = canvas.offsetBottom;
         drawer.ctx = canvas.getContext("2d");
+        drawer.x = 0;
+        drawer.y = 0;
         drawer.height = canvas.height;
         drawer.width = canvas.width;
-        drawer.drawables = [];
         drawer.zones = [];
         drawer.selected = null;
         GetHomeBack.Cursor.init(drawer, opts.cursor);
@@ -24,18 +25,18 @@ GetHomeBack.drawer = (function(){
     };
 
     drawer.globalToRelativeX = function(x){
-        return x - drawer.offsetLeft;
+        return x - drawer.offsetLeft + drawer.x;
     };
 
     drawer.globalToRelativeY = function(y){
-        return y - drawer.offsetTop;
+        return y - drawer.offsetTop + drawer.y;
     };
 
     drawer.redraw = function(){
         drawer.drawBackground();
-        for(var i in drawer.drawables) {
-            drawer.drawables[i].draw(drawer.ctx);
-        }
+        drawer.eachDrawables(function(d){
+            d.draw(drawer.ctx, drawer.x, drawer.y);
+        });
     };
 
     drawer.drawBackground = function(){
@@ -45,7 +46,6 @@ GetHomeBack.drawer = (function(){
 
     drawer.addZone = function(zone){
         drawer.zones.push(zone);
-        drawer.drawables = drawer.zones.concat(GetHomeBack.Cursor);
         return drawer;
     };
 
@@ -61,12 +61,49 @@ GetHomeBack.drawer = (function(){
         return null;
     };
 
+    drawer.eachDrawables = function(f){
+        var res = [];
+        var x1 = drawer.x;
+        var x2 = x1 + drawer.width;
+        var y1 = drawer.y;
+        var y2 = y1 + drawer.height;
+        for(var i in drawer.zones) {
+            var zone = drawer.zones[i];
+            if (zone.x <= x2 &&
+                zone.x + zone.dx >= x1 &&
+                zone.y <= y2 &&
+                zone.y + zone.dy >= y1)
+                    f(zone);
+        }
+        f(GetHomeBack.Cursor);
+    };
+
     drawer.onMouseMove = function(e){
+        if (drawer.whenSelected) {
+            drawer.movedWhenSelected = true;
+            var selected = drawer.whenSelected;
+            var d = selected.drawer;
+            var c = selected.cursor;
+            var dx = e.globalX - c.x;
+            var dy = e.globalY - c.y;
+            drawer.x = d.x - dx;
+            drawer.y = d.y - dy;
+        }
         drawer.redraw();
     };
 
     drawer.onMouseDown = function(e){
         var selected = drawer.getDrawable(e.x, e.y);
+        drawer.whenSelected = {
+            drawer: {
+                x: drawer.x,
+                y: drawer.y
+            },
+            cursor: {
+                x: e.globalX,
+                y: e.globalY
+            }
+        };
         if (selected === drawer.selected) {
             // no nothing
         }
@@ -82,19 +119,24 @@ GetHomeBack.drawer = (function(){
     };
 
     drawer.onMouseUp = function(e){
+        drawer.whenSelected = null;
     };
 
     drawer.onClick = function(e){
         var res = true;
-        if(drawer.selected) {
+        if (drawer.movedWhenSelected) {
+            // do nothing
+        }
+        else if (drawer.selected) {
             res = drawer.selected.onClick(e);
         }
         else {
             GetHomeBack.status.displayNothing();
         }
         drawer.redraw();
+        drawer.movedWhenSelected = false;
         return res;
     };
 
     return drawer;
-})();
+})(GetHomeBack);
