@@ -30,7 +30,6 @@ GetHomeBack.Cursor = (function(GetHomeBack){
     cursor.getX = function(e){
         var x = cursor.getGlobalX(e);
         x = cursor.drawer.globalToRelativeX(x);
-        if (x < 0) x = 0;
         return x;
     };
 
@@ -41,7 +40,6 @@ GetHomeBack.Cursor = (function(GetHomeBack){
     cursor.getY = function(e){
         var y = cursor.getGlobalY(e);
         y = cursor.drawer.globalToRelativeY(y);
-        if (y < 0) y = 0;
         return y;
     };
 

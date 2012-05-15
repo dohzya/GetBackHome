@@ -79,11 +79,31 @@ GetHomeBack.drawer = (function(){
     };
 
     drawer.onMouseMove = function(e){
+        if (drawer.whenSelected) {
+            drawer.movedWhenSelected = true;
+            var selected = drawer.whenSelected;
+            var d = selected.drawer;
+            var c = selected.cursor;
+            var dx = e.globalX - c.x;
+            var dy = e.globalY - c.y;
+            drawer.x = d.x - dx;
+            drawer.y = d.y - dy;
+        }
         drawer.redraw();
     };
 
     drawer.onMouseDown = function(e){
         var selected = drawer.getDrawable(e.x, e.y);
+        drawer.whenSelected = {
+            drawer: {
+                x: drawer.x,
+                y: drawer.y
+            },
+            cursor: {
+                x: e.globalX,
+                y: e.globalY
+            }
+        };
         if (selected === drawer.selected) {
             // no nothing
         }
@@ -99,17 +119,22 @@ GetHomeBack.drawer = (function(){
     };
 
     drawer.onMouseUp = function(e){
+        drawer.whenSelected = null;
     };
 
     drawer.onClick = function(e){
         var res = true;
-        if(drawer.selected) {
+        if (drawer.movedWhenSelected) {
+            // do nothing
+        }
+        else if (drawer.selected) {
             res = drawer.selected.onClick(e);
         }
         else {
             GetHomeBack.status.displayNothing();
         }
         drawer.redraw();
+        drawer.movedWhenSelected = false;
         return res;
     };
 
