@@ -7,6 +7,7 @@ var GetHomeBack = (function(){
         GetHomeBack.drawer.init(canvas, opts);
         GetHomeBack.status.init(status, opts);
         GetHomeBack.game.init(opts);
+        GetHomeBack.opts = opts;
         if (opts.zones) GetHomeBack.addZones(opts.zones);
     };
 
@@ -16,7 +17,7 @@ var GetHomeBack = (function(){
 
     GetHomeBack.addZones = function(zones){
         for(var i in zones){
-            GetHomeBack.drawer.addZone(GetHomeBack.Zone(zones[i]));
+            GetHomeBack.drawer.addZone(GetHomeBack.Zone(zones[i], GetHomeBack.opts));
         }
     };
 

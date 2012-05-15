@@ -1,35 +1,51 @@
 "use strict";
 
 GetHomeBack.Zone = (function(GetHomeBack){
-    function Class(zn){
+    function Class(zn, opts){
+        function createImg(src){
+            if (src) {
+                var img = new Image();
+                img.src = src;
+                return img;
+            }
+            else return null;
+        }
+
         this.x = zn.x;
         this.y = zn.y;
         this.dx = zn.width;
         this.dy = zn.height;
         this.infos = zn.infos;
-        this.infectionAlpha = 1-(this.infos.infection/1.5);
+        this.alpha = 1-(this.infos.infection/1.5);
         this.infos.infection = this.infos.infection.toPrecision(3);
 
         if (this.infos.type2 == "city"){
-            this.color = "rgba(127, 127, 127, "+this.infectionAlpha+")";
+            this.image = createImg(opts.tiles[this.infos.type2]);
+            this.color = "rgba(127, 127, 127, "+this.alpha+")";
         }
         else if (this.infos.type2 == "forrest"){
-            this.color = "rgba(0, 127, 0, "+this.infectionAlpha+")";
+            this.image = createImg(opts.tiles[this.infos.type2]);
+            this.color = "rgba(0, 127, 0, "+this.alpha+")";
         }
         else if (this.infos.type2 == "field"){
-            this.color = "rgba(191, 127, 15, "+this.infectionAlpha+")";
+            this.image = createImg(opts.tiles[this.infos.type2]);
+            this.color = "rgba(191, 127, 15, "+this.alpha+")";
         }
         else if (this.infos.type1 == "water"){
-            this.color = "rgba(0, 0, 127, "+this.infectionAlpha+")";
+            this.image = createImg(opts.tiles[this.infos.type1]);
+            this.color = "rgba(0, 0, 127, "+this.alpha+")";
         }
         else if (this.infos.type1 == "boue"){
-            this.color = "rgba(127, 63, 31, "+this.infectionAlpha+")";
+            this.image = createImg(opts.tiles[this.infos.type1]);
+            this.color = "rgba(127, 63, 31, "+this.alpha+")";
         }
-        else if (this.infos.type1 == "plaine"){
-            this.color = "rgba(0, 127, 0, "+this.infectionAlpha+")";
+        else if (this.infos.type1 == "grass"){
+            this.image = createImg(opts.tiles[this.infos.type1]);
+            this.color = "rgba(0, 127, 0, "+this.alpha+")";
         }
         else if (this.infos.type1 == "montains"){
-            this.color = "rgba(0, 127, 0, "+this.infectionAlpha+")";
+            this.image = createImg(opts.tiles[this.infos.type1]);
+            this.color = "rgba(0, 127, 0, "+this.alpha+")";
         }
         else {
             this.color = "black";
@@ -37,8 +53,16 @@ GetHomeBack.Zone = (function(GetHomeBack){
     }
 
     Class.prototype.draw = function(ctx, x, y){
-        ctx.fillStyle = this.color;
-        ctx.fillRect(this.x-x, this.y-y, this.dx, this.dy);
+        if (this.image) {
+            var oldGlobalAlpha = ctx.globalAlpha;
+            ctx.globalAlpha = this.alpha;
+            ctx.drawImage(this.image, this.x-x, this.y-y);
+            ctx.globalAlpha = oldGlobalAlpha;
+        }
+        else {
+            ctx.fillStyle = this.color;
+            ctx.fillRect(this.x-x, this.y-y, this.dx, this.dy);
+        }
     };
 
     Class.prototype.onClick = function(e){
@@ -55,8 +79,8 @@ GetHomeBack.Zone = (function(GetHomeBack){
         this.color = this.oldColor;
     };
 
-    function Zone(zn){
-        return new Class(zn);
+    function Zone(zn, opts){
+        return new Class(zn, opts);
     }
 
     return Zone;

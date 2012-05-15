@@ -49,7 +49,7 @@ object Game {
                      else if (type2Int < -100) Some("forrest")
                      else if (type2Int < -50) Some("field")
                      else None
-            ("plaine", t2)
+            ("grass", t2)
           }
           else {
             val t2 = if (type2Int < -400) Some("city")
