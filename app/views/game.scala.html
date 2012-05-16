@@ -57,26 +57,26 @@
           var status = {
               selected: document.getElementById("cursor")
           };
-          GetHomeBack.init(
+          GetHomeBack.start(
               canvas,
               status,
               {
-                  tiles: {
-                    city: "@routes.Assets.at("images/city.png")",
-                    forrest: "@routes.Assets.at("images/forrest.png")",
-                    field: "@routes.Assets.at("images/field.png")",
-                    grass: "@routes.Assets.at("images/grass.png")"
-                  },
-                  cursor: {
-                    normal: "@routes.Assets.at("images/cursor.png")",
-                    selected: "@routes.Assets.at("images/cursorSelected.png")"
+                  sprites: {
+                    src: "@routes.Assets.at("images/sprites.png")",
+                    tiles: {
+                      cursor: [0, 0, 20, 20],
+                      cursorSelected: [20, 0, 20, 20],
+                      city: [40, 0, 20, 20],
+                      forrest: [0, 20, 20, 20],
+                      field: [20, 20, 20, 20],
+                      grass: [40, 20, 20, 20],
+                    }
                   },
                   zones: [
                       @Html(game.zones.map(Json.toJson(_)).mkString(",\n                      "))
                   ]
               }
           );
-          GetHomeBack.start();
       });
       // ]]>
     </script>

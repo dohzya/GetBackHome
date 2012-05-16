@@ -9,10 +9,10 @@ GetHomeBack.Cursor = (function(GetHomeBack){
         cursor.y = 100;
         cursor.dx = 20;
         cursor.dy = 20;
-        cursor.normal = new Image();
-        cursor.normal.src = opts.normal;
-        cursor.selected = new Image();
-        cursor.selected.src = opts.selected;
+        cursor.normal = GetHomeBack.sprites("cursor");
+        cursor.selected = GetHomeBack.sprites("cursorSelected");
+        console.log(cursor.normal);
+        console.log(GetHomeBack.sprites.tiles);
         cursor.mode = "normal";
     };
 
@@ -75,23 +75,11 @@ GetHomeBack.Cursor = (function(GetHomeBack){
     };
 
     cursor.draw = function(ctx, x, y){
-        if (cursor.mode === "normal") {
-            if (cursor.normal) {
-                ctx.drawImage(cursor.normal, cursor.x-x, cursor.y-y);
-            }
-            else {
-                ctx.fillStyle = "yellow";
-                ctx.fillRect(cursor.x-x, cursor.y-y, cursor.dx, cursor.dy);
-            }
+        if (cursor.mode === "selected") {
+            cursor.selected.draw(ctx, cursor.x-x, cursor.y-y);
         }
-        else if (cursor.mode === "selected") {
-            if (cursor.selected) {
-                ctx.drawImage(cursor.selected, cursor.x-x, cursor.y-y);
-            }
-            else {
-                ctx.fillStyle = "red";
-                ctx.fillRect(cursor.x-x, cursor.y-y, cursor.dx, cursor.dy);
-            }
+        else {
+            cursor.normal.draw(ctx, cursor.x-x, cursor.y-y);
         }
     };
 

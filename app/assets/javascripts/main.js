@@ -3,16 +3,21 @@
 var GetHomeBack = (function(){
     var GetHomeBack = {};
 
-    GetHomeBack.init = function(canvas, status, opts){
-        GetHomeBack.drawer.init(canvas, opts);
-        GetHomeBack.status.init(status, opts);
-        GetHomeBack.game.init(opts);
-        GetHomeBack.opts = opts;
-        if (opts.zones) GetHomeBack.addZones(opts.zones);
+    GetHomeBack.init = function(canvas, status, opts, andThen){
+        GetHomeBack.sprites.init(opts, function(){
+            GetHomeBack.drawer.init(canvas, opts);
+            GetHomeBack.status.init(status, opts);
+            GetHomeBack.game.init(opts);
+            GetHomeBack.opts = opts;
+            if (opts.zones) GetHomeBack.addZones(opts.zones);
+            andThen();
+        });
     };
 
-    GetHomeBack.start = function(){
-        GetHomeBack.game.start();
+    GetHomeBack.start = function(canvas, status, opts){
+        GetHomeBack.init(canvas, status, opts, function(){
+            GetHomeBack.game.start();
+        });
     };
 
     GetHomeBack.addZones = function(zones){

@@ -2,15 +2,6 @@
 
 GetHomeBack.Zone = (function(GetHomeBack){
     function Class(zn, opts){
-        function createImg(src){
-            if (src) {
-                var img = new Image();
-                img.src = src;
-                return img;
-            }
-            else return null;
-        }
-
         this.x = zn.x;
         this.y = zn.y;
         this.dx = zn.width;
@@ -20,31 +11,31 @@ GetHomeBack.Zone = (function(GetHomeBack){
         this.infos.infection = this.infos.infection.toPrecision(3);
 
         if (this.infos.type2 == "city"){
-            this.image = createImg(opts.tiles[this.infos.type2]);
+            this.image = GetHomeBack.sprites(this.infos.type2);
             this.color = "rgba(127, 127, 127, "+this.alpha+")";
         }
         else if (this.infos.type2 == "forrest"){
-            this.image = createImg(opts.tiles[this.infos.type2]);
+            this.image = GetHomeBack.sprites(this.infos.type2);
             this.color = "rgba(0, 127, 0, "+this.alpha+")";
         }
         else if (this.infos.type2 == "field"){
-            this.image = createImg(opts.tiles[this.infos.type2]);
+            this.image = GetHomeBack.sprites(this.infos.type2);
             this.color = "rgba(191, 127, 15, "+this.alpha+")";
         }
         else if (this.infos.type1 == "water"){
-            this.image = createImg(opts.tiles[this.infos.type1]);
+            this.image = GetHomeBack.sprites(this.infos.type1);
             this.color = "rgba(0, 0, 127, "+this.alpha+")";
         }
         else if (this.infos.type1 == "boue"){
-            this.image = createImg(opts.tiles[this.infos.type1]);
+            this.image = GetHomeBack.sprites(this.infos.type1);
             this.color = "rgba(127, 63, 31, "+this.alpha+")";
         }
         else if (this.infos.type1 == "grass"){
-            this.image = createImg(opts.tiles[this.infos.type1]);
+            this.image = GetHomeBack.sprites(this.infos.type1);
             this.color = "rgba(0, 127, 0, "+this.alpha+")";
         }
         else if (this.infos.type1 == "montains"){
-            this.image = createImg(opts.tiles[this.infos.type1]);
+            this.image = GetHomeBack.sprites(this.infos.type1);
             this.color = "rgba(0, 127, 0, "+this.alpha+")";
         }
         else {
@@ -56,7 +47,7 @@ GetHomeBack.Zone = (function(GetHomeBack){
         if (this.image) {
             var oldGlobalAlpha = ctx.globalAlpha;
             ctx.globalAlpha = this.alpha;
-            ctx.drawImage(this.image, this.x-x, this.y-y);
+            this.image.draw(ctx, this.x-x, this.y-y);
             ctx.globalAlpha = oldGlobalAlpha;
         }
         else {
