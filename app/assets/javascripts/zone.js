@@ -47,7 +47,6 @@ GetHomeBack.Zone = (function(GetHomeBack){
     };
 
     Class.prototype.onClick = function(e){
-        e.drawer.redraw();
     };
 
     Class.prototype.onSelected = function(){
