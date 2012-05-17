@@ -108,12 +108,6 @@ GetHomeBack.drawer = (function(GetHomeBack){
             // no nothing
         }
         else {
-            if (drawer.selected) {
-                drawer.selected.onUnSelected();
-            }
-            if (selected) {
-                selected.onSelected();
-            }
             drawer.selected = selected;
         }
     };
@@ -128,6 +122,12 @@ GetHomeBack.drawer = (function(GetHomeBack){
             // do nothing
         }
         else if (drawer.selected) {
+            if (drawer.selectedBefore) {
+                drawer.selectedBefore.onUnSelected();
+            }
+            drawer.selected.onSelected();
+            drawer.selectedBefore = drawer.selected;
+            drawer.selected.display(GetHomeBack.status);
             res = drawer.selected.onClick(e);
         }
         else {

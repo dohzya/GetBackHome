@@ -52,7 +52,10 @@ GetHomeBack.Zone = (function(GetHomeBack){
     Class.prototype.onSelected = function(){
         this.oldColor = this.color;
         this.color = "255, 250, 71";
-        GetHomeBack.status.displayZone(this);
+    };
+
+    Class.prototype.display = function(dst){
+        dst.displayZone(this);
     };
 
     Class.prototype.onUnSelected = function(){
