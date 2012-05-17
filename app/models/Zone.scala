@@ -14,7 +14,8 @@ object Zone {
     height: Double,
     type1: String,
     type2: Option[String],
-    infection: Double
+    infection: Int,
+    youth: Int
   )
 
 }
@@ -32,14 +33,16 @@ object ZoneJsonFormatter {
       height = (json \ "height").as[Double],
       type1 = (json \ "type1").as[String],
       type2 = (json \ "type2").asOpt[String],
-      infection = (json \ "infection").as[Double]
+      infection = (json \ "infection").as[Int],
+      youth = (json \ "youth").as[Int]
     )
 
     def writes(o: Zone.Infos): JsValue = JsObject(List(
       "height" -> JsNumber(o.height),
       "type1" -> JsString(o.type1),
       "type2" -> o.type2.map(JsString(_)).getOrElse(JsNull),
-      "infection" -> JsNumber(o.infection)
+      "infection" -> JsNumber(o.infection),
+      "youth" -> JsNumber(o.youth)
     ))
   }
 

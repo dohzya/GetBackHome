@@ -7,52 +7,42 @@ GetHomeBack.Zone = (function(GetHomeBack){
         this.dx = zn.width;
         this.dy = zn.height;
         this.infos = zn.infos;
-        this.alpha = 1-(this.infos.infection/1.5);
-        this.infos.infection = this.infos.infection.toPrecision(3);
+        this.alphaInfection = 1-(this.infos.infection / 100.0);
+        this.alphaYouth = 1-(this.infos.youth / 100.0);
 
-        if (this.infos.type2 == "city"){
-            this.image = GetHomeBack.sprites(this.infos.type2);
-            this.color = "rgba(127, 127, 127, "+this.alpha+")";
+        if (this.infos.type1 === "water"){
+            this.color = "0, 0, 127";
         }
-        else if (this.infos.type2 == "forrest"){
-            this.image = GetHomeBack.sprites(this.infos.type2);
-            this.color = "rgba(0, 127, 0, "+this.alpha+")";
+        else if (this.infos.type1 === "swamp"){
+            this.color = "127, 63, 31";
         }
-        else if (this.infos.type2 == "field"){
-            this.image = GetHomeBack.sprites(this.infos.type2);
-            this.color = "rgba(191, 127, 15, "+this.alpha+")";
+        else if (this.infos.type1 === "plain"){
+            this.color = "0, 127, 0";
         }
-        else if (this.infos.type1 == "water"){
-            this.image = GetHomeBack.sprites(this.infos.type1);
-            this.color = "rgba(0, 0, 127, "+this.alpha+")";
-        }
-        else if (this.infos.type1 == "boue"){
-            this.image = GetHomeBack.sprites(this.infos.type1);
-            this.color = "rgba(127, 63, 31, "+this.alpha+")";
-        }
-        else if (this.infos.type1 == "grass"){
-            this.image = GetHomeBack.sprites(this.infos.type1);
-            this.color = "rgba(0, 127, 0, "+this.alpha+")";
-        }
-        else if (this.infos.type1 == "montains"){
-            this.image = GetHomeBack.sprites(this.infos.type1);
-            this.color = "rgba(0, 127, 0, "+this.alpha+")";
+        else if (this.infos.type1 === "mountainous"){
+            this.color = "127, 127, 127";
         }
         else {
-            this.color = "black";
+            this.color = "0, 0, 0";
         }
+
+        if (this.infos.type2) {
+            this.image = GetHomeBack.sprites(this.infos.type2);
+        }
+        else {
+            this.image = GetHomeBack.sprites("grass");
+        }
+
     }
 
     Class.prototype.draw = function(ctx, x, y){
+        ctx.fillStyle = "rgba("+this.color+", "+this.alphaInfection+")";
+        ctx.fillRect(this.x-x, this.y-y, this.dx, this.dy);
         if (this.image) {
             var oldGlobalAlpha = ctx.globalAlpha;
-            ctx.globalAlpha = this.alpha;
+            ctx.globalAlpha = this.alphaYouth;
             this.image.draw(ctx, this.x-x, this.y-y);
             ctx.globalAlpha = oldGlobalAlpha;
-        }
-        else {
-            ctx.fillStyle = this.color;
-            ctx.fillRect(this.x-x, this.y-y, this.dx, this.dy);
         }
     };
 
@@ -62,7 +52,7 @@ GetHomeBack.Zone = (function(GetHomeBack){
 
     Class.prototype.onSelected = function(){
         this.oldColor = this.color;
-        this.color = "yellow";
+        this.color = "255, 250, 71";
         GetHomeBack.status.displayZone(this);
     };
 
