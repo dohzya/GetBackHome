@@ -11,8 +11,6 @@ GetHomeBack.Cursor = (function(GetHomeBack){
         cursor.dy = 20;
         cursor.normal = GetHomeBack.sprites("cursor");
         cursor.selected = GetHomeBack.sprites("cursorSelected");
-        console.log(cursor.normal);
-        console.log(GetHomeBack.sprites.tiles);
         cursor.mode = "normal";
     };
 
