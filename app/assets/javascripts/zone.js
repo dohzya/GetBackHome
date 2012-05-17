@@ -11,7 +11,7 @@ GetHomeBack.Zone = (function(GetHomeBack){
         this.alphaYouth = 1-(this.infos.youth / 100.0);
 
         if (this.infos.type1 === "water"){
-            this.color = "0, 0, 127";
+            this.color = "0, 63, 200";
         }
         else if (this.infos.type1 === "swamp"){
             this.color = "127, 63, 31";
