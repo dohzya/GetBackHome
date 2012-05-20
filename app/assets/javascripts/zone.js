@@ -35,9 +35,24 @@ GetHomeBack.Zone = (function(GetHomeBack){
 
     }
 
+    // Class.prototype.drawHex = function(ctx, x, y){
+    //     var cx = x*(hexWidth + dist) - y*(hexWidth + dist)/2;
+    //     var cy = y*(hexR + lengthX + dist);
+    //     ctx.beginPath();
+    //     ctx.moveTo(cx, cy-hexR);
+    //     ctx.lineTo(cx+hexHalfW, cy-hexR+lengthX);
+    //     ctx.lineTo(cx+hexHalfW, cy+hexR-lengthX);
+    //     ctx.lineTo(cx, cy+hexR);
+    //     ctx.lineTo(cx-hexHalfW, cy+hexR-lengthX);
+    //     ctx.lineTo(cx-hexHalfW, cy-hexR+lengthX);
+    //     ctx.lineTo(cx, cy-hexR);
+    //     ctx.fill();
+    // };
+
     Class.prototype.draw = function(ctx, x, y){
         ctx.fillStyle = "rgba("+this.color+", "+this.alphaInfection+")";
         ctx.fillRect(this.x-x, this.y-y, this.dx, this.dy);
+
         if (this.image) {
             var oldGlobalAlpha = ctx.globalAlpha;
             ctx.globalAlpha = this.alphaYouth;
