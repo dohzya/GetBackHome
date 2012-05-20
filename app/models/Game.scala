@@ -33,7 +33,7 @@ object Game {
       yield {
         val x = xx - 10; val y = yy - 10
         val infection = (infectionGen(x, y) * 100).abs.toInt
-        val youth = (youthGen(x, y) * 100).abs.toInt
+        val youth = (youthGen(x, y) * 100).abs.toInt * 10
         val height = (type1Gen(x, y) * 700 + 200).toInt * 2
         val (type1, type2) = {
           val type2Int = (type2Gen(x, y) * 1000).toInt
