@@ -6,6 +6,9 @@ GetHomeBack.Zone = (function(GetHomeBack){
         this.y = zn.y;
         this.dx = zn.width;
         this.dy = zn.height;
+        this.cx = this.x * this.dx - this.y * this.dx / 2;
+        this.cy = this.y * (3/4 * this.dy);
+        this.points = this.buildPoints(0, 0);
         this.infos = zn.infos;
         this.alphaInfection = 1-(this.infos.infection / 100.0);
         this.alphaYouth = 1-(this.infos.youth / 100.0);
@@ -35,30 +38,66 @@ GetHomeBack.Zone = (function(GetHomeBack){
 
     }
 
-    // Class.prototype.drawHex = function(ctx, x, y){
-    //     var cx = x*(hexWidth + dist) - y*(hexWidth + dist)/2;
-    //     var cy = y*(hexR + lengthX + dist);
-    //     ctx.beginPath();
-    //     ctx.moveTo(cx, cy-hexR);
-    //     ctx.lineTo(cx+hexHalfW, cy-hexR+lengthX);
-    //     ctx.lineTo(cx+hexHalfW, cy+hexR-lengthX);
-    //     ctx.lineTo(cx, cy+hexR);
-    //     ctx.lineTo(cx-hexHalfW, cy+hexR-lengthX);
-    //     ctx.lineTo(cx-hexHalfW, cy-hexR+lengthX);
-    //     ctx.lineTo(cx, cy-hexR);
-    //     ctx.fill();
-    // };
+    Class.prototype.buildPoints = function(x, y){
+        var cx = this.cx - x,
+            cy = this.cy - y;
+        return [
+            {x: cx, y: cy - this.dy/2},
+            {x: cx + this.dx/2, y: cy - this.dy/4},
+            {x: cx + this.dx/2, y: cy + this.dy/4},
+            {x: cx, y: cy + this.dy/2},
+            {x: cx - this.dx/2, y: cy + this.dy/4},
+            {x: cx - this.dx/2, y: cy - this.dy/4},
+            {x: cx, y: cy - this.dy/2}
+        ];
+    };
 
-    Class.prototype.draw = function(ctx, x, y){
+    Class.prototype.drawBackground = function(ctx, x, y){
+        var points = this.buildPoints(x, y);
         ctx.fillStyle = "rgba("+this.color+", "+this.alphaInfection+")";
-        ctx.fillRect(this.x-x, this.y-y, this.dx, this.dy);
+        ctx.beginPath();
+        var point = points[0];
+        ctx.moveTo(point[0], point[1]);
+        for (var i=1; i<points.length; i++){
+            point = points[i];
+            ctx.lineTo(point.x, point.y);
+        }
+        ctx.closePath();
+        ctx.fill();
+    };
 
+    Class.prototype.drawImage = function(ctx, x, y){
         if (this.image) {
+            var cx = this.cx - this.dy/2;
+            var cy = this.cy - this.dy/2;
             var oldGlobalAlpha = ctx.globalAlpha;
             ctx.globalAlpha = this.alphaYouth;
-            this.image.draw(ctx, this.x-x, this.y-y);
+            this.image.draw(ctx, cx-x, cy-y);
             ctx.globalAlpha = oldGlobalAlpha;
         }
+    };
+
+    Class.prototype.contains = function(x, y){
+        // Stolen from http://local.wasp.uwa.edu.au/~pbourke/geometry/insidepoly/
+        for (var i=1; i<this.points.length; i++){
+            var p0 = this.points[i];
+            var p1 = this.points[ (i+1) % this.points.length ];
+            var pos = (y - p0.y)*(p1.x - p0.x) - (x - p0.x)*(p1.y - p0.y);
+            if (pos < 0) return false;
+        }
+        return true;
+    };
+
+    Class.prototype.isContained = function(x, y, dx, dy){
+        return x < this.cx + this.dx &&
+               x+dx > this.cx - this.dx &&
+               y < this.cy + this.dy &&
+               y+dy > this.cy - this.dy;
+    };
+
+    Class.prototype.draw = function(ctx, x, y){
+        this.drawBackground(ctx, x, y);
+        this.drawImage(ctx, x, y);
     };
 
     Class.prototype.onClick = function(e){

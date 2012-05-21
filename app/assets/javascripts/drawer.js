@@ -52,15 +52,12 @@ GetHomeBack.drawer = (function(GetHomeBack){
     drawer.getDrawable = function(x, y){
         for(var i in drawer.zones) {
             var zone = drawer.zones[i];
-            if (zone.x <= x &&
-                zone.x + zone.dx >= x &&
-                zone.y <= y &&
-                zone.y + zone.dy >= y)
+            if (zone.contains(x, y))
                     return zone;
         }
         return null;
     };
-
+    // TODO merge these 2 functions
     drawer.eachDrawables = function(f){
         var res = [];
         var x1 = drawer.x;
@@ -69,11 +66,8 @@ GetHomeBack.drawer = (function(GetHomeBack){
         var y2 = y1 + drawer.height;
         for(var i in drawer.zones) {
             var zone = drawer.zones[i];
-            if (zone.x <= x2 &&
-                zone.x + zone.dx >= x1 &&
-                zone.y <= y2 &&
-                zone.y + zone.dy >= y1)
-                    f(zone);
+            if (zone.isContained(drawer.x, drawer.y, drawer.width, drawer.height))
+                f(zone);
         }
         f(GetHomeBack.Cursor);
     };

@@ -62,8 +62,8 @@ object Game {
           }
         }
         Zone(
-          Position(x*zonesDim.width, y*zonesDim.height),
-          Dimension(zonesDim.width, zonesDim.height),
+          Position(x, y),
+          zonesDim,
           ts = 0,
           infos = Zone.Infos(height, type1, type2, infection, youth)
         )
