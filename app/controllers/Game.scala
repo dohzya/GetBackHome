@@ -10,7 +10,7 @@ object Game extends Base {
   def game(id: String) = Action { implicit request =>
     val game = models.Game(id)
     val player = game.player(session.get("playerName").getOrElse("Guest"))
-    Ok(views.html.game(game, player)).withSession(
+    Ok(views.html.game(game, player.infos)).withSession(
       session + ("playerName" -> player.name)
     )
   }

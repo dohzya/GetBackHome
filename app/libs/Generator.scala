@@ -1,6 +1,6 @@
 package com.dohzya.gethomeback.libs
 
-import com.dohzya.gethomeback.models.{ Game, Player }
+import com.dohzya.gethomeback.models._
 
 object Generator {
 
@@ -39,7 +39,7 @@ object Generator {
   def genSeed(max: Int = 1000000): Int =
     new java.util.Random(System.currentTimeMillis()).nextInt(max)
 
-  def genSeed(player: Player): Int =
+  def genSeed(player: Player.Infos): Int =
     genSeed(player.name)
 
   def genSeed(game: Game): Int =
