@@ -2,17 +2,15 @@ package com.dohzya.gethomeback.models
 
 import com.dohzya.gethomeback.libs.Generator
 
-case class Game(
-  name: String,
-  zones: Seq[Zone],
-  players: Seq[Player]
+class Game(
+  val name: String,
+  val zones: Seq[Zone]
 ) {
 
+  var players = Map[String, Player]()
+
   def player(name: String): Player = {
-    players find {_.name == name} match {
-      case Some(p) => p
-      case None => Player(name)
-    }
+    players.get(name).getOrElse(Player(name))
   }
 
 }
@@ -65,10 +63,7 @@ object Game {
           infos = Zone.Infos(height, type1, type2, infection, youth)
         )
       }
-    Game(name, zones)
+    new Game(name, zones)
   }
-
-  def apply(name: String, zones: Seq[Zone]): Game =
-    Game(name, zones, List[Player]())
 
 }
