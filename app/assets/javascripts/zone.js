@@ -14,13 +14,13 @@ GetHomeBack.Zone = (function(GetHomeBack){
         this.alphaYouth = 1-(this.infos.youth / 100.0);
 
         if (this.infos.type1 === "water"){
-            this.color = "0, 63, 200";
+            this.color = "127, 169, 181";
         }
         else if (this.infos.type1 === "swamp"){
-            this.color = "127, 63, 31";
+            this.color = "105, 74, 68";
         }
         else if (this.infos.type1 === "plain"){
-            this.color = "0, 127, 0";
+            this.color = "127, 168, 79";
         }
         else if (this.infos.type1 === "mountainous"){
             this.color = "127, 127, 127";
