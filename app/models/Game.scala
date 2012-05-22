@@ -1,5 +1,6 @@
 package com.dohzya.gethomeback.models
 
+import akka.actor._
 import com.dohzya.gethomeback.libs.Generator
 
 class Game(
@@ -7,10 +8,10 @@ class Game(
   val zones: Seq[Zone]
 ) {
 
-  var players = Map[String, Player]()
+  var players = Map[String, ActorRef]()
 
-  def player(name: String): Player = {
-    players.get(name).getOrElse(Player(name))
+  def player(name: String): Option[ActorRef] = {
+    players.get(name)
   }
 
 }
