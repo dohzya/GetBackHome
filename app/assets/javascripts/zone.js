@@ -43,11 +43,11 @@ GetHomeBack.Zone = (function(GetHomeBack){
             cy = this.cy - y;
         return [
             {x: cx, y: cy - this.dy/2},
-            {x: cx + this.dx/2, y: cy - this.dy/4},
-            {x: cx + this.dx/2, y: cy + this.dy/4},
+            {x: cx + this.dx/2 - 1, y: cy - this.dy/4 + 1},
+            {x: cx + this.dx/2 - 1, y: cy + this.dy/4 - 1},
             {x: cx, y: cy + this.dy/2},
-            {x: cx - this.dx/2, y: cy + this.dy/4},
-            {x: cx - this.dx/2, y: cy - this.dy/4},
+            {x: cx - this.dx/2 + 1, y: cy + this.dy/4 - 1},
+            {x: cx - this.dx/2 + 1, y: cy - this.dy/4 + 1},
             {x: cx, y: cy - this.dy/2}
         ];
     };
