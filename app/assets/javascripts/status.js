@@ -1,6 +1,6 @@
-"use strict";
+GetHomeBack.status = (function($){
+    "use strict";
 
-GetHomeBack.status = (function(){
     var status = {};
 
     status.init = function(containers, opts){
@@ -36,4 +36,4 @@ GetHomeBack.status = (function(){
 
 
     return status;
-})();
+})(jQuery);

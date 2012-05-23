@@ -1,6 +1,6 @@
-"use strict";
-
 GetHomeBack.drawer = (function(GetHomeBack){
+    "use strict";
+
     var drawer = {};
 
     drawer.init = function(canvas, opts){

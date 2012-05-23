@@ -1,6 +1,6 @@
-"use strict";
-
 GetHomeBack.Zone = (function(GetHomeBack){
+    "use strict";
+
     function Class(zn, opts){
         this.x = zn.x;
         this.y = zn.y;

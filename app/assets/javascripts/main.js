@@ -1,6 +1,6 @@
-"use strict";
-
 var GetHomeBack = (function(){
+    "use strict";
+
     var GetHomeBack = {};
 
     GetHomeBack.init = function(canvas, status, opts, andThen){

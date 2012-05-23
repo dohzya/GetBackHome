@@ -1,6 +1,6 @@
-"use strict";
-
 GetHomeBack.Sprite = (function(GetHomeBack){
+    "use strict";
+
     function Class(x, y, width, height) {
         this.x = x;
         this.y = y;
