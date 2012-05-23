@@ -54,8 +54,9 @@ GetHomeBack.Zone = (function(GetHomeBack){
 
     Class.prototype.drawBackground = function(ctx, x, y){
         var points = this.buildPoints(x, y);
-        ctx.fillStyle = "rgba("+this.color+", "+this.alphaInfection+")";
-        ctx.strokeStyle = "rgba("+this.color+", "+this.alphaInfection+")";
+        var color = this.selected ? "255, 250, 71" : this.color;
+        ctx.fillStyle = "rgba("+color+", "+this.alphaInfection+")";
+        ctx.strokeStyle = "rgba("+color+", "+this.alphaInfection+")";
         ctx.beginPath();
         var point = points[0];
         ctx.moveTo(point[0], point[1]);
@@ -106,8 +107,7 @@ GetHomeBack.Zone = (function(GetHomeBack){
     };
 
     Class.prototype.onSelected = function(){
-        this.oldColor = this.color;
-        this.color = "255, 250, 71";
+        this.selected = true;
     };
 
     Class.prototype.display = function(dst){
@@ -115,7 +115,7 @@ GetHomeBack.Zone = (function(GetHomeBack){
     };
 
     Class.prototype.onUnSelected = function(){
-        this.color = this.oldColor;
+        this.selected = false;
     };
 
     function Zone(zn, opts){
