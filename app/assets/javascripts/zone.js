@@ -98,6 +98,17 @@ GetHomeBack.Zone = (function(GetHomeBack){
                y+dy > this.cy - this.dy;
     };
 
+    Class.prototype.around = function(){
+        return [
+            GetHomeBack.drawer.getDrawable(this.cx + this.dx/2, this.cy - this.dy/2),
+            GetHomeBack.drawer.getDrawable(this.cx + this.dx, this.cy),
+            GetHomeBack.drawer.getDrawable(this.cx + this.dx/2, this.cy + this.dy/2),
+            GetHomeBack.drawer.getDrawable(this.cx - this.dx/2, this.cy + this.dy/2),
+            GetHomeBack.drawer.getDrawable(this.cx - this.dx, this.cy),
+            GetHomeBack.drawer.getDrawable(this.cx - this.dx/2, this.cy - this.dy/2)
+        ];
+    };
+
     Class.prototype.draw = function(ctx, x, y){
         this.drawBackground(ctx, x, y);
         this.drawImage(ctx, x, y);
