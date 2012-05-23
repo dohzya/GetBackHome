@@ -42,19 +42,20 @@ GetHomeBack.Zone = (function(GetHomeBack){
         var cx = this.cx - x,
             cy = this.cy - y;
         return [
-            {x: cx, y: cy - this.dy/2},
-            {x: cx + this.dx/2 - 1, y: cy - this.dy/4 + 1},
-            {x: cx + this.dx/2 - 1, y: cy + this.dy/4 - 1},
-            {x: cx, y: cy + this.dy/2},
-            {x: cx - this.dx/2 + 1, y: cy + this.dy/4 - 1},
-            {x: cx - this.dx/2 + 1, y: cy - this.dy/4 + 1},
-            {x: cx, y: cy - this.dy/2}
+            {x: cx,             y: cy - this.dy/2},
+            {x: cx + this.dx/2, y: cy - this.dy/4},
+            {x: cx + this.dx/2, y: cy + this.dy/4},
+            {x: cx,             y: cy + this.dy/2},
+            {x: cx - this.dx/2, y: cy + this.dy/4},
+            {x: cx - this.dx/2, y: cy - this.dy/4},
+            {x: cx,             y: cy - this.dy/2}
         ];
     };
 
     Class.prototype.drawBackground = function(ctx, x, y){
         var points = this.buildPoints(x, y);
         ctx.fillStyle = "rgba("+this.color+", "+this.alphaInfection+")";
+        ctx.strokeStyle = "rgba("+this.color+", "+this.alphaInfection+")";
         ctx.beginPath();
         var point = points[0];
         ctx.moveTo(point[0], point[1]);
@@ -63,6 +64,7 @@ GetHomeBack.Zone = (function(GetHomeBack){
             ctx.lineTo(point.x, point.y);
         }
         ctx.closePath();
+        ctx.stroke();
         ctx.fill();
     };
 
