@@ -7,9 +7,17 @@ GetHomeBack.Zone = (function(GetHomeBack){
         this.dx = zn.width;
         this.dy = zn.height;
         this.cx = this.x * this.dx - this.y * this.dx / 2;
+        // if (this.y % 2 === 0) {
+        //     this.cx = this.x * this.dx;
+        // }
+        // else {
+        //     this.cx = this.x * this.dx - this.dx/2;
+        // }
         this.cy = this.y * (3/4 * this.dy);
         this.points = this.buildPoints(0, 0);
         this.infos = zn.infos;
+        this.infos.x = this.x;
+        this.infos.y = this.y;
         this.alphaInfection = 1-(this.infos.infection / 100.0);
         this.alphaYouth = 1-(this.infos.youth / 100.0);
 
