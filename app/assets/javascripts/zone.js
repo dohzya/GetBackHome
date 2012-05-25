@@ -42,17 +42,24 @@ GetHomeBack.Zone = (function(GetHomeBack){
         return this.y * Zone.height - this.x * Zone.height / 2;
     };
 
+    Class.prototype.width = function(){
+        return Zone.width;
+    };
+    Class.prototype.height = function(){
+        return Zone.height;
+    };
+
     Class.prototype.buildPoints = function(x, y){
         var cx = this.cx() - x,
             cy = this.cy() - y;
         return [
-            {x: cx + Zone.width/4, y: cy - Zone.height/2},
-            {x: cx + Zone.width/2, y: cy},
-            {x: cx + Zone.width/4, y: cy + Zone.height/2},
-            {x: cx - Zone.width/4, y: cy + Zone.height/2},
-            {x: cx - Zone.width/2, y: cy},
-            {x: cx - Zone.width/4, y: cy - Zone.height/2},
-            {x: cx + Zone.width/4, y: cy - Zone.height/2}
+            {x: cx + this.width()/4,   y: cy},
+            {x: cx + 3*this.width()/4, y: cy},
+            {x: cx + this.width(),     y: cy + this.height()/2},
+            {x: cx + 3*this.width()/4, y: cy + this.height()},
+            {x: cx + this.width()/4,   y: cy + this.height()},
+            {x: cx,                  y: cy + this.height()/2},
+            {x: cx + this.width()/4,   y: cy}
         ];
     };
 
@@ -75,11 +82,11 @@ GetHomeBack.Zone = (function(GetHomeBack){
 
     Class.prototype.drawImage = function(ctx, x, y){
         if (this.image) {
-            var cx = this.cx() - Zone.height/2;
-            var cy = this.cy() - Zone.height/2;
+            var cx = this.cx() - x;
+            var cy = this.cy() - y;
             var oldGlobalAlpha = ctx.globalAlpha;
             ctx.globalAlpha = this.alphaYouth;
-            this.image.draw(ctx, cx-x, cy-y, Zone.width, Zone.height);
+            this.image.draw(ctx, cx, cy, this.width(), this.height());
             ctx.globalAlpha = oldGlobalAlpha;
         }
     };
@@ -96,20 +103,20 @@ GetHomeBack.Zone = (function(GetHomeBack){
     };
 
     Class.prototype.isContained = function(x, y, dx, dy){
-        return x < this.cx() + Zone.width &&
-               x+dx > this.cx() - Zone.width &&
-               y < this.cy() + Zone.height &&
-               y+dy > this.cy() - Zone.height;
+        return x < this.cx() + this.width() &&
+               x+dx > this.cx() - this.width() &&
+               y < this.cy() + this.height() &&
+               y+dy > this.cy() - this.height();
     };
 
     Class.prototype.around = function(){
         return [
-            GetHomeBack.drawer.getDrawable(this.cx() + Zone.width/2, this.cy() - Zone.height/2),
-            GetHomeBack.drawer.getDrawable(this.cx() + Zone.width,   this.cy()),
-            GetHomeBack.drawer.getDrawable(this.cx() + Zone.width/2, this.cy() + Zone.height/2),
-            GetHomeBack.drawer.getDrawable(this.cx() - Zone.width/2, this.cy() + Zone.height/2),
-            GetHomeBack.drawer.getDrawable(this.cx() - Zone.width,   this.cy()),
-            GetHomeBack.drawer.getDrawable(this.cx() - Zone.width/2, this.cy() - Zone.height/2)
+            GetHomeBack.drawer.getDrawable(this.cx() + this.width()/2, this.cy() - this.height()/2),
+            GetHomeBack.drawer.getDrawable(this.cx() + this.width(),   this.cy()),
+            GetHomeBack.drawer.getDrawable(this.cx() + this.width()/2, this.cy() + this.height()/2),
+            GetHomeBack.drawer.getDrawable(this.cx() - this.width()/2, this.cy() + this.height()/2),
+            GetHomeBack.drawer.getDrawable(this.cx() - this.width(),   this.cy()),
+            GetHomeBack.drawer.getDrawable(this.cx() - this.width()/2, this.cy() - this.height()/2)
         ];
     };
 
