@@ -1,4 +1,4 @@
-GetHomeBack.game = (function(GetHomeBack){
+GetBackHome.game = (function(GetBackHome){
     "use strict";
 
     var game = {};
@@ -7,8 +7,8 @@ GetHomeBack.game = (function(GetHomeBack){
     };
 
     game.start = function(){
-        GetHomeBack.drawer.start();
+        GetBackHome.drawer.start();
     };
 
     return game;
-})(GetHomeBack);
+})(GetBackHome);

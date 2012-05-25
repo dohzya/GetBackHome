@@ -60,22 +60,22 @@
               selected: document.getElementById("cursor")
           };
           var zoneDims = $("#zoneDims");
-          zoneDims.attr("value", GetHomeBack.Zone.width);
+          zoneDims.attr("value", GetBackHome.Zone.width);
           zoneDims.change(function(){
             var value = parseInt(zoneDims.attr("value"), 10);
 
-            var centerX = (GetHomeBack.drawer.x + GetHomeBack.drawer.width/2) / GetHomeBack.Zone.width;
-            var centerY = (GetHomeBack.drawer.y + GetHomeBack.drawer.height/2) / GetHomeBack.Zone.height;
+            var centerX = (GetBackHome.drawer.x + GetBackHome.drawer.width/2) / GetBackHome.Zone.width;
+            var centerY = (GetBackHome.drawer.y + GetBackHome.drawer.height/2) / GetBackHome.Zone.height;
 
-            GetHomeBack.Zone.width = value;
-            GetHomeBack.Zone.height = value;
+            GetBackHome.Zone.width = value;
+            GetBackHome.Zone.height = value;
 
-            GetHomeBack.drawer.x = centerX * GetHomeBack.Zone.width - GetHomeBack.drawer.width/2;
-            GetHomeBack.drawer.y = centerY * GetHomeBack.Zone.height - GetHomeBack.drawer.height/2;
+            GetBackHome.drawer.x = centerX * GetBackHome.Zone.width - GetBackHome.drawer.width/2;
+            GetBackHome.drawer.y = centerY * GetBackHome.Zone.height - GetBackHome.drawer.height/2;
 
-            GetHomeBack.drawer.redraw();
+            GetBackHome.drawer.redraw();
           });
-          GetHomeBack.start(
+          GetBackHome.start(
               canvas,
               status,
               {

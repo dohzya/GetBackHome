@@ -1,4 +1,4 @@
-GetHomeBack.Zone = (function(GetHomeBack){
+GetBackHome.Zone = (function(GetBackHome){
     "use strict";
 
     function Class(zn, opts){
@@ -26,12 +26,12 @@ GetHomeBack.Zone = (function(GetHomeBack){
         }
 
         if (this.infos.type2) {
-            this.image = GetHomeBack.sprites(this.infos.type2);
+            this.image = GetBackHome.sprites(this.infos.type2);
         }
         else {
-            this.image = GetHomeBack.sprites(this.infos.type1);
+            this.image = GetBackHome.sprites(this.infos.type1);
         }
-        if (!this.image) this.image = GetHomeBack.sprites("grass");
+        if (!this.image) this.image = GetBackHome.sprites("grass");
 
     }
 
@@ -114,12 +114,12 @@ GetHomeBack.Zone = (function(GetHomeBack){
 
     Class.prototype.around = function(){
         return [
-            GetHomeBack.drawer.getDrawable(this.cx() + this.width()/2, this.cy() - this.height()/2),
-            GetHomeBack.drawer.getDrawable(this.cx() + this.width(),   this.cy()),
-            GetHomeBack.drawer.getDrawable(this.cx() + this.width()/2, this.cy() + this.height()/2),
-            GetHomeBack.drawer.getDrawable(this.cx() - this.width()/2, this.cy() + this.height()/2),
-            GetHomeBack.drawer.getDrawable(this.cx() - this.width(),   this.cy()),
-            GetHomeBack.drawer.getDrawable(this.cx() - this.width()/2, this.cy() - this.height()/2)
+            GetBackHome.drawer.getDrawable(this.cx() + this.width()/2, this.cy() - this.height()/2),
+            GetBackHome.drawer.getDrawable(this.cx() + this.width(),   this.cy()),
+            GetBackHome.drawer.getDrawable(this.cx() + this.width()/2, this.cy() + this.height()/2),
+            GetBackHome.drawer.getDrawable(this.cx() - this.width()/2, this.cy() + this.height()/2),
+            GetBackHome.drawer.getDrawable(this.cx() - this.width(),   this.cy()),
+            GetBackHome.drawer.getDrawable(this.cx() - this.width()/2, this.cy() - this.height()/2)
         ];
     };
 
@@ -151,4 +151,4 @@ GetHomeBack.Zone = (function(GetHomeBack){
     Zone.height = 48;
 
     return Zone;
-})(GetHomeBack);
+})(GetBackHome);

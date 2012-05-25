@@ -1,31 +1,31 @@
-var GetHomeBack = (function(){
+var GetBackHome = (function(){
     "use strict";
 
-    var GetHomeBack = {};
+    var GetBackHome = {};
 
-    GetHomeBack.init = function(canvas, status, opts, andThen){
-        GetHomeBack.sprites.init(opts, function(){
-            GetHomeBack.drawer.init(canvas, opts);
-            GetHomeBack.status.init(status, opts);
-            GetHomeBack.game.init(opts);
-            GetHomeBack.opts = opts;
-            if (opts.zones) GetHomeBack.addZones(opts.zones);
+    GetBackHome.init = function(canvas, status, opts, andThen){
+        GetBackHome.sprites.init(opts, function(){
+            GetBackHome.drawer.init(canvas, opts);
+            GetBackHome.status.init(status, opts);
+            GetBackHome.game.init(opts);
+            GetBackHome.opts = opts;
+            if (opts.zones) GetBackHome.addZones(opts.zones);
             andThen();
         });
     };
 
-    GetHomeBack.start = function(canvas, status, opts){
-        GetHomeBack.init(canvas, status, opts, function(){
-            GetHomeBack.game.start();
+    GetBackHome.start = function(canvas, status, opts){
+        GetBackHome.init(canvas, status, opts, function(){
+            GetBackHome.game.start();
         });
     };
 
-    GetHomeBack.addZones = function(zones){
+    GetBackHome.addZones = function(zones){
         for(var i in zones){
-            GetHomeBack.drawer.addZone(GetHomeBack.Zone(zones[i], GetHomeBack.opts));
+            GetBackHome.drawer.addZone(GetBackHome.Zone(zones[i], GetBackHome.opts));
         }
     };
 
-    return GetHomeBack;
+    return GetBackHome;
 
 })();

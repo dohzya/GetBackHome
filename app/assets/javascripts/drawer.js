@@ -1,4 +1,4 @@
-GetHomeBack.drawer = (function(GetHomeBack){
+GetBackHome.drawer = (function(GetBackHome){
     "use strict";
 
     var drawer = {};
@@ -17,12 +17,12 @@ GetHomeBack.drawer = (function(GetHomeBack){
         drawer.zones = [];
         drawer.underMouse = null;
         drawer.selected = [];
-        GetHomeBack.Cursor.init(drawer, opts.cursor);
+        GetBackHome.Cursor.init(drawer, opts.cursor);
     };
 
     drawer.start = function(){
         drawer.redraw();
-        GetHomeBack.Cursor.start();
+        GetBackHome.Cursor.start();
     };
 
     drawer.globalToRelativeX = function(x){
@@ -70,7 +70,7 @@ GetHomeBack.drawer = (function(GetHomeBack){
             if (zone.isContained(drawer.x, drawer.y, drawer.width, drawer.height))
                 f(zone);
         }
-        f(GetHomeBack.Cursor);
+        f(GetBackHome.Cursor);
     };
 
     drawer.onMouseMove = function(e){
@@ -118,11 +118,11 @@ GetHomeBack.drawer = (function(GetHomeBack){
         }
         else if (drawer.underMouse) {
             drawer.select(drawer.underMouse);
-            drawer.underMouse.display(GetHomeBack.status);
+            drawer.underMouse.display(GetBackHome.status);
             res = drawer.underMouse.onClick(e);
         }
         else {
-            GetHomeBack.status.displayNothing();
+            GetBackHome.status.displayNothing();
         }
         drawer.redraw();
         drawer.movedWhenSelected = false;
@@ -146,4 +146,4 @@ GetHomeBack.drawer = (function(GetHomeBack){
     };
 
     return drawer;
-})(GetHomeBack);
+})(GetBackHome);

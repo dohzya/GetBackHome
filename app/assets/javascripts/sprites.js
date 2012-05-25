@@ -1,4 +1,4 @@
-GetHomeBack.Sprite = (function(GetHomeBack){
+GetBackHome.Sprite = (function(GetBackHome){
     "use strict";
 
     function Class(img, x, y, width, height) {
@@ -20,9 +20,9 @@ GetHomeBack.Sprite = (function(GetHomeBack){
     };
 
     return Sprite;
-})(GetHomeBack);
+})(GetBackHome);
 
-GetHomeBack.sprites = (function(GetHomeBack){
+GetBackHome.sprites = (function(GetBackHome){
     var sprites = function(name){
         return sprites.tiles[name];
     };
@@ -35,18 +35,18 @@ GetHomeBack.sprites = (function(GetHomeBack){
             for (var k in opts.sprites.tiles) {
                 var v = opts.sprites.tiles[k];
                 var x = v[0], y = v[1], width = v[2], height = v[3];
-                sprites.tiles[k] = GetHomeBack.Sprite(img, x, y, width, height);
+                sprites.tiles[k] = GetBackHome.Sprite(img, x, y, width, height);
             }
             // tmp
             var img2 = new Image();
             img2.onload = function(){
-                sprites.tiles["mountains"] = GetHomeBack.Sprite(img2, 0, 0, 157, 157);
+                sprites.tiles["mountains"] = GetBackHome.Sprite(img2, 0, 0, 157, 157);
                 var img3 = new Image();
                 img3.onload = function(){
-                    sprites.tiles["water"] = GetHomeBack.Sprite(img3, 0, 0, 157, 157);
+                    sprites.tiles["water"] = GetBackHome.Sprite(img3, 0, 0, 157, 157);
                     var img4 = new Image();
                     img4.onload = function(){
-                        sprites.tiles["grass"] = GetHomeBack.Sprite(img4, 0, 0, 157, 157);
+                        sprites.tiles["grass"] = GetBackHome.Sprite(img4, 0, 0, 157, 157);
                         andThen();
                     };
                     img4.src = "/assets/images/grass.svg";
@@ -61,4 +61,4 @@ GetHomeBack.sprites = (function(GetHomeBack){
     };
 
     return sprites;
-})(GetHomeBack);
+})(GetBackHome);

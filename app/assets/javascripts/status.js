@@ -1,4 +1,4 @@
-GetHomeBack.status = (function($){
+GetBackHome.status = (function($){
     "use strict";
 
     var status = {};

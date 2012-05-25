@@ -1,4 +1,4 @@
-GetHomeBack.Cursor = (function(GetHomeBack){
+GetBackHome.Cursor = (function(GetBackHome){
     "use strict";
 
     var cursor = {};
@@ -9,8 +9,8 @@ GetHomeBack.Cursor = (function(GetHomeBack){
         cursor.y = 100;
         cursor.dx = 20;
         cursor.dy = 20;
-        cursor.normal = GetHomeBack.sprites("cursor");
-        cursor.selected = GetHomeBack.sprites("cursorSelected");
+        cursor.normal = GetBackHome.sprites("cursor");
+        cursor.selected = GetBackHome.sprites("cursorSelected");
         cursor.mode = "normal";
     };
 
@@ -82,4 +82,4 @@ GetHomeBack.Cursor = (function(GetHomeBack){
     };
 
     return cursor;
-})(GetHomeBack);
+})(GetBackHome);
