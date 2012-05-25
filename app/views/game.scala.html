@@ -63,8 +63,16 @@
           zoneDims.attr("value", GetHomeBack.Zone.width);
           zoneDims.change(function(){
             var value = parseInt(zoneDims.attr("value"), 10);
+
+            var centerX = (GetHomeBack.drawer.x + GetHomeBack.drawer.width/2) / GetHomeBack.Zone.width;
+            var centerY = (GetHomeBack.drawer.y + GetHomeBack.drawer.height/2) / GetHomeBack.Zone.height;
+
             GetHomeBack.Zone.width = value;
             GetHomeBack.Zone.height = value;
+
+            GetHomeBack.drawer.x = centerX * GetHomeBack.Zone.width - GetHomeBack.drawer.width/2;
+            GetHomeBack.drawer.y = centerY * GetHomeBack.Zone.height - GetHomeBack.drawer.height/2;
+
             GetHomeBack.drawer.redraw();
           });
           GetHomeBack.start(
