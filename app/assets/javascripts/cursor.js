@@ -1,6 +1,6 @@
-"use strict";
-
 GetHomeBack.Cursor = (function(GetHomeBack){
+    "use strict";
+
     var cursor = {};
 
     cursor.init = function(drawer, opts){

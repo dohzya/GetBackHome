@@ -1,6 +1,6 @@
-"use strict";
-
 GetHomeBack.drawer = (function(GetHomeBack){
+    "use strict";
+
     var drawer = {};
 
     drawer.init = function(canvas, opts){
@@ -15,7 +15,8 @@ GetHomeBack.drawer = (function(GetHomeBack){
         drawer.height = canvas.height;
         drawer.width = canvas.width;
         drawer.zones = [];
-        drawer.selected = null;
+        drawer.underMouse = null;
+        drawer.selected = [];
         GetHomeBack.Cursor.init(drawer, opts.cursor);
     };
 
@@ -52,15 +53,12 @@ GetHomeBack.drawer = (function(GetHomeBack){
     drawer.getDrawable = function(x, y){
         for(var i in drawer.zones) {
             var zone = drawer.zones[i];
-            if (zone.x <= x &&
-                zone.x + zone.dx >= x &&
-                zone.y <= y &&
-                zone.y + zone.dy >= y)
+            if (zone.contains(x, y))
                     return zone;
         }
         return null;
     };
-
+    // TODO merge these 2 functions
     drawer.eachDrawables = function(f){
         var res = [];
         var x1 = drawer.x;
@@ -69,11 +67,8 @@ GetHomeBack.drawer = (function(GetHomeBack){
         var y2 = y1 + drawer.height;
         for(var i in drawer.zones) {
             var zone = drawer.zones[i];
-            if (zone.x <= x2 &&
-                zone.x + zone.dx >= x1 &&
-                zone.y <= y2 &&
-                zone.y + zone.dy >= y1)
-                    f(zone);
+            if (zone.isContained(drawer.x, drawer.y, drawer.width, drawer.height))
+                f(zone);
         }
         f(GetHomeBack.Cursor);
     };
@@ -81,9 +76,9 @@ GetHomeBack.drawer = (function(GetHomeBack){
     drawer.onMouseMove = function(e){
         if (drawer.whenSelected) {
             drawer.movedWhenSelected = true;
-            var selected = drawer.whenSelected;
-            var d = selected.drawer;
-            var c = selected.cursor;
+            var underMouse = drawer.whenSelected;
+            var d = underMouse.drawer;
+            var c = underMouse.cursor;
             var dx = e.globalX - c.x;
             var dy = e.globalY - c.y;
             drawer.x = d.x - dx;
@@ -93,7 +88,7 @@ GetHomeBack.drawer = (function(GetHomeBack){
     };
 
     drawer.onMouseDown = function(e){
-        var selected = drawer.getDrawable(e.x, e.y);
+        var underMouse = drawer.getDrawable(e.x, e.y);
         drawer.whenSelected = {
             drawer: {
                 x: drawer.x,
@@ -104,11 +99,11 @@ GetHomeBack.drawer = (function(GetHomeBack){
                 y: e.globalY
             }
         };
-        if (selected === drawer.selected) {
+        if (underMouse === drawer.underMouse) {
             // no nothing
         }
         else {
-            drawer.selected = selected;
+            drawer.underMouse = underMouse;
         }
     };
 
@@ -121,14 +116,10 @@ GetHomeBack.drawer = (function(GetHomeBack){
         if (drawer.movedWhenSelected) {
             // do nothing
         }
-        else if (drawer.selected) {
-            if (drawer.selectedBefore) {
-                drawer.selectedBefore.onUnSelected();
-            }
-            drawer.selected.onSelected();
-            drawer.selectedBefore = drawer.selected;
-            drawer.selected.display(GetHomeBack.status);
-            res = drawer.selected.onClick(e);
+        else if (drawer.underMouse) {
+            drawer.select(drawer.underMouse);
+            drawer.underMouse.display(GetHomeBack.status);
+            res = drawer.underMouse.onClick(e);
         }
         else {
             GetHomeBack.status.displayNothing();
@@ -136,6 +127,22 @@ GetHomeBack.drawer = (function(GetHomeBack){
         drawer.redraw();
         drawer.movedWhenSelected = false;
         return res;
+    };
+
+    drawer.eachSelected = function(func){
+        for (var i in this.selected) {
+            func(this.selected[i]);
+        }
+    };
+
+    drawer.select = function(arr){
+        this.eachSelected(function(s){
+            s.onUnSelected();
+        });
+        this.selected = arr.length ? arr : [arr];
+        this.eachSelected(function(s){
+            s.onSelected();
+        });
     };
 
     return drawer;

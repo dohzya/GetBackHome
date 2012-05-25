@@ -4,7 +4,6 @@ import com.dohzya.gethomeback.libs.Generator
 
 case class Game(
   name: String,
-  dim: Dimension,
   zones: Seq[Zone],
   players: Seq[Player]
 ) {
@@ -20,16 +19,14 @@ case class Game(
 object Game {
 
   def apply(
-    name: String,
-    worldDim: Dimension,
-    zonesDim: Dimension
+    name: String
   ): Game = {
     val gen = Generator(name)(_)
     val infectionGen = gen(0)
     val type1Gen = gen(1)
     val type2Gen = gen(2)
     val youthGen = gen(3)
-    val zones = for(xx <- 0.to(worldDim.width/zonesDim.width * 2); yy <- 0.to(worldDim.height/zonesDim.height * 2))
+    val zones = for(xx <- 0.to(80); yy <- 0.to(80))
       yield {
         val x = xx - 10; val y = yy - 10
         val infection = (infectionGen(x, y) * 100).abs.toInt
@@ -62,16 +59,16 @@ object Game {
           }
         }
         Zone(
-          Position(x*zonesDim.width, y*zonesDim.height),
-          Dimension(zonesDim.width, zonesDim.height),
+          Position(x, y),
+          Dimension(1000, 1000),
           ts = 0,
           infos = Zone.Infos(height, type1, type2, infection, youth)
         )
       }
-    Game(name, worldDim, zones)
+    Game(name, zones)
   }
 
-  def apply(name: String, worldDim: Dimension, zones: Seq[Zone]): Game =
-    Game(name, worldDim, zones, List[Player]())
+  def apply(name: String, zones: Seq[Zone]): Game =
+    Game(name, zones, List[Player]())
 
 }

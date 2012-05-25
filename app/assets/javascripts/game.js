@@ -1,6 +1,6 @@
-"use strict";
+GetHomeBack.game = (function(GetHomeBack){
+    "use strict";
 
-GetHomeBack.game = (function(){
     var game = {};
 
     game.init = function(drawer, opts){
@@ -11,4 +11,4 @@ GetHomeBack.game = (function(){
     };
 
     return game;
-})();
+})(GetHomeBack);
