@@ -29,8 +29,9 @@ GetHomeBack.Zone = (function(GetHomeBack){
             this.image = GetHomeBack.sprites(this.infos.type2);
         }
         else {
-            this.image = GetHomeBack.sprites("grass");
+            this.image = GetHomeBack.sprites(this.infos.type1);
         }
+        if (!this.image) this.image = GetHomeBack.sprites("grass");
 
     }
 
@@ -51,15 +52,17 @@ GetHomeBack.Zone = (function(GetHomeBack){
 
     Class.prototype.buildPoints = function(x, y){
         var cx = this.cx() - x,
-            cy = this.cy() - y;
+            cy = this.cy() - y,
+            width = this.width(),
+            height = this.height();
         return [
-            {x: cx + this.width()/4,   y: cy},
-            {x: cx + 3*this.width()/4, y: cy},
-            {x: cx + this.width(),     y: cy + this.height()/2},
-            {x: cx + 3*this.width()/4, y: cy + this.height()},
-            {x: cx + this.width()/4,   y: cy + this.height()},
-            {x: cx,                  y: cy + this.height()/2},
-            {x: cx + this.width()/4,   y: cy}
+            {x: cx + width/4,   y: cy},
+            {x: cx + 3*width/4, y: cy},
+            {x: cx + width,     y: cy + height/2},
+            {x: cx + 3*width/4, y: cy + height},
+            {x: cx + width/4,   y: cy + height},
+            {x: cx,             y: cy + height/2},
+            {x: cx + width/4,   y: cy}
         ];
     };
 
@@ -82,11 +85,11 @@ GetHomeBack.Zone = (function(GetHomeBack){
 
     Class.prototype.drawImage = function(ctx, x, y){
         if (this.image) {
-            var cx = this.cx() - x;
-            var cy = this.cy() - y;
+            var cx = this.cx() - this.width()/10 - x;
+            var cy = this.cy() - this.height()/10 - y;
             var oldGlobalAlpha = ctx.globalAlpha;
             ctx.globalAlpha = this.alphaYouth;
-            this.image.draw(ctx, cx, cy, this.width(), this.height());
+            this.image.draw(ctx, cx, cy, 11/10*this.width(), 11/10*this.height());
             ctx.globalAlpha = oldGlobalAlpha;
         }
     };

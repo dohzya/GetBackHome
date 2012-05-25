@@ -37,7 +37,25 @@ GetHomeBack.sprites = (function(GetHomeBack){
                 var x = v[0], y = v[1], width = v[2], height = v[3];
                 sprites.tiles[k] = GetHomeBack.Sprite(img, x, y, width, height);
             }
-            andThen();
+            // tmp
+            var img2 = new Image();
+            img2.onload = function(){
+                sprites.tiles["mountains"] = GetHomeBack.Sprite(img2, 0, 0, 157, 157);
+                var img3 = new Image();
+                img3.onload = function(){
+                    sprites.tiles["water"] = GetHomeBack.Sprite(img3, 0, 0, 157, 157);
+                    var img4 = new Image();
+                    img4.onload = function(){
+                        sprites.tiles["grass"] = GetHomeBack.Sprite(img4, 0, 0, 157, 157);
+                        andThen();
+                    };
+                    img4.src = "/assets/images/grass.svg";
+                };
+                img3.src = "/assets/images/water.svg";
+            };
+            img2.src = "/assets/images/mountains.svg";
+            // -
+            // andThen();
         };
         sprites.img.src = opts.sprites.src;
     };
