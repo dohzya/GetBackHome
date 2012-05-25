@@ -15,7 +15,9 @@
 
     <div class="game">
 
-      <canvas id="mainDrawer" class="drawer" height="@(game.dim.height)px" width="@(game.dim.width)px"></canvas>
+      <input id="zoneDims" type="range"  min="10" max="200" value="50" />
+
+      <canvas id="mainDrawer" class="drawer" width="800px" height="600px"></canvas>
 
       <div id="status" class="sidebar">
         <div id="global" class="status">
@@ -57,6 +59,14 @@
           var status = {
               selected: document.getElementById("cursor")
           };
+          var zoneDims = $("#zoneDims");
+          zoneDims.attr("value", GetHomeBack.Zone.width);
+          zoneDims.change(function(){
+            var value = parseInt(zoneDims.attr("value"), 10);
+            GetHomeBack.Zone.width = value;
+            GetHomeBack.Zone.height = value;
+            GetHomeBack.drawer.redraw();
+          });
           GetHomeBack.start(
               canvas,
               status,

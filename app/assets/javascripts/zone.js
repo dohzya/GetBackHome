@@ -4,20 +4,8 @@ GetHomeBack.Zone = (function(GetHomeBack){
     function Class(zn, opts){
         this.x = zn.x;
         this.y = zn.y;
-        this.dx = zn.width;
-        this.dy = zn.height;
-        this.cx = this.x * this.dx - this.y * this.dx / 2;
-        // if (this.y % 2 === 0) {
-        //     this.cx = this.x * this.dx;
-        // }
-        // else {
-        //     this.cx = this.x * this.dx - this.dx/2;
-        // }
-        this.cy = this.y * (3/4 * this.dy);
         this.points = this.buildPoints(0, 0);
         this.infos = zn.infos;
-        this.infos.x = this.x;
-        this.infos.y = this.y;
         this.alphaInfection = 1-(this.infos.infection / 100.0);
         this.alphaYouth = 1-(this.infos.youth / 100.0);
 
@@ -46,17 +34,25 @@ GetHomeBack.Zone = (function(GetHomeBack){
 
     }
 
+    Class.prototype.cx = function(){
+        return this.x * Zone.width - this.y * Zone.width / 2;
+    };
+
+    Class.prototype.cy = function(){
+        return this.y * (3/4 * Zone.height);
+    };
+
     Class.prototype.buildPoints = function(x, y){
-        var cx = this.cx - x,
-            cy = this.cy - y;
+        var cx = this.cx() - x,
+            cy = this.cy() - y;
         return [
-            {x: cx,             y: cy - this.dy/2},
-            {x: cx + this.dx/2, y: cy - this.dy/4},
-            {x: cx + this.dx/2, y: cy + this.dy/4},
-            {x: cx,             y: cy + this.dy/2},
-            {x: cx - this.dx/2, y: cy + this.dy/4},
-            {x: cx - this.dx/2, y: cy - this.dy/4},
-            {x: cx,             y: cy - this.dy/2}
+            {x: cx,                y: cy - Zone.height/2},
+            {x: cx + Zone.width/2, y: cy - Zone.height/4},
+            {x: cx + Zone.width/2, y: cy + Zone.height/4},
+            {x: cx,                y: cy + Zone.height/2},
+            {x: cx - Zone.width/2, y: cy + Zone.height/4},
+            {x: cx - Zone.width/2, y: cy - Zone.height/4},
+            {x: cx,                y: cy - Zone.height/2}
         ];
     };
 
@@ -79,8 +75,8 @@ GetHomeBack.Zone = (function(GetHomeBack){
 
     Class.prototype.drawImage = function(ctx, x, y){
         if (this.image) {
-            var cx = this.cx - this.dy/2;
-            var cy = this.cy - this.dy/2;
+            var cx = this.cx() - Zone.height/2;
+            var cy = this.cy() - Zone.height/2;
             var oldGlobalAlpha = ctx.globalAlpha;
             ctx.globalAlpha = this.alphaYouth;
             this.image.draw(ctx, cx-x, cy-y);
@@ -100,20 +96,20 @@ GetHomeBack.Zone = (function(GetHomeBack){
     };
 
     Class.prototype.isContained = function(x, y, dx, dy){
-        return x < this.cx + this.dx &&
-               x+dx > this.cx - this.dx &&
-               y < this.cy + this.dy &&
-               y+dy > this.cy - this.dy;
+        return x < this.cx() + Zone.width &&
+               x+dx > this.cx() - Zone.width &&
+               y < this.cy() + Zone.height &&
+               y+dy > this.cy() - Zone.height;
     };
 
     Class.prototype.around = function(){
         return [
-            GetHomeBack.drawer.getDrawable(this.cx + this.dx/2, this.cy - this.dy/2),
-            GetHomeBack.drawer.getDrawable(this.cx + this.dx, this.cy),
-            GetHomeBack.drawer.getDrawable(this.cx + this.dx/2, this.cy + this.dy/2),
-            GetHomeBack.drawer.getDrawable(this.cx - this.dx/2, this.cy + this.dy/2),
-            GetHomeBack.drawer.getDrawable(this.cx - this.dx, this.cy),
-            GetHomeBack.drawer.getDrawable(this.cx - this.dx/2, this.cy - this.dy/2)
+            GetHomeBack.drawer.getDrawable(this.cx() + Zone.width/2, this.cy() - Zone.height/2),
+            GetHomeBack.drawer.getDrawable(this.cx() + Zone.width,   this.cy()),
+            GetHomeBack.drawer.getDrawable(this.cx() + Zone.width/2, this.cy() + Zone.height/2),
+            GetHomeBack.drawer.getDrawable(this.cx() - Zone.width/2, this.cy() + Zone.height/2),
+            GetHomeBack.drawer.getDrawable(this.cx() - Zone.width,   this.cy()),
+            GetHomeBack.drawer.getDrawable(this.cx() - Zone.width/2, this.cy() - Zone.height/2)
         ];
     };
 
@@ -140,6 +136,9 @@ GetHomeBack.Zone = (function(GetHomeBack){
     function Zone(zn, opts){
         return new Class(zn, opts);
     }
+
+    Zone.width = 48;
+    Zone.height = 48;
 
     return Zone;
 })(GetHomeBack);
