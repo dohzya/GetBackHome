@@ -1,7 +1,8 @@
 GetHomeBack.Sprite = (function(GetHomeBack){
     "use strict";
 
-    function Class(x, y, width, height) {
+    function Class(img, x, y, width, height) {
+        this.img = img;
         this.x = x;
         this.y = y;
         this.width = width;
@@ -11,11 +12,11 @@ GetHomeBack.Sprite = (function(GetHomeBack){
     Class.prototype.draw = function(ctx, x, y, width, height) {
         var dx = width || this.width;
         var dy = height || this.height;
-        ctx.drawImage(GetHomeBack.sprites.img, this.x, this.y, this.height, this.width, x, y, dx, dy);
+        ctx.drawImage(this.img, this.x, this.y, this.height, this.width, x, y, dx, dy);
     };
 
-    var Sprite = function(x, y, width, height) {
-        return new Class(x, y, width, height);
+    var Sprite = function(img, x, y, width, height) {
+        return new Class(img, x, y, width, height);
     };
 
     return Sprite;
@@ -27,13 +28,14 @@ GetHomeBack.sprites = (function(GetHomeBack){
     };
 
     sprites.init = function(opts, andThen){
-        sprites.img = new Image();
+        var img = new Image();
+        sprites.img = img;
         sprites.img.onload = function(){
             sprites.tiles = {};
             for (var k in opts.sprites.tiles) {
                 var v = opts.sprites.tiles[k];
                 var x = v[0], y = v[1], width = v[2], height = v[3];
-                sprites.tiles[k] = GetHomeBack.Sprite(x, y, width, height);
+                sprites.tiles[k] = GetHomeBack.Sprite(img, x, y, width, height);
             }
             andThen();
         };
