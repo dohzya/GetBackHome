@@ -8,8 +8,10 @@ GetHomeBack.Sprite = (function(GetHomeBack){
         this.height = height;
     }
 
-    Class.prototype.draw = function(ctx, x, y) {
-        ctx.drawImage(GetHomeBack.sprites.img, this.x, this.y, this.height, this.width, x, y, this.height, this.width);
+    Class.prototype.draw = function(ctx, x, y, width, height) {
+        var dx = width || this.width;
+        var dy = height || this.height;
+        ctx.drawImage(GetHomeBack.sprites.img, this.x, this.y, this.height, this.width, x, y, dx, dy);
     };
 
     var Sprite = function(x, y, width, height) {

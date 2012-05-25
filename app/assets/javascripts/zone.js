@@ -79,7 +79,7 @@ GetHomeBack.Zone = (function(GetHomeBack){
             var cy = this.cy() - Zone.height/2;
             var oldGlobalAlpha = ctx.globalAlpha;
             ctx.globalAlpha = this.alphaYouth;
-            this.image.draw(ctx, cx-x, cy-y);
+            this.image.draw(ctx, cx-x, cy-y, Zone.width, Zone.height);
             ctx.globalAlpha = oldGlobalAlpha;
         }
     };
