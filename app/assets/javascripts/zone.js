@@ -35,24 +35,24 @@ GetHomeBack.Zone = (function(GetHomeBack){
     }
 
     Class.prototype.cx = function(){
-        return this.x * Zone.width - this.y * Zone.width / 2;
+        return this.x * (3/4 * Zone.width);
     };
 
     Class.prototype.cy = function(){
-        return this.y * (3/4 * Zone.height);
+        return this.y * Zone.height - this.x * Zone.height / 2;
     };
 
     Class.prototype.buildPoints = function(x, y){
         var cx = this.cx() - x,
             cy = this.cy() - y;
         return [
-            {x: cx,                y: cy - Zone.height/2},
-            {x: cx + Zone.width/2, y: cy - Zone.height/4},
-            {x: cx + Zone.width/2, y: cy + Zone.height/4},
-            {x: cx,                y: cy + Zone.height/2},
-            {x: cx - Zone.width/2, y: cy + Zone.height/4},
-            {x: cx - Zone.width/2, y: cy - Zone.height/4},
-            {x: cx,                y: cy - Zone.height/2}
+            {x: cx + Zone.width/4, y: cy - Zone.height/2},
+            {x: cx + Zone.width/2, y: cy},
+            {x: cx + Zone.width/4, y: cy + Zone.height/2},
+            {x: cx - Zone.width/4, y: cy + Zone.height/2},
+            {x: cx - Zone.width/2, y: cy},
+            {x: cx - Zone.width/4, y: cy - Zone.height/2},
+            {x: cx + Zone.width/4, y: cy - Zone.height/2}
         ];
     };
 
