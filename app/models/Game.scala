@@ -12,7 +12,8 @@ class Game(
 object Game {
 
   def apply(
-    name: String
+    name: String,
+    zoneDims: Dimension
   ): Game = {
     val gen = Generator(name)(_)
     val infectionGen = gen(0)
@@ -53,7 +54,7 @@ object Game {
         }
         Zone(
           Position(x, y),
-          Dimension(1000, 1000),
+          zoneDims,
           ts = 0,
           infos = Zone.Infos(height, type1, type2, infection, youth)
         )

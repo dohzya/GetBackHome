@@ -21,7 +21,7 @@ object Game extends Base {
 
   def game(id: String) = Action { implicit request =>
     Async {
-      val game = models.Game(id)
+      val game = models.Game(id, Dimension(1000, 1000))
       (player ? messages.GetInfos).mapTo[Player.Infos].asPromise.map { playerInfos =>
         Ok(views.html.game(game, playerInfos))
       }
