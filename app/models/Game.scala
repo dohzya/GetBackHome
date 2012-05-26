@@ -8,12 +8,6 @@ class Game(
   val zones: Seq[Zone]
 ) {
 
-  var players = Map[String, ActorRef]()
-
-  def player(name: String): Option[ActorRef] = {
-    players.get(name)
-  }
-
 }
 object Game {
 
