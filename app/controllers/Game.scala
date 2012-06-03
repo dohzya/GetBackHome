@@ -18,12 +18,14 @@ object Game extends Base {
   implicit val timeout = Timeout(5 seconds)
 
   val player = Akka.system.actorOf(Props(new Player("Guest")), name = "player")
+  val game = Akka.system.actorOf(Props(models.Game("abc", Dimension(1000,1000))), name = "game")
 
   def index(id: String) = Action { implicit request =>
     Async {
-      val game = models.Game(id, Dimension(1000, 1000))
-      (player ? messages.GetInfos).mapTo[Player.Infos].asPromise.map { playerInfos =>
-        Ok(views.html.game(game, playerInfos))
+      (player ? messages.GetInfos).mapTo[Player.Infos].asPromise.flatMap { playerInfos =>
+        (game ? messages.GetInfos).mapTo[models.Game.Infos].asPromise.map { gameInfos =>
+          Ok(views.html.game(gameInfos, playerInfos))
+        }
       }
     }
   }

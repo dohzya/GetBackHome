@@ -1,12 +1,25 @@
 package com.dohzya.gethomeback.models
 
 import akka.actor._
+import akka.pattern.ask
+import akka.util.Timeout
+import akka.util.duration._
+import play.api.Play.current
+import play.api.libs.concurrent._
 import com.dohzya.gethomeback.libs.Generator
 
 class Game(
   val name: String,
   val zones: Seq[Zone]
-) {
+) extends Actor {
+
+  import Game._
+
+  def receive = {
+    case messages.GetInfos => sender ! infos
+  }
+
+  def infos = Infos(name, zones)
 
 }
 object Game {
@@ -61,5 +74,7 @@ object Game {
       }
     new Game(name, zones)
   }
+
+  case class Infos(name: String, zones: Seq[Zone])
 
 }
