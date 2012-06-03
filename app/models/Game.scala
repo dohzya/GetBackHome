@@ -13,6 +13,8 @@ class Game(
   val zones: Seq[Zone]
 ) extends Actor {
 
+  play.api.Logger.debug("Creating game "+ name+ "…")
+
   import Game._
 
   def receive = {
@@ -76,5 +78,33 @@ object Game {
   }
 
   case class Infos(name: String, zones: Seq[Zone])
+
+}
+
+class GameRegistry extends Actor {
+
+  var instances = Map.empty[String, ActorRef]
+
+  def receive = {
+    case messages.GetInstance(name) => sender ! getInstance(name)
+    case messages.CreateGame(name, zoneDims) => sender ! createInstance(name, zoneDims)
+  }
+
+  def getInstance(name: String) = instances.get(name)
+
+  def createInstance(name: String, zoneDims: Dimension) = {
+    val ref = context.actorOf(Props(Game(name, zoneDims)), name)
+    instances = instances + (name -> ref)
+    ref
+  }
+
+}
+object GameRegistry {
+
+  lazy val actor = try {
+    Akka.system.actorOf(Props[GameRegistry], "games")
+  } catch {
+    case _ => Akka.system.actorFor("games")
+  }
 
 }

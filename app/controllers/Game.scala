@@ -4,7 +4,7 @@ import play.api._
 import play.api.mvc._
 import com.dohzya.gethomeback._
 import com.dohzya.gethomeback.models._
-import com.dohzya.gethomeback.models.messages
+import com.dohzya.gethomeback.models.messages._
 
 import akka.actor._
 import akka.pattern.ask
@@ -17,16 +17,33 @@ object Game extends Base {
 
   implicit val timeout = Timeout(5 seconds)
 
-  val player = Akka.system.actorOf(Props(new Player("Guest")), name = "player")
-  val game = Akka.system.actorOf(Props(models.Game("abc", Dimension(1000,1000))), name = "game")
+  lazy val games = GameRegistry.actor
+  lazy val players = PlayerRegistry.actor
 
   def index(id: String) = Action { implicit request =>
     Async {
-      (player ? messages.GetInfos).mapTo[Player.Infos].asPromise.flatMap { playerInfos =>
-        (game ? messages.GetInfos).mapTo[models.Game.Infos].asPromise.map { gameInfos =>
-          Ok(views.html.game(gameInfos, playerInfos))
-        }
+      for (
+        player <- getOrCreatePlayer("Guest");
+        game <- getOrCreateGame(id);
+        playerInfos <- (player ? GetInfos).mapTo[Player.Infos].asPromise;
+        gameInfos <- (game ? GetInfos).mapTo[models.Game.Infos].asPromise
+      ) yield {
+        Ok(views.html.game(gameInfos, playerInfos))
       }
+    }
+  }
+
+  def getOrCreateGame(id: String) = {
+    (games ? GetInstance(id)).mapTo[Option[ActorRef]].asPromise.flatMap {
+      case Some(game) => Promise.pure(game)
+      case None => (games ? CreateGame(id)).mapTo[ActorRef].asPromise
+    }
+  }
+
+  def getOrCreatePlayer(id: String) = {
+    (players ? GetInstance(id)).mapTo[Option[ActorRef]].asPromise.flatMap {
+      case Some(player) => Promise.pure(player)
+      case None => (players ? CreatePlayer(id)).mapTo[ActorRef].asPromise
     }
   }
 
