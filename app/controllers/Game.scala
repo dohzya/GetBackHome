@@ -19,7 +19,7 @@ object Game extends Base {
 
   val player = Akka.system.actorOf(Props(new Player("Guest")), name = "player")
 
-  def game(id: String) = Action { implicit request =>
+  def index(id: String) = Action { implicit request =>
     Async {
       val game = models.Game(id, Dimension(1000, 1000))
       (player ? messages.GetInfos).mapTo[Player.Infos].asPromise.map { playerInfos =>
