@@ -13,7 +13,7 @@ import akka.util.duration._
 import play.api.Play.current
 import play.api.libs.concurrent._
 
-object Game extends Base {
+object Games extends Base {
 
   implicit val timeout = Timeout(5 seconds)
 
@@ -26,7 +26,7 @@ object Game extends Base {
         player <- getOrCreatePlayer("Guest");
         game <- getOrCreateGame(id);
         playerInfos <- (player ? GetInfos).mapTo[Player.Infos].asPromise;
-        gameInfos <- (game ? GetInfos).mapTo[models.Game.Infos].asPromise
+        gameInfos <- (game ? GetInfos).mapTo[Game.Infos].asPromise
       ) yield {
         Ok(views.html.game(gameInfos, playerInfos))
       }
