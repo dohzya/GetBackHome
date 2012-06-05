@@ -86,25 +86,37 @@ class GameRegistry extends Actor {
   var instances = Map.empty[String, ActorRef]
 
   def receive = {
+    case messages.GetInstances => sender ! getInstances
     case messages.GetInstance(name) => sender ! getInstance(name)
     case messages.CreateGame(name, zoneDims) => sender ! createInstance(name, zoneDims)
   }
 
-  def getInstance(name: String) = instances.get(name)
+  def getInstance(name: String): Option[ActorRef] = instances.get(name)
 
-  def createInstance(name: String, zoneDims: Dimension) = {
-    val ref = context.actorOf(Props(Game(name, zoneDims)), name)
-    instances = instances + (name -> ref)
-    ref
+  def getInstances: Map[String, ActorRef] = instances
+
+  def createInstance(name: String, zoneDims: Dimension): Option[ActorRef] = {
+    try {
+      val ref = context.actorOf(Props(Game(name, zoneDims)), name)
+      instances = instances + (name -> ref)
+      Some(ref)
+    } catch {
+      case e => {
+        play.api.Logger.error(e.toString)
+        None
+      }
+    }
   }
 
 }
 object GameRegistry {
 
-  lazy val actor = try {
-    Akka.system.actorOf(Props[GameRegistry], "games")
-  } catch {
-    case _ => Akka.system.actorFor("games")
+  lazy val actor = {
+    try {
+      Akka.system.actorOf(Props[GameRegistry], "games")
+    } catch {
+      case _ => Akka.system.actorFor("games")
+    }
   }
 
 }

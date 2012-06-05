@@ -7,7 +7,7 @@ import com.dohzya.getbackhome.models._
 object Application extends Base {
 
   def index = Action { implicit request =>
-    Ok(views.html.index())
+    Redirect(routes.Games.index)
   }
 
 }

@@ -3,7 +3,9 @@
 # ~~~~
 
 # Home page
-GET     /                           com.dohzya.getbackhome.controllers.Application.index
+GET     /                            com.dohzya.getbackhome.controllers.Application.index
+GET     /games                       com.dohzya.getbackhome.controllers.Games.index
+POST    /games                       com.dohzya.getbackhome.controllers.Games.create
 GET     /games/:id                   com.dohzya.getbackhome.controllers.Games.show(id: String)
 
 # Map static resources from the /public folder to the /assets URL path

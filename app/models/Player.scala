@@ -33,12 +33,16 @@ class PlayerRegistry extends Actor {
     case messages.CreatePlayer(name) => sender ! createInstance(name)
   }
 
-  def getInstance(name: String) = instances.get(name)
+  def getInstance(name: String): Option[ActorRef] = instances.get(name)
 
-  def createInstance(name: String) = {
-    val ref = context.actorOf(Props(new Player(name)), name)
-    instances = instances + (name -> ref)
-    ref
+  def createInstance(name: String): Option[ActorRef] = {
+    try {
+      val ref = context.actorOf(Props(new Player(name)), name)
+      instances = instances + (name -> ref)
+      Some(ref)
+    } catch {
+      case _: akka.actor.InvalidActorNameException => None
+    }
   }
 
 }
