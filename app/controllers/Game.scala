@@ -1,10 +1,10 @@
-package com.dohzya.gethomeback.controllers
+package com.dohzya.getbackhome.controllers
 
 import play.api._
 import play.api.mvc._
-import com.dohzya.gethomeback._
-import com.dohzya.gethomeback.models._
-import com.dohzya.gethomeback.models.messages._
+import com.dohzya.getbackhome._
+import com.dohzya.getbackhome.models._
+import com.dohzya.getbackhome.models.messages._
 
 import akka.actor._
 import akka.pattern.ask

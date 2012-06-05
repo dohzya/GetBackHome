@@ -1,4 +1,4 @@
-package com.dohzya.gethomeback.models
+package com.dohzya.getbackhome.models
 
 import akka.actor._
 import akka.pattern.ask
@@ -6,7 +6,7 @@ import akka.util.Timeout
 import akka.util.duration._
 import play.api.Play.current
 import play.api.libs.concurrent._
-import com.dohzya.gethomeback.libs.Generator
+import com.dohzya.getbackhome.libs.Generator
 
 class Game(
   val name: String,

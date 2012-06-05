@@ -1,6 +1,6 @@
-package com.dohzya.gethomeback.models.messages
+package com.dohzya.getbackhome.models.messages
 
-import com.dohzya.gethomeback.models._
+import com.dohzya.getbackhome.models._
 
 trait Request
 case object GetInfos extends Request

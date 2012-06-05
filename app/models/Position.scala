@@ -1,4 +1,4 @@
-package com.dohzya.gethomeback.models
+package com.dohzya.getbackhome.models
 
 case class Position(x: Int, y: Int)
 

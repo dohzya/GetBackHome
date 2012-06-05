@@ -1,4 +1,4 @@
-package com.dohzya.gethomeback.models
+package com.dohzya.getbackhome.models
 
 import akka.actor._
 import akka.pattern.ask

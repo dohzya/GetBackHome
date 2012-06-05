@@ -1,4 +1,4 @@
-package com.dohzya.gethomeback.controllers
+package com.dohzya.getbackhome.controllers
 
 import play.api._
 import play.api.mvc._

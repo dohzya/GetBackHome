@@ -1,6 +1,6 @@
-package com.dohzya.gethomeback.libs
+package com.dohzya.getbackhome.libs
 
-import com.dohzya.gethomeback.models._
+import com.dohzya.getbackhome.models._
 
 object Generator {
 
