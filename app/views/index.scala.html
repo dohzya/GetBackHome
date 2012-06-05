@@ -1,11 +1,24 @@
-@()(implicit lang: Lang)
+@(games: Seq[String])(implicit lang: Lang)
 
 @main() {
 
   <h1>@Messages("index.welcome")</h1>
 
   <div>
-    <a href="/game/xxx">Start a game</a>
+    <div>Games</div>
+    <ul>
+      @for(game <- games) {
+      <li><a href="@com.dohzya.getbackhome.controllers.routes.Games.show(game)">@game</a></li>
+      }
+    </ul>
+  </div>
+
+  <div>
+    <form action="@com.dohzya.getbackhome.controllers.routes.Games.create" method="post">
+      Start a game
+      <input type="text" name="name" />
+      <input type="submit" />
+    </form>
   </div>
 
 }

@@ -1,4 +1,4 @@
-package com.dohzya.gethomeback.models
+package com.dohzya.getbackhome.models
 
 import play.api.libs.json
 

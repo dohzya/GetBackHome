@@ -1,4 +1,4 @@
-package com.dohzya.gethomeback.models
+package com.dohzya.getbackhome.models
 
 case class Dimension(height: Int, width: Int)
 

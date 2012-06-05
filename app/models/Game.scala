@@ -1,25 +1,34 @@
-package com.dohzya.gethomeback.models
+package com.dohzya.getbackhome.models
 
-import com.dohzya.gethomeback.libs.Generator
+import akka.actor._
+import akka.pattern.ask
+import akka.util.Timeout
+import akka.util.duration._
+import play.api.Play.current
+import play.api.libs.concurrent._
+import com.dohzya.getbackhome.libs.Generator
 
-case class Game(
-  name: String,
-  zones: Seq[Zone],
-  players: Seq[Player]
-) {
+class Game(
+  val name: String,
+  val zones: Seq[Zone]
+) extends Actor {
 
-  def player(name: String): Player = {
-    players find {_.name == name} match {
-      case Some(p) => p
-      case None => Player(name)
-    }
+  play.api.Logger.debug("Creating game "+ name+ "…")
+
+  import Game._
+
+  def receive = {
+    case messages.GetInfos => sender ! infos
   }
+
+  def infos = Infos(name, zones)
 
 }
 object Game {
 
   def apply(
-    name: String
+    name: String,
+    zoneDims: Dimension
   ): Game = {
     val gen = Generator(name)(_)
     val infectionGen = gen(0)
@@ -60,15 +69,54 @@ object Game {
         }
         Zone(
           Position(x, y),
-          Dimension(1000, 1000),
+          zoneDims,
           ts = 0,
           infos = Zone.Infos(height, type1, type2, infection, youth)
         )
       }
-    Game(name, zones)
+    new Game(name, zones)
   }
 
-  def apply(name: String, zones: Seq[Zone]): Game =
-    Game(name, zones, List[Player]())
+  case class Infos(name: String, zones: Seq[Zone])
+
+}
+
+class GameRegistry extends Actor {
+
+  var instances = Map.empty[String, ActorRef]
+
+  def receive = {
+    case messages.GetInstances => sender ! getInstances
+    case messages.GetInstance(name) => sender ! getInstance(name)
+    case messages.CreateGame(name, zoneDims) => sender ! createInstance(name, zoneDims)
+  }
+
+  def getInstance(name: String): Option[ActorRef] = instances.get(name)
+
+  def getInstances: Map[String, ActorRef] = instances
+
+  def createInstance(name: String, zoneDims: Dimension): Option[ActorRef] = {
+    try {
+      val ref = context.actorOf(Props(Game(name, zoneDims)), name)
+      instances = instances + (name -> ref)
+      Some(ref)
+    } catch {
+      case e => {
+        play.api.Logger.error(e.toString)
+        None
+      }
+    }
+  }
+
+}
+object GameRegistry {
+
+  lazy val actor = {
+    try {
+      Akka.system.actorOf(Props[GameRegistry], "games")
+    } catch {
+      case _ => Akka.system.actorFor("games")
+    }
+  }
 
 }
