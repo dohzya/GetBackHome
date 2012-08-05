@@ -37,25 +37,30 @@ GetBackHome.sprites = (function(GetBackHome){
                 var x = v[0], y = v[1], width = v[2], height = v[3];
                 sprites.tiles[k] = GetBackHome.Sprite(img, x, y, width, height);
             }
-            // tmp
-            var img2 = new Image();
-            img2.onload = function(){
-                sprites.tiles["mountains"] = GetBackHome.Sprite(img2, 0, 0, 157, 157);
-                var img3 = new Image();
-                img3.onload = function(){
-                    sprites.tiles["water"] = GetBackHome.Sprite(img3, 0, 0, 157, 157);
-                    var img4 = new Image();
-                    img4.onload = function(){
-                        sprites.tiles["grass"] = GetBackHome.Sprite(img4, 0, 0, 157, 157);
-                        andThen();
-                    };
-                    img4.src = "/assets/images/grass.svg";
+            function loadImg(infos, andThen) {
+                var name = infos.name,
+                    width = infos.width,
+                    height = infos.height;
+                var src = "/assets/images/"+name+".svg";
+                var img = new Image();
+                img.onload = function() {
+                    sprites.tiles[name] = GetBackHome.Sprite(img, 0, 0, width, height);
+                    andThen();
                 };
-                img3.src = "/assets/images/water.svg";
-            };
-            img2.src = "/assets/images/mountains.svg";
-            // -
-            // andThen();
+                img.src = src;
+            }
+            function loadImgs(imgs, andThen) {
+                var img = imgs.shift();
+                if (img) {
+                    loadImg(img, function(){ loadImgs(imgs, andThen); });
+                }
+                else { andThen(); }
+            }
+            loadImgs([
+                {name: "mountains", width: 157, height: 157},
+                {name: "water", width: 157, height: 157},
+                {name: "grass", width: 157, height: 157},
+            ], function(){ andThen(); });
         };
         sprites.img.src = opts.sprites.src;
     };
