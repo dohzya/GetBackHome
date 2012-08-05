@@ -1,7 +1,7 @@
 GetBackHome.Zone = (function(GetBackHome){
     "use strict";
 
-    function Class(zn, opts){
+    function Zone(zn, opts){
         this.x = zn.x;
         this.y = zn.y;
         this.points = this.buildPoints(0, 0);
@@ -35,22 +35,22 @@ GetBackHome.Zone = (function(GetBackHome){
 
     }
 
-    Class.prototype.cx = function(){
-        return this.x * (3/4 * Zone.width);
+    Zone.prototype.cx = function(){
+        return this.x * (3/4 * Class.width);
     };
 
-    Class.prototype.cy = function(){
-        return this.y * Zone.height - this.x * Zone.height / 2;
+    Zone.prototype.cy = function(){
+        return this.y * Class.height - this.x * Class.height / 2;
     };
 
-    Class.prototype.width = function(){
-        return Zone.width;
+    Zone.prototype.width = function(){
+        return Class.width;
     };
-    Class.prototype.height = function(){
-        return Zone.height;
+    Zone.prototype.height = function(){
+        return Class.height;
     };
 
-    Class.prototype.buildPoints = function(x, y){
+    Zone.prototype.buildPoints = function(x, y){
         var cx = this.cx() - x,
             cy = this.cy() - y,
             width = this.width(),
@@ -66,7 +66,7 @@ GetBackHome.Zone = (function(GetBackHome){
         ];
     };
 
-    Class.prototype.drawBackground = function(ctx, x, y){
+    Zone.prototype.drawBackground = function(ctx, x, y){
         var points = this.buildPoints(x, y);
         var color = this.selected ? "255, 250, 71" : this.color;
         ctx.fillStyle = "rgba("+color+", "+this.alphaInfection+")";
@@ -83,7 +83,7 @@ GetBackHome.Zone = (function(GetBackHome){
         ctx.fill();
     };
 
-    Class.prototype.drawImage = function(ctx, x, y){
+    Zone.prototype.drawImage = function(ctx, x, y){
         if (this.image) {
             var cx = this.cx() - this.width()/10 - x;
             var cy = this.cy() - this.height()/10 - y;
@@ -94,7 +94,7 @@ GetBackHome.Zone = (function(GetBackHome){
         }
     };
 
-    Class.prototype.contains = function(x, y){
+    Zone.prototype.contains = function(x, y){
         // Stolen from http://local.wasp.uwa.edu.au/~pbourke/geometry/insidepoly/
         for (var i=1; i<this.points.length; i++){
             var p0 = this.points[i];
@@ -105,14 +105,14 @@ GetBackHome.Zone = (function(GetBackHome){
         return true;
     };
 
-    Class.prototype.isContained = function(x, y, dx, dy){
+    Zone.prototype.isContained = function(x, y, dx, dy){
         return x < this.cx() + this.width() &&
                x+dx > this.cx() - this.width() &&
                y < this.cy() + this.height() &&
                y+dy > this.cy() - this.height();
     };
 
-    Class.prototype.around = function(){
+    Zone.prototype.around = function(){
         return [
             GetBackHome.drawer.getDrawable(this.cx() + this.width()/2, this.cy() - this.height()/2),
             GetBackHome.drawer.getDrawable(this.cx() + this.width(),   this.cy()),
@@ -123,32 +123,32 @@ GetBackHome.Zone = (function(GetBackHome){
         ];
     };
 
-    Class.prototype.draw = function(ctx, x, y){
+    Zone.prototype.draw = function(ctx, x, y){
         this.drawBackground(ctx, x, y);
         this.drawImage(ctx, x, y);
     };
 
-    Class.prototype.onClick = function(e){
+    Zone.prototype.onClick = function(e){
     };
 
-    Class.prototype.onSelected = function(){
+    Zone.prototype.onSelected = function(){
         this.selected = true;
     };
 
-    Class.prototype.display = function(dst){
+    Zone.prototype.display = function(dst){
         dst.displayZone(this);
     };
 
-    Class.prototype.onUnSelected = function(){
+    Zone.prototype.onUnSelected = function(){
         this.selected = false;
     };
 
-    function Zone(zn, opts){
-        return new Class(zn, opts);
+    function Class(zn, opts){
+        return new Zone(zn, opts);
     }
 
-    Zone.width = 48;
-    Zone.height = 48;
+    Class.width = 48;
+    Class.height = 48;
 
-    return Zone;
+    return Class;
 })(GetBackHome);
