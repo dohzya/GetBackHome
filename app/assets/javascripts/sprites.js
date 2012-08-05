@@ -1,7 +1,7 @@
 GetBackHome.Sprite = (function(GetBackHome){
     "use strict";
 
-    function Class(img, x, y, width, height) {
+    function Sprite(img, x, y, width, height) {
         this.img = img;
         this.x = x;
         this.y = y;
@@ -9,17 +9,17 @@ GetBackHome.Sprite = (function(GetBackHome){
         this.height = height;
     }
 
-    Class.prototype.draw = function(ctx, x, y, width, height) {
+    Sprite.prototype.draw = function(ctx, x, y, width, height) {
         var dx = width || this.width;
         var dy = height || this.height;
         ctx.drawImage(this.img, this.x, this.y, this.height, this.width, x, y, dx, dy);
     };
 
-    var Sprite = function(img, x, y, width, height) {
-        return new Class(img, x, y, width, height);
+    var Class = function(img, x, y, width, height) {
+        return new Sprite(img, x, y, width, height);
     };
 
-    return Sprite;
+    return Class;
 })(GetBackHome);
 
 GetBackHome.sprites = (function(GetBackHome){
