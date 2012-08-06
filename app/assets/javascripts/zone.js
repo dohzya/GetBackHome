@@ -32,15 +32,14 @@ GetBackHome.Zone = (function(GetBackHome){
             this.image = GetBackHome.sprites(this.infos.type1);
         }
         if (!this.image) this.image = GetBackHome.sprites("grass");
-
     }
 
     Zone.prototype.cx = function(){
-        return this.x * (3/4 * Class.width);
+        return this.x * (3/4 * this.width());
     };
 
     Zone.prototype.cy = function(){
-        return this.y * Class.height - this.x * Class.height / 2;
+        return this.y * this.height() - this.x * this.height() / 2;
     };
 
     Zone.prototype.width = function(){

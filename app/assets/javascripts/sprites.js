@@ -12,6 +12,7 @@ GetBackHome.Sprite = (function(GetBackHome){
     Sprite.prototype.draw = function(ctx, x, y, width, height) {
         var dx = width || this.width;
         var dy = height || this.height;
+        console.log(this.img, this.x, this.y, this.height, this.width, x, y, dx, dy);
         ctx.drawImage(this.img, this.x, this.y, this.height, this.width, x, y, dx, dy);
     };
 
@@ -40,8 +41,8 @@ GetBackHome.sprites = (function(GetBackHome){
             function loadImg(infos, andThen) {
                 var name = infos.name,
                     width = infos.width,
-                    height = infos.height;
-                var src = "/assets/images/"+name+".svg";
+                    height = infos.height,
+                    src = infos.src;
                 var img = new Image();
                 img.onload = function() {
                     sprites.tiles[name] = GetBackHome.Sprite(img, 0, 0, width, height);
@@ -54,12 +55,13 @@ GetBackHome.sprites = (function(GetBackHome){
                 if (img) {
                     loadImg(img, function(){ loadImgs(imgs, andThen); });
                 }
-                else { andThen(); }
+                else andThen();
             }
             loadImgs([
-                {name: "mountains", width: 157, height: 157},
-                {name: "water", width: 157, height: 157},
-                {name: "grass", width: 157, height: 157},
+                {name: "mountains",   width: 157, height: 157, src: "/assets/images/mountains.svg"},
+                {name: "water",       width: 157, height: 157, src: "/assets/images/water.svg"},
+                {name: "grass",       width: 157, height: 157, src: "/assets/images/grass.svg"},
+                {name: "mountainous", width: 184, height: 148, src: "/assets/images/mountainous.svg"}
             ], function(){ andThen(); });
         };
         sprites.img.src = opts.sprites.src;
