@@ -12,7 +12,6 @@ GetBackHome.Sprite = (function(GetBackHome){
     Sprite.prototype.draw = function(ctx, x, y, width, height) {
         var dx = width || this.width;
         var dy = height || this.height;
-        console.log(this.img, this.x, this.y, this.height, this.width, x, y, dx, dy);
         ctx.drawImage(this.img, this.x, this.y, this.height, this.width, x, y, dx, dy);
     };
 
@@ -58,10 +57,11 @@ GetBackHome.sprites = (function(GetBackHome){
                 else andThen();
             }
             loadImgs([
-                {name: "mountains",   width: 157, height: 157, src: "/assets/images/mountains.svg"},
-                {name: "water",       width: 157, height: 157, src: "/assets/images/water.svg"},
-                {name: "grass",       width: 157, height: 157, src: "/assets/images/grass.svg"},
-                {name: "mountainous", width: 184, height: 148, src: "/assets/images/mountainous.svg"}
+                {name: "mountains",   height: 157, width: 157, src: "/assets/images/mountains.svg"},
+                {name: "water",       height: 157, width: 157, src: "/assets/images/water.svg"},
+                {name: "grass",       height: 157, width: 157, src: "/assets/images/grass.svg"},
+                {name: "mountainous", height: 184, width: 148, src: "/assets/images/mountainous.svg"},
+                false
             ], function(){ andThen(); });
         };
         sprites.img.src = opts.sprites.src;
