@@ -2,11 +2,75 @@
 
 @navbar-link-color: #DDD;
 @navbar-bg: #333;
-
 @body-background: #555;
+// @btn-color: #DDD;
+@text-color: #AAA;
+@brand-primary: darken(#428bca, 30%);
 
-@btn-color:#DDD;
+#turn {
+  position: absolute;
+  top: 65px;
+  right: 15px;
+}
 
-@text-color:#AAA;
+.btn {
+  margin: 2px;
+}
 
-@brand-primary:         darken(#428bca, 30%);
+.gbh-frames {
+  position: absolute;
+  top: 100px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 20px;
+  & > div {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    .gbh-frame {
+      position: absolute;
+      width: 48%;
+      height: 46%;
+      border: solid 1px gray;
+      border-radius: 5px;
+      padding: 5px;
+      &.gbh-frame-messages {
+        top: 0;
+        left: 0;
+      }
+      &.gbh-frame-actions {
+        bottom: 0;
+        left: 0;
+      }
+      &.gbh-frame-stats {
+        bottom: 0;
+        right: 0;
+      }
+      &.gbh-frame-logs {
+        top: 0;
+        right: 0;
+      }
+      & > .gbh-title {
+        font-size: 150%;
+      }
+      & > .gbh-contents {
+        position: absolute;
+        top: 30px;
+        left: 5px;
+        right: 5px;
+        bottom: 5px;
+        overflow: auto;
+        & > .gbh-content {
+          clear: both;
+          & > .gbh-content-label {
+            float: left;
+          }
+          & > .gbh-content-value {
+            margin-left: 50%;
+          }
+        }
+      }
+    }
+  }
+}

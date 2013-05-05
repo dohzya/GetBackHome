@@ -2,6 +2,30 @@
 
 
 @templates.default() {
-  <h1>Welcome on GetBackHome!</h1>
+    <button id="turn" class="btn">FIN DE TOUR</button>
+    <div class="gbh-frames"><div>
+
+      <div id="ghb-frame-messages" class="gbh-frame gbh-frame-messages">
+        <div class="gbh-title">Messages</div>
+        <div class="gbh-contents"></div>
+      </div>
+      <div id="ghb-frame-actions" class="gbh-frame gbh-frame-actions">
+        <div class="gbh-title">Actions</div>
+        <div class="gbh-contents"></div>
+      </div>
+      <div id="ghb-frame-stats" class="gbh-frame gbh-frame-stats">
+        <div class="gbh-title">Stats</div>
+        <div class="gbh-contents"></div>
+      </div>
+      <div id="ghb-frame-logs" class="gbh-frame gbh-frame-logs">
+        <div class="gbh-title">Logs</div>
+        <div class="gbh-contents"></div>
+      </div>
+
+    </div></div>
+
+  <script>
+    $(window.GBH.init);
+  </script>
 
 }
