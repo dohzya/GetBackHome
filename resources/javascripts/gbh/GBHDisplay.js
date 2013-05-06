@@ -16,13 +16,17 @@ app.service("GBHDisplay", ["$rootScope", function ($rootScope) {
     self.addLog(m);
   };
 
+  var $logsVisibleContents = $("#ghb-frame-logs .gbh-visible-contents");
+  var $logsContents = $logsVisibleContents.find(".gbh-contents");
   self.addLog = function(msg) {
-    // var scroll = $logsVisibleContents.scrollTop() + $logsVisibleContents.height();
-    // var cur = $logsContents.height();
+    var scroll = $logsVisibleContents.scrollTop() + $logsVisibleContents.height();
+    var cur = $logsContents.height();
     $rootScope.logs.push(makeUnique({msg: msg}));
-    // if (scroll >= cur) {
-      // $logsVisibleContents.scrollTop($logsContents.height() - $logsVisibleContents.height());
-    // }
+    setTimeout(function(){
+      if (scroll >= cur) {
+        $logsVisibleContents.scrollTop($logsContents.height() - $logsVisibleContents.height());
+      }
+    }, 10);
   };
 
   self.addStat = function(id, label, suffix) {
