@@ -4,7 +4,7 @@ app.service("GBHDisplay", ["$rootScope", function ($rootScope) {
 
   var MAX_MESSAGE = 5;
 
-  self.addMessage = function(msg) {
+  function addMessage(msg) {
     var args = arguments;
     var m = msg.replace(/\{(\d+)\}/g, function(_, n){
       return ""+args[ parseInt(n, 10) +1];
@@ -13,12 +13,12 @@ app.service("GBHDisplay", ["$rootScope", function ($rootScope) {
       $rootScope.messages.shift();
     }
     $rootScope.messages.push(makeUnique({msg: m}));
-    self.addLog(m);
+    addLog(m);
   };
 
   var $logsVisibleContents = $("#ghb-frame-logs .gbh-visible-contents");
   var $logsContents = $logsVisibleContents.find(".gbh-contents");
-  self.addLog = function(msg) {
+  function addLog(msg) {
     var scroll = $logsVisibleContents.scrollTop() + $logsVisibleContents.height();
     var cur = $logsContents.height();
     $rootScope.logs.push(makeUnique({msg: msg}));
@@ -29,17 +29,17 @@ app.service("GBHDisplay", ["$rootScope", function ($rootScope) {
     }, 10);
   };
 
-  self.addStat = function(id, label, suffix) {
+  function addStat(id, label, suffix) {
     $rootScope.stats.push({id: id, label: label, suffix: suffix});
   };
-  self.updateStat = function(id, value) {
+  function updateStat(id, value) {
     var stat = $rootScope.stats.filter(function(s){ return s.id == id; })[0];
     if (stat) {
       stat.value = value;
     }
   };
 
-  self.addAction = function(id, name) {
+  function addAction(id, name) {
     $rootScope.actions.push({id: id, name: name, action: id});
   };
 
@@ -48,5 +48,26 @@ app.service("GBHDisplay", ["$rootScope", function ($rootScope) {
     obj.id = id++;
     return obj;
   }
+
+  addStat("turn", "Tour");
+  addStat("ratio", "Sécurité");
+  addStat("status", "Étant du fort", "%");
+  addStat("zombies", "Zombies aux alentour");
+  addStat("survivors", "Survivants");
+  addStat("idle", "Survivants inactif");
+  addStat("food", "Nourriture restante", "j");
+  addAction("purify", "Purifier");
+  addAction("scavange", "Fouiller");
+  addAction("fortify", "Fortifier");
+  addAction("convert", "Amenager");
+
+  // Export
+  $.extend(self, {
+    addMessage: addMessage,
+    addLog: addLog,
+    addStat: addStat,
+    updateStat: updateStat,
+    addAction: addAction
+  });
 
 }]);

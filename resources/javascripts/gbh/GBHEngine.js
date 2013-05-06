@@ -19,7 +19,7 @@ app.service("GBHEngine", ["GBHDisplay", function (Display) {
     else return Math.random();
   }
 
-  self.purify = function() {
+  function purify() {
     var killZombies = 0;
     var killSurvivors = 0;
     if (! ratio < 1) killZombies = Math.round(zombies * random(5, 30) / 100);
@@ -27,25 +27,25 @@ app.service("GBHEngine", ["GBHDisplay", function (Display) {
     zombies -= killZombies;
     survivors -= killSurvivors;
     Display.addMessage("La zone a été purifée ({0} zombies éliminés, {1} survivants tués)", killZombies, killSurvivors);
-    self.changed();
+    changed();
   }
-  self.scavange = function() {
+  function scavange() {
     food++;
     Display.addMessage("Du materiel a été récupéré");
-    self.changed();
+    changed();
   }
-  self.fortify = function() {
+  function fortify() {
     var rest = 100 - status;
     var fortifying = random(rest/10, rest);
     status += fortifying;
     Display.addMessage("La zone a été fortifiée (de {0}%)", fortifying);
-    self.changed();
+    changed();
   }
-  self.convert = function() {
+  function convert() {
     Display.addMessage("La zone a été amenagée");
-    self.changed();
+    changed();
   }
-  self.zombieAttack = function() {
+  function zombieAttack() {
     var ratio = (survivors * status) / (zombies * 10);
     var killZombies = 0;
     var killSurvivors = 0;
@@ -57,23 +57,23 @@ app.service("GBHEngine", ["GBHDisplay", function (Display) {
     survivors -= killSurvivors;
     status -= damage;
     Display.addMessage("La zone a été attaquée ! ({0} zombies éliminés, {1} survivants tués, {2}% de dégats)", killZombies, killSurvivors, damage);
-    self.changed();
+    changed();
   }
 
-  self.turn = function() {
+  function turn() {
     zombies += random(10, 100);
     if (random() > 0.8) {
       var nb = Math.round(random(1, 6) / 2);
       survivors += nb;
       Display.addMessage("Vous avez été rejoins par {0} survivants", nb);
     }
-    if (random() > 0.7) self.zombieAttack();
+    if (random() > 0.7) zombieAttack();
     turnNb++;
     Display.addMessage("Tour {0}.", turnNb);
-    self.changed();
+    changed();
   }
 
-  self.updateStats = function() {
+  function updateStats() {
     Display.updateStat("turn", turnNb);
     Display.updateStat("ratio", ratio);
     Display.updateStat("status", status);
@@ -83,16 +83,16 @@ app.service("GBHEngine", ["GBHDisplay", function (Display) {
     Display.updateStat("food", food);
   }
 
-  self.changed = function() {
-    var s = self.stats();
+  function changed() {
+    var s = stats();
     for (var i=0; i<changeCb.length; i++) changeCb[i](s);
   }
 
-  self.onChange = function(cb) {
+  function onChange(cb) {
     changeCb.push(cb);
   }
 
-  self.stats = function() {
+  function stats() {
     return {
       survivors: survivors,
       status: status,
@@ -102,7 +102,10 @@ app.service("GBHEngine", ["GBHDisplay", function (Display) {
     };
   }
 
-  var changeCb = [function(){ ratio = (survivors * 10) / zombies; }, function(){ self.updateStats(); }];
+  var changeCb = [
+    function(){ ratio = (survivors * 10) / zombies; },
+    function(){ updateStats(); }
+  ];
   var survivors = 15;
   var ratio;
   var status = 100;
@@ -110,17 +113,17 @@ app.service("GBHEngine", ["GBHDisplay", function (Display) {
   var idle = 0;
   var food = 0;
   var turnNb = 0;
-  Display.addStat("turn", "Tour");
-  Display.addStat("ratio", "Sécurité");
-  Display.addStat("status", "Étant du fort", "%");
-  Display.addStat("zombies", "Zombies aux alentour");
-  Display.addStat("survivors", "Survivants");
-  Display.addStat("idle", "Survivants inactif");
-  Display.addStat("food", "Nourriture restante", "j");
-  Display.addAction("purify", "Purifier");
-  Display.addAction("scavange", "Fouiller");
-  Display.addAction("fortify", "Fortifier");
-  Display.addAction("convert", "Amenager");
-  self.changed();
+  changed();
+
+  // Export
+  $.extend(self, {
+    purify: purify,
+    scavange: scavange,
+    fortify: fortify,
+    convert: convert,
+    zombieAttack: zombieAttack,
+    turn: turn,
+    stats: stats
+  });
 
 }]);
