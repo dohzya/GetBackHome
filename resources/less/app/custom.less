@@ -7,7 +7,7 @@
 @text-color: #AAA;
 @brand-primary: darken(#428bca, 30%);
 
-#turn {
+button[data-id=turn] {
   position: absolute;
   top: 65px;
   right: 15px;
@@ -54,13 +54,15 @@
       & > .gbh-title {
         font-size: 150%;
       }
-      & > .gbh-contents {
+      & .gbh-visible-contents {
         position: absolute;
+        overflow: auto;
         top: 30px;
         left: 5px;
         right: 5px;
         bottom: 5px;
-        overflow: auto;
+      }
+      & .gbh-contents {
         & > .gbh-content {
           clear: both;
           & > .gbh-content-label {

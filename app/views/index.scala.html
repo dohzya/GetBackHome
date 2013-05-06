@@ -2,30 +2,39 @@
 
 
 @templates.default() {
-    <button id="turn" class="btn">FIN DE TOUR</button>
+    <button data-id="turn" class="btn" data-ng-click="turn()">FIN DE TOUR</button>
     <div class="gbh-frames"><div>
 
       <div id="ghb-frame-messages" class="gbh-frame gbh-frame-messages">
         <div class="gbh-title">Messages</div>
-        <div class="gbh-contents"></div>
+        <div class="gbh-contents">
+          <div class="gbh-content" data-id="{{msg.id}}" data-ng-repeat="msg in messages">{{msg.msg}}</div>
+        </div>
       </div>
       <div id="ghb-frame-actions" class="gbh-frame gbh-frame-actions">
         <div class="gbh-title">Actions</div>
-        <div class="gbh-contents"></div>
+        <div class="gbh-contents">
+          <button data-id="{{action.id}}" class="btn gbh-content" data-ng-click="{{action.action}}()"  data-ng-repeat="action in actions">{{action.name}}</button>
+        </div>
       </div>
       <div id="ghb-frame-stats" class="gbh-frame gbh-frame-stats">
         <div class="gbh-title">Stats</div>
-        <div class="gbh-contents"></div>
+        <div class="gbh-contents">
+          <div data-id="{{stat.id}}" class="gbh-content" data-ng-repeat="stat in stats">
+            <div class="gbh-content-label">{{stat.label}}</div>
+            <div class="gbh-content-value">{{stat.value}}{{stat.suffix}}</div>
+          </div>
+        </div>
       </div>
       <div id="ghb-frame-logs" class="gbh-frame gbh-frame-logs">
         <div class="gbh-title">Logs</div>
-        <div class="gbh-contents"></div>
+        <div class="gbh-visible-contents">
+          <div class="gbh-contents">
+            <div class="gbh-content" data-id="{{log.id}}" data-ng-repeat="log in logs">{{log.msg}}</div>
+          </div>
+        </div>
       </div>
 
     </div></div>
-
-  <script>
-    $(window.GBH.init);
-  </script>
 
 }
