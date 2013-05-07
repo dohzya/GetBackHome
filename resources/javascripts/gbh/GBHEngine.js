@@ -109,16 +109,27 @@ app.service("GBHEngine", ["GBHDisplay", function (Display) {
     Display.updateStat("survivors", survivors);
     Display.updateStat("idle", idle);
     Display.updateStat("food", "{0} ({1} | {2} jours)", food, -survivors, Math.round(food / survivors));
-    Display.updateAction("purify", "Purifier ({0} %)", Math.round(computeRatio(survivors, zombies, 1, COEF_PURIFY)*100))
+  }
+
+  function updateActions() {
+    Display.updateAction("purify", Math.round(computeRatio(selected, zombies, 1, COEF_PURIFY)*100));
+    Display.updateAction("scavange", 100);
+    Display.updateAction("fortify", 100);
   }
 
   function changed() {
     updateStats();
+    updateActions();
   }
 
   function computeRatio(nbSurvivors, nbZombies, defense, coef) {
     var r = (nbSurvivors * defense  * coef) / nbZombies;
     return Math.min(1, r);
+  }
+
+  function select(s) {
+    selected = s;
+    updateActions();
   }
 
   var turnNb = 0;
@@ -130,8 +141,10 @@ app.service("GBHEngine", ["GBHDisplay", function (Display) {
   var defense = 1;
   var zombies = 100;
 
+  var selected = 0;
+
   var COEF_FORT = 10;
-  var COEF_PURIFY = 20;
+  var COEF_PURIFY = 10;
 
   changed();
 
@@ -142,7 +155,8 @@ app.service("GBHEngine", ["GBHDisplay", function (Display) {
     fortify: fortify,
     convert: convert,
     zombieAttack: zombieAttack,
-    turn: turn
+    turn: turn,
+    select: select
   });
 
 }]);

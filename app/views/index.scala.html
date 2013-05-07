@@ -14,7 +14,8 @@
       <div id="ghb-frame-actions" class="gbh-frame gbh-frame-actions">
         <div class="gbh-title">Actions</div>
         <div class="gbh-contents">
-          <button data-id="{{action.id}}" class="btn gbh-content" data-ng-click="{{action.action}}()"  data-ng-repeat="action in actions">{{action.name}}</button>
+          <div>Demander à <input type="number" ng-model="selected" ng-change="select()" min="0" max="50" required /> survivants de</div>
+          <button data-id="{{action.id}}" class="btn gbh-content" data-ng-click="{{action.action}}()" data-ng-repeat="action in actions">{{action.name}} ({{action.ratio}} %)</button>
         </div>
       </div>
       <div id="ghb-frame-stats" class="gbh-frame gbh-frame-stats">

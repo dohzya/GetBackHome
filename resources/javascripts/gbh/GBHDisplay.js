@@ -48,11 +48,23 @@ app.service("GBHDisplay", ["$rootScope", function ($rootScope) {
   function addAction(id, name) {
     var action = {id: id, name: name, action: id};
     actions[id] = action;
-    $rootScope.actions.push(action);
+    updateActions()
   };
-  function updateAction(id, name) {
+  function updateAction(id, ratio) {
     var action = actions[id];
-    if (action) { action.name = formatMessage(name, arguments, 2); }
+    if (action) { action.ratio = ratio; }
+    updateActions();
+  }
+  function updateActions() {
+    $rootScope.actions = [];
+    for (id in actions) {
+      if (actions.hasOwnProperty(id)) {
+        var action = actions[id];
+        if (action.ratio) {
+          $rootScope.actions.push(action);
+        }
+      }
+    }
   }
 
   var id = 0;

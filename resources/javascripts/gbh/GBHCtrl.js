@@ -9,4 +9,9 @@ app.controller("GBHCtrl", ["$scope", "$routeParams", "GBHEngine", function ($sco
   $scope.convert = function(){ Engine.convert(); }
   $scope.turn = function(){ Engine.turn(); }
 
+  $scope.selected = 20;
+  $scope.select = function() {
+    Engine.select($scope.selected);
+  }
+
 }]);
