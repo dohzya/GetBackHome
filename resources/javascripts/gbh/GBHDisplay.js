@@ -4,11 +4,14 @@ app.service("GBHDisplay", ["$rootScope", function ($rootScope) {
 
   var MAX_MESSAGE = 5;
 
-  function addMessage(msg) {
-    var args = arguments;
-    var m = msg.replace(/\{(\d+)\}/g, function(_, n){
-      return ""+args[ parseInt(n, 10) +1];
+  function formatMessage(msg, args, base) {
+    return msg.replace(/\{(\d+)\}/g, function(_, n){
+      return ""+args[parseInt(n, 10) + base];
     });
+  }
+
+  function addMessage(msg) {
+    var m = formatMessage(msg, arguments, 1);
     if ($rootScope.messages.length > MAX_MESSAGE) {
       $rootScope.messages.shift();
     }
@@ -29,19 +32,28 @@ app.service("GBHDisplay", ["$rootScope", function ($rootScope) {
     }, 10);
   };
 
+  var stats = {};
   function addStat(id, label, suffix) {
-    $rootScope.stats.push({id: id, label: label, suffix: suffix});
+    var stat = {id: id, label: label, suffix: suffix};
+    stats[id] = stat;
+    $rootScope.stats.push(stat);
   };
   function updateStat(id, value) {
-    var stat = $rootScope.stats.filter(function(s){ return s.id == id; })[0];
-    if (stat) {
-      stat.value = value;
-    }
+    var stat = stats[id];
+    var msg = typeof(value) == "string" ? formatMessage(value, arguments, 2) : ""+value;
+    if (stat) { stat.value = msg; }
   };
 
+  var actions = {};
   function addAction(id, name) {
-    $rootScope.actions.push({id: id, name: name, action: id});
+    var action = {id: id, name: name, action: id};
+    actions[id] = action;
+    $rootScope.actions.push(action);
   };
+  function updateAction(id, name) {
+    var action = actions[id];
+    if (action) { action.name = formatMessage(name, arguments, 2); }
+  }
 
   var id = 0;
   function makeUnique(obj) {
@@ -50,12 +62,12 @@ app.service("GBHDisplay", ["$rootScope", function ($rootScope) {
   }
 
   addStat("turn", "Tour");
-  addStat("ratio", "Sécurité");
-  addStat("status", "Étant du fort", "%");
+  addStat("ratio", "Sécurité", " %");
+  addStat("defense", "Étant du fort", " %");
   addStat("zombies", "Zombies aux alentour");
   addStat("survivors", "Survivants");
   addStat("idle", "Survivants inactif");
-  addStat("food", "Nourriture restante", "j");
+  addStat("food", "Nourriture restante");
   addAction("purify", "Purifier");
   addAction("scavange", "Fouiller");
   addAction("fortify", "Fortifier");
@@ -67,7 +79,8 @@ app.service("GBHDisplay", ["$rootScope", function ($rootScope) {
     addLog: addLog,
     addStat: addStat,
     updateStat: updateStat,
-    addAction: addAction
+    addAction: addAction,
+    updateAction: updateAction
   });
 
 }]);
