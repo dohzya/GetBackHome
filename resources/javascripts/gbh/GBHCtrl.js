@@ -1,13 +1,10 @@
-app.controller("GBHCtrl", ["$scope", "$routeParams", "GBHEngine", "GBHLogger", function ($scope, $routeParams, Engine, Logger) {
+app.controller("GBHCtrl", ["$scope", "GBHEngine", "GBHLogger", function ($scope, Engine, Logger) {
   "use strict";
 
   var self = this;
 
   $scope.turn = function(){ Engine.turn(); };
-  $scope.purify = function(){
-    console.log("purify")
-    Logger.trace("purify")
-    Engine.purify(); };
+  $scope.purify = function(){ Engine.purify(); };
   $scope.scavange = function(){ Engine.scavange(); };
   $scope.fortify = function(){ Engine.fortify(); };
   $scope.convert = function(){ Engine.convert(); };

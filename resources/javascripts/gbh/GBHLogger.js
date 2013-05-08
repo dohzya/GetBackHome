@@ -16,7 +16,7 @@ app.service("GBHLogger", [function () {
     error: ERROR
   }
 
-  var LEVEL = TRACE
+  var LEVEL = DEBUG;//TRACE;
   function setLevel(value) {
     if (typeof(value) == "number") { LEVEL = value; }
     else { LEVEL = LEVEL[value]; }

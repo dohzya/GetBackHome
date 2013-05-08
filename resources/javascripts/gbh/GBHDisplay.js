@@ -68,7 +68,7 @@ app.service("GBHDisplay", ["$rootScope", "GBHLogger", function ($rootScope, Logg
     if (action) {
       for (stat in stats) {
         if (stats.hasOwnProperty(stat)) {
-          Logger.debug("Update stat {0} of action {0}", stat, action)
+          Logger.trace("Update stat {0} of action {0}", stat, action)
           action.stats[stat].value = stats[stat];
         }
       }
