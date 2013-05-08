@@ -1,2 +1,23 @@
 - ratio de survivants morts qui deviennent zombies
   - important en cas de fuite
+
+- un {{ordre}} contient
+  - une action (purifier, fortifier, etc)
+  - un nombre de personnes
+    - plus il y a de monde, moins c'est dangereux,
+    - plus il y a de monde, moins ça prend de temps (jusqu'à un certain point)
+  - un temps donné ⁇
+    - plus c'est long, moins c'est dangereux
+    - plus c'est long, mieux on réussi
+  - un comportement ⁇
+    - normal
+    - agressif ⇒ plus rapide, plus dangereux
+    - minutieux ⇒ plus lent, plus sûr
+
+- on peut construire d'autres forts
+  - on aura des news en retard
+    - faut-il une IA pour les gérer ⁇
+
+- un ordre dure plusieurs tours
+  - on a des news en temps réel quand ça se passe dans le fort
+  - on _peut_ avoir des news en cours de route sinon

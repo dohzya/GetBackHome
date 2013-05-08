@@ -3,7 +3,8 @@ app.controller("GBHCtrl", ["$scope", "GBHEngine", "GBHLogger", function ($scope,
 
   var self = this;
 
-  $scope.turn = function(){ Engine.turn(); };
+  $scope.nextTurn = function(){ Engine.turn(); };
+
   $scope.purify = function(){ Engine.purify(); };
   $scope.scavange = function(){ Engine.scavange(); };
   $scope.fortify = function(){ Engine.fortify(); };

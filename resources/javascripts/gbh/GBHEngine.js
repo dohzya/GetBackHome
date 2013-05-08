@@ -41,13 +41,10 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", function (Display, Logger) 
     var ratio = computeRatio(survivors, zombies, random(70, 130)/100, COEF_PURIFY);
     var killZombies = 0;
     var killSurvivors = 0;
-    var damage = 0;
     killZombies = positiveFloor(zombies * random(ratio*50, ratio*100)/100);
     killSurvivors = positiveFloor(survivors * random((1-ratio)*50, (1-ratio)*100)/100);
-    damage = positiveFloor(defense * random((1-ratio)*50, (1-ratio)*100)/100);
     zombies -= killZombies;
     survivors -= killSurvivors;
-    defense -= damage;
     Display.addMessage("La zone a été purifée ({0} zombies éliminés, {1} survivants tués)", killZombies, killSurvivors);
     changed();
   }
@@ -62,7 +59,7 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", function (Display, Logger) 
     var survivors = sendSelected();
     var fortifying = random(10, 50) / 100;
     defense += fortifying;
-    Display.addMessage("La zone a été fortifiée (de {0}%)", fortifying);
+    Display.addMessage("La zone a été fortifiée (de {0}%)", Math.round(fortifying*100));
     changed();
   }
   function convert() {
@@ -113,7 +110,7 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", function (Display, Logger) 
 
   function updateStats() {
     Display.updateStat("turn", turnNb);
-    Display.updateStat("ratio", Math.round(computeRatio(survivors, zombies, defense, COEF_FORT)*100));
+    Display.updateStat("ratio", Math.round(computeRatio(idle, zombies, defense, COEF_FORT)*100));
     Display.updateStat("defense", Math.round(defense*100));
     Display.updateStat("zombies", zombies);
     Display.updateStat("survivors", survivors);
@@ -137,23 +134,25 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", function (Display, Logger) 
 
   function computeRatio(nbSurvivors, nbZombies, defense, coef) {
     var r = (nbSurvivors * defense  * coef) / nbZombies;
-    return Math.min(1, r);
+    return Math.max(Math.min(0.999, r), 0.01);
   }
 
   function select(s) {
-    selected = Math.min(s, survivors);
+    selected = Math.min(s, idle);
     if (selected != s) { changeSelection(selected); }
-    updateActions();
+    changed();
     return selected;
   }
   function sendSelected() {
     var s = selected;
     idle -= selected;
     selected = 0;
+    changeSelection(0);
     return s;
   }
   function resetSelected() {
     selected = 0;
+    changeSelection(0);
     idle = survivors;
   }
 
