@@ -2,7 +2,7 @@
 
 
 @templates.default() {
-    <button data-id="turn" class="btn" data-ng-click="turn()">FIN DE TOUR</button>
+    <div data-id="turn" class="btn" data-ng-click="turn()">FIN DE TOUR</div>
     <div class="gbh-frames"><div>
 
       <div id="ghb-frame-messages" class="gbh-frame gbh-frame-messages">
@@ -14,8 +14,13 @@
       <div id="ghb-frame-actions" class="gbh-frame gbh-frame-actions">
         <div class="gbh-title">Actions</div>
         <div class="gbh-contents">
-          <div>Demander à <input type="number" ng-model="selected" ng-change="select()" min="0" max="50" required /> survivants de</div>
-          <button data-id="{{action.id}}" class="btn gbh-content" data-ng-click="{{action.action}}()" data-ng-repeat="action in actions">{{action.name}} ({{action.ratio}} %)</button>
+          <div>Demander à <input type="number" id="selected" ng-model="selected" ng-change="select()" min="0" required /> survivants de</div>
+          <div data-id="{{action.id}}" class="btn gbh-content" data-ng-click="{{action.action}}()" data-ng-repeat="action in actions">
+            <div>{{action.name}}</div>
+            <div data-ng-repeat="stat in action.statsList">
+              <span>{{stat.name}}</span> : <span>{{stat.value}}{{stat.suffix}}</span>
+            </div>
+          </div>
         </div>
       </div>
       <div id="ghb-frame-stats" class="gbh-frame gbh-frame-stats">

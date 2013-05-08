@@ -1,5 +1,9 @@
-app.service("GBHEngine", ["GBHDisplay", function (Display) {
+app.service("GBHEngine", ["GBHDisplay", "GBHLogger", function (Display, Logger) {
   "use strict";
+
+  function changeSelection(selected) {
+    $("#selected").val(selected);
+  }
 
   var self = this;
 
@@ -32,6 +36,8 @@ app.service("GBHEngine", ["GBHDisplay", function (Display) {
   }
 
   function purify() {
+    Logger.trace("purify()");
+    var survivors = sendSelected();
     var ratio = computeRatio(survivors, zombies, random(70, 130)/100, COEF_PURIFY);
     var killZombies = 0;
     var killSurvivors = 0;
@@ -46,23 +52,26 @@ app.service("GBHEngine", ["GBHDisplay", function (Display) {
     changed();
   }
   function scavange() {
+    var survivors = sendSelected();
     var scavangedFood = random(2, 10);
     food += scavangedFood;
     Display.addMessage("Du materiel a été récupéré ({0} nourritures)", scavangedFood);
     changed();
   }
   function fortify() {
+    var survivors = sendSelected();
     var fortifying = random(10, 50) / 100;
     defense += fortifying;
     Display.addMessage("La zone a été fortifiée (de {0}%)", fortifying);
     changed();
   }
   function convert() {
+    var survivors = sendSelected();
     Display.addMessage("La zone a été amenagée");
     changed();
   }
   function zombieAttack() {
-    var ratio = computeRatio(survivors, zombies, defense, COEF_FORT);
+    var ratio = computeRatio(idle, zombies, defense, COEF_FORT);
     var killZombies = 0;
     var killSurvivors = 0;
     var damage = 0;
@@ -77,6 +86,7 @@ app.service("GBHEngine", ["GBHDisplay", function (Display) {
   }
 
   function turn() {
+    resetSelected();
     var consumedFood = random(survivors*0.8, survivors*1.2);
     if (consumedFood < food) {
       food -= consumedFood;
@@ -112,9 +122,12 @@ app.service("GBHEngine", ["GBHDisplay", function (Display) {
   }
 
   function updateActions() {
-    Display.updateAction("purify", Math.round(computeRatio(selected, zombies, 1, COEF_PURIFY)*100));
-    Display.updateAction("scavange", 100);
-    Display.updateAction("fortify", 100);
+    Display.updateAction("purify", {"safe": Math.round(computeRatio(selected, zombies, 1, COEF_PURIFY)*100)});
+    Display.showAction("purify");
+    Display.updateAction("scavange", {"safe": 100, "loot": 100});
+    Display.showAction("scavange");
+    Display.updateAction("fortify", {"build": 100});
+    Display.showAction("fortify");
   }
 
   function changed() {
@@ -128,24 +141,37 @@ app.service("GBHEngine", ["GBHDisplay", function (Display) {
   }
 
   function select(s) {
-    selected = s;
+    selected = Math.min(s, survivors);
+    if (selected != s) { changeSelection(selected); }
     updateActions();
+    return selected;
+  }
+  function sendSelected() {
+    var s = selected;
+    idle -= selected;
+    selected = 0;
+    return s;
+  }
+  function resetSelected() {
+    selected = 0;
+    idle = survivors;
   }
 
   var turnNb = 0;
 
   var survivors = 10;
-  var idle = 0;
   var food = 50;
 
   var defense = 1;
   var zombies = 100;
 
   var selected = 0;
+  var idle = 0;
 
   var COEF_FORT = 10;
-  var COEF_PURIFY = 10;
+  var COEF_PURIFY = 20;
 
+  resetSelected();
   changed();
 
   // Export

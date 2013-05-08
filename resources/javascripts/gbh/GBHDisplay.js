@@ -1,4 +1,4 @@
-app.service("GBHDisplay", ["$rootScope", function ($rootScope) {
+app.service("GBHDisplay", ["$rootScope", "GBHLogger", function ($rootScope, Logger) {
 
   var self = this;
 
@@ -45,14 +45,52 @@ app.service("GBHDisplay", ["$rootScope", function ($rootScope) {
   };
 
   var actions = {};
-  function addAction(id, name) {
-    var action = {id: id, name: name, action: id};
+  function addAction(id, name, stats) {
+    var _stats = {};
+    var _statsList = [];
+    for (stat in stats) {
+      if (stats.hasOwnProperty(stat)) {
+        var s = stats[stat];
+        var _stat;
+        if (typeof(s) == "string") { _stat = {id: stat, name: s}; }
+        else { _stat = {id: stat, name: s[0], suffix: s[1]}; }
+        _stats[stat] = _stat;
+        _statsList.push(_stat);
+      }
+    }
+    var action = {id: id, name: name, action: id, stats: _stats, statsList: _statsList, visible: false};
     actions[id] = action;
-    updateActions()
+    updateActions();
   };
-  function updateAction(id, ratio) {
+  function updateAction(id, stats) {
+    Logger.trace("updateAction({0}, {1})", id, stats);
     var action = actions[id];
-    if (action) { action.ratio = ratio; }
+    if (action) {
+      for (stat in stats) {
+        if (stats.hasOwnProperty(stat)) {
+          Logger.debug("Update stat {0} of action {0}", stat, action)
+          action.stats[stat].value = stats[stat];
+        }
+      }
+    }
+    updateActions();
+  }
+  function showAction(id) {
+    Logger.trace("showAction({0})", id);
+    var action = actions[id];
+    if (action) {
+      Logger.trace("Show action {0}", action);
+      action.visible = true;
+    }
+    updateActions();
+  }
+  function hideAction(id) {
+    Logger.trace("hideAction({0})", id);
+    var action = actions[id];
+    if (action) {
+      Logger.trace("Hide action {0}", action);
+      action.visible = false;
+    }
     updateActions();
   }
   function updateActions() {
@@ -60,7 +98,7 @@ app.service("GBHDisplay", ["$rootScope", function ($rootScope) {
     for (id in actions) {
       if (actions.hasOwnProperty(id)) {
         var action = actions[id];
-        if (action.ratio) {
+        if (action.visible) {
           $rootScope.actions.push(action);
         }
       }
@@ -80,10 +118,10 @@ app.service("GBHDisplay", ["$rootScope", function ($rootScope) {
   addStat("survivors", "Survivants");
   addStat("idle", "Survivants inactif");
   addStat("food", "Nourriture restante");
-  addAction("purify", "Purifier");
-  addAction("scavange", "Fouiller");
-  addAction("fortify", "Fortifier");
-  addAction("convert", "Amenager");
+  addAction("purify", "Purifier", {"safe": ["Sécurité", " %"]});
+  addAction("scavange", "Fouiller", {"safe": ["Sécurité", " %"], "loot": "Récolte"});
+  addAction("fortify", "Fortifier", {"build": "Avancement"});
+  addAction("convert", "Amenager", {"build": ["Avancement", " %"]});
 
   // Export
   $.extend(self, {
@@ -92,7 +130,9 @@ app.service("GBHDisplay", ["$rootScope", function ($rootScope) {
     addStat: addStat,
     updateStat: updateStat,
     addAction: addAction,
-    updateAction: updateAction
+    updateAction: updateAction,
+    showAction: showAction,
+    hideAction: hideAction
   });
 
 }]);
