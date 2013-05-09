@@ -5,10 +5,19 @@
     <div data-id="next-turn" class="btn" data-ng-click="nextTurn()">FIN DE TOUR</div>
     <div class="gbh-frames"><div>
 
-      <div id="ghb-frame-messages" class="gbh-frame gbh-frame-messages">
-        <div class="gbh-title">Messages</div>
+      <div id="ghb-frame-orders" class="gbh-frame gbh-frame-orders">
+        <div class="gbh-title">Ordres</div>
         <div class="gbh-contents">
-          <div class="gbh-content" data-id="{{msg.id}}" data-ng-repeat="msg in messages">{{msg.msg}}</div>
+          <div class="gbh-content" data-id="{{order.id}}" data-ng-repeat="order in orders">
+            <span>{{order.msg}}</span>
+            (<span>survivants : {{order.survivors}}</span>, <span>tours restants : {{order.turnToComplete}}</span>)
+            <div class="btn btn-small" ng-click="cancelOrder({{order.id}})">
+              <span>Annuler</span> (<span>1 tour</span>)
+            </div>
+            <div class="btn btn-small" ng-click="sendBackup({{order.id}})">
+              <span>Envoyer du renfort</span> (<span>1 tour</span>)
+            </div>
+          </div>
         </div>
       </div>
       <div id="ghb-frame-actions" class="gbh-frame gbh-frame-actions">
@@ -33,7 +42,7 @@
         </div>
       </div>
       <div id="ghb-frame-logs" class="gbh-frame gbh-frame-logs">
-        <div class="gbh-title">Logs</div>
+        <div class="gbh-title">Messages</div>
         <div class="gbh-visible-contents">
           <div class="gbh-contents">
             <div class="gbh-content" data-id="{{log.id}}" data-ng-repeat="log in logs">{{log.msg}}</div>

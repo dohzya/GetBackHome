@@ -2,29 +2,25 @@ app.service("GBHDisplay", ["$rootScope", "GBHLogger", function ($rootScope, Logg
 
   var self = this;
 
-  var MAX_MESSAGE = 5;
-
   function formatMessage(msg, args, base) {
     return msg.replace(/\{(\d+)\}/g, function(_, n){
       return ""+args[parseInt(n, 10) + base];
     });
   }
 
-  function addMessage(msg) {
-    var m = formatMessage(msg, arguments, 1);
-    if ($rootScope.messages.length > MAX_MESSAGE) {
-      $rootScope.messages.shift();
-    }
-    $rootScope.messages.push(makeUnique({msg: m}));
-    addLog(m);
-  };
+  function addOrder(order) {
+    $rootScope.orders.push(makeUnique(order));
+  }
+  function resetOrders() {
+    $rootScope.orders = [];
+  }
 
   var $logsVisibleContents = $("#ghb-frame-logs .gbh-visible-contents");
   var $logsContents = $logsVisibleContents.find(".gbh-contents");
-  function addLog(msg) {
+  function addMessage(msg) {
     var scroll = $logsVisibleContents.scrollTop() + $logsVisibleContents.height();
     var cur = $logsContents.height();
-    $rootScope.logs.push(makeUnique({msg: msg}));
+    $rootScope.logs.push(makeUnique({msg: formatMessage(msg, arguments, 1)}));
     setTimeout(function(){
       if (scroll >= cur) {
         $logsVisibleContents.scrollTop($logsContents.height() - $logsVisibleContents.height());
@@ -107,7 +103,7 @@ app.service("GBHDisplay", ["$rootScope", "GBHLogger", function ($rootScope, Logg
 
   var id = 0;
   function makeUnique(obj) {
-    obj.id = id++;
+    if (!obj.id) { obj.id = id++; }
     return obj;
   }
 
@@ -125,8 +121,9 @@ app.service("GBHDisplay", ["$rootScope", "GBHLogger", function ($rootScope, Logg
 
   // Export
   $.extend(self, {
+    addOrder: addOrder,
+    resetOrders: resetOrders,
     addMessage: addMessage,
-    addLog: addLog,
     addStat: addStat,
     updateStat: updateStat,
     addAction: addAction,

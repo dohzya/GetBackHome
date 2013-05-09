@@ -13,10 +13,10 @@ var app = angular
       })
   }])
   .config(["$locationProvider", function ($locationProvider) {
-    $locationProvider.html5Mode(false)
+    $locationProvider.html5Mode(true)
   }])
   .run(["$rootScope", function ($rootScope) {
-    $rootScope.messages = [];
+    $rootScope.orders = [];
     $rootScope.logs = [];
     $rootScope.stats = [];
     $rootScope.actions = [];
