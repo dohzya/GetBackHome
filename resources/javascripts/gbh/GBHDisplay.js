@@ -36,7 +36,7 @@ app.service("GBHDisplay", ["$rootScope", "GBHLogger", function ($rootScope, Logg
   };
   function updateStat(id, value) {
     var stat = stats[id];
-    var msg = typeof(value) == "string" ? formatMessage(value, arguments, 2) : ""+value;
+    var msg = (typeof(value) == "string") ? formatMessage(value, arguments, 2) : ""+value;
     if (stat) { stat.value = msg; }
   };
 
@@ -44,10 +44,12 @@ app.service("GBHDisplay", ["$rootScope", "GBHLogger", function ($rootScope, Logg
   function addAction(order) {
     var stats = {};
     var statsList = [];
-    for (var i in order.action.stats) {
-        var stat = order.action.stats[i];
+    for (var id in order.action.stats) {
+      if (order.action.stats.hasOwnProperty(id)) {
+        var stat = order.action.stats[id];
         stats[stat.id] = stat;
         statsList.push(stat);
+      }
     }
     var action = {
       id: order.id,
@@ -57,7 +59,7 @@ app.service("GBHDisplay", ["$rootScope", "GBHLogger", function ($rootScope, Logg
       statsList: statsList,
       visible: order.action.visible !== false
     };
-    actions[id] = action;
+    actions[order.id] = action;
     updateActions();
   };
   function updateAction(order) {
@@ -107,9 +109,7 @@ app.service("GBHDisplay", ["$rootScope", "GBHLogger", function ($rootScope, Logg
   addStat("survivors", "Survivants");
   addStat("idle", "Survivants inactif");
   addStat("food", "Nourriture restante");
-  // addAction("purify", "Purifier", {"safe": ["Sécurité", " %"]});
   // addAction("scavange", "Fouiller", {"safe": ["Sécurité", " %"], "loot": "Récolte"});
-  // addAction("fortify", "Fortifier", {"build": "Avancement"});
   // addAction("convert", "Amenager", {"build": ["Avancement", " %"]});
 
   // Export

@@ -61,13 +61,7 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", function (Disp
     });
     changed();
   }
-  function fortify() {
-    var survivors = sendSelected();
-    var fortifying = random(10, 50) / 100;
-    defense += fortifying;
-    Display.addMessage("La zone a été fortifiée (de {0}%)", Math.round(fortifying*100));
-    changed();
-  }
+  function fortify() { sendOrder("fortify"); }
   function convert() {
     var survivors = sendSelected();
     Display.addMessage("La zone a été amenagée");
@@ -129,7 +123,6 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", function (Disp
     Orders.updateActions();
     Display.updateAction("scavange", {"safe": 100, "loot": 100});
     Display.showAction("scavange");
-    Display.updateAction("fortify", {"build": 100});
     Display.showAction("fortify");
   }
 
@@ -177,6 +170,8 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", function (Disp
     name: "Purification",
     turns: 2,
     run: function(){
+      console.log("this = ", this)
+      console.log("this.survivors = ", this.survivors)
       var ratio = computeRatio(this.survivors, zombies, random(70, 130)/100, COEF_PURIFY);
       var killZombies = 0;
       var killSurvivors = 0;
@@ -193,11 +188,33 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", function (Disp
         safe: {
           id: "safe",
           name: "Sécurité",
-          default: "0",
+          value: 0,
           suffix: "%",
           update: function() {
             this.value = Math.round(computeRatio(selected, zombies, 1, COEF_PURIFY)*100);
           }
+        }
+      }
+    }
+  });
+
+  Orders.defineOrder({
+    id: "fortify",
+    name: "Fortifier",
+    turns: 3,
+    run: function(){
+      var fortifying = random(10, 50) / 100;
+      defense += fortifying;
+      Display.addMessage("La zone a été fortifiée (de {0}%)", Math.round(fortifying*100));
+      changed();
+    },
+    action: {
+      name: "Fortifier",
+      stats: {
+        build: {
+          id: "build",
+          name: "Avancement",
+          value: 100
         }
       }
     }

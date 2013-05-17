@@ -55,7 +55,9 @@ app.service("GBHOrders", ["GBHDisplay", "GBHLogger", function (Display, Logger) 
   function updateAction(action) {
     for (var stat in action.stats) {
       if (action.stats.hasOwnProperty(stat)) {
-        action.stats[stat].update();
+        if (action.stats[stat].update) {
+          action.stats[stat].update();
+        }
       }
     }
     Display.updateAction(action);
@@ -63,7 +65,8 @@ app.service("GBHOrders", ["GBHDisplay", "GBHLogger", function (Display, Logger) 
 
   function defaultOnTurn(){}
 
-  function defaultUpdate(){ updateAction(this); }
+  function defaultUpdate(){
+    updateAction(this); }
 
   var sentOrdersId = 0;
   function sendOrder(id, data) {
@@ -72,23 +75,19 @@ app.service("GBHOrders", ["GBHDisplay", "GBHLogger", function (Display, Logger) 
     var order = new Object(template)
     order.id = sentOrdersId++;
     if (order.turns) { order.turnToComplete = order.turns; }
-    if (data.survivors) { order.survivrs = data.survivors; }
+    if (data.survivors) { order.survivors = data.survivors; }
     if (order.onSend) { order.onSend(data); }
     sentOrders.push(order);
     refreshOrders();
-    // Display.addOrder(order);
-  }
-
-  function foreach(f) {
-    for (var order in orders) {
-      if (orders.hasOwnProperty(order)) { f(orders[order]); }
-    }
   }
 
   function updateActions() {
-    foreach(function(order) {
-      if (order.action && order.action.update) { order.action.update(); }
-    });
+    for (var id in orders) {
+      if (orders.hasOwnProperty(id)) {
+        var order = orders[id];
+        if (order.action && order.action.update) { order.action.update(); }
+      }
+    }
   }
 
   // Init
