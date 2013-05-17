@@ -41,41 +41,27 @@ app.service("GBHDisplay", ["$rootScope", "GBHLogger", function ($rootScope, Logg
   };
 
   var actions = {};
-  function addAction(id, name, stats, visible) {
-    var _stats = {};
-    var _statsList = [];
-    for (var stat in stats) {
-      if (stats.hasOwnProperty(stat)) {
-        var s = stats[stat];
-        var _stat;
-        if (typeof(s) == "string") { _stat = {id: stat, name: s}; }
-        else { _stat = {id: stat, name: s[0], suffix: s[1]}; }
-        _stats[stat] = _stat;
-        _statsList.push(_stat);
-      }
+  function addAction(order) {
+    var stats = {};
+    var statsList = [];
+    for (var i in order.action.stats) {
+        var stat = order.action.stats[i];
+        stats[stat.id] = stat;
+        statsList.push(stat);
     }
     var action = {
-      id: id,
-      name: name,
-      action: id,
-      stats: _stats,
-      statsList: _statsList,
-      visible: visible !== false
+      id: order.id,
+      name: order.action.name,
+      order: order,
+      stats: stats,
+      statsList: statsList,
+      visible: order.action.visible !== false
     };
     actions[id] = action;
     updateActions();
   };
-  function updateAction(id, stats) {
-    Logger.trace("updateAction({0}, {1})", id, stats);
-    var action = actions[id];
-    if (action) {
-      for (var stat in stats) {
-        if (stats.hasOwnProperty(stat)) {
-          Logger.trace("Update stat {0} of action {0}", stat, action)
-          action.stats[stat].value = stats[stat];
-        }
-      }
-    }
+  function updateAction(order) {
+    Logger.trace("updateAction({0})", order);
     updateActions();
   }
   function showAction(id) {
@@ -122,9 +108,9 @@ app.service("GBHDisplay", ["$rootScope", "GBHLogger", function ($rootScope, Logg
   addStat("idle", "Survivants inactif");
   addStat("food", "Nourriture restante");
   // addAction("purify", "Purifier", {"safe": ["Sécurité", " %"]});
-  addAction("scavange", "Fouiller", {"safe": ["Sécurité", " %"], "loot": "Récolte"});
-  addAction("fortify", "Fortifier", {"build": "Avancement"});
-  addAction("convert", "Amenager", {"build": ["Avancement", " %"]});
+  // addAction("scavange", "Fouiller", {"safe": ["Sécurité", " %"], "loot": "Récolte"});
+  // addAction("fortify", "Fortifier", {"build": "Avancement"});
+  // addAction("convert", "Amenager", {"build": ["Avancement", " %"]});
 
   // Export
   $.extend(self, {

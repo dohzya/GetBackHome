@@ -175,17 +175,7 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", function (Disp
   Orders.defineOrder({
     id: "purify",
     name: "Purification",
-    action: {
-      name: "Purifier",
-      update: function() {
-        this.stats.safe = Math.round(computeRatio(selected, zombies, 1, COEF_PURIFY)*100);
-        Display.updateAction(this.order.id, this.stats);
-      },
-    },
     turns: 2,
-    onSend: function(data) {
-      this.survivors = data.survivors;
-    },
     run: function(){
       var ratio = computeRatio(this.survivors, zombies, random(70, 130)/100, COEF_PURIFY);
       var killZombies = 0;
@@ -196,6 +186,20 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", function (Disp
       survivors -= killSurvivors;
       Display.addMessage("La zone a été purifée ({0} survivants impliqués dont {2} tués, {1} zombies éliminés)", this.survivors, killZombies, killSurvivors);
       changed();
+    },
+    action: {
+      name: "Purifier",
+      stats: {
+        safe: {
+          id: "safe",
+          name: "Sécurité",
+          default: "0",
+          suffix: "%",
+          update: function() {
+            this.value = Math.round(computeRatio(selected, zombies, 1, COEF_PURIFY)*100);
+          }
+        }
+      }
     }
   });
 

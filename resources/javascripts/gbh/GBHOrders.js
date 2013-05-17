@@ -42,16 +42,28 @@ app.service("GBHOrders", ["GBHDisplay", "GBHLogger", function (Display, Logger) 
       order.action = {
         order: order,
         name: _order.action.name ? _order.action.name : _order.name,
-        update: _order.action.update,
-        stats: {}
+        update: (_order.action.update ? function(){ _order.action.update(defaultUpdate) } : defaultUpdate),
+        stats: _order.action.stats,
+        visible: _order.action.visible
       };
+      Display.addAction(order);
     }
     orders[order.id] = order;
-    Display.addAction(order.id, order.action.name, {"safe": ["Sécurité", " %"]}, true);
     return order;
   }
 
-  function defaultOnTurn() {}
+  function updateAction(action) {
+    for (var stat in action.stats) {
+      if (action.stats.hasOwnProperty(stat)) {
+        action.stats[stat].update();
+      }
+    }
+    Display.updateAction(action);
+  }
+
+  function defaultOnTurn(){}
+
+  function defaultUpdate(){ updateAction(this); }
 
   var sentOrdersId = 0;
   function sendOrder(id, data) {
@@ -60,6 +72,7 @@ app.service("GBHOrders", ["GBHDisplay", "GBHLogger", function (Display, Logger) 
     var order = new Object(template)
     order.id = sentOrdersId++;
     if (order.turns) { order.turnToComplete = order.turns; }
+    if (data.survivors) { order.survivrs = data.survivors; }
     if (order.onSend) { order.onSend(data); }
     sentOrders.push(order);
     refreshOrders();
