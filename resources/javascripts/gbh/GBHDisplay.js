@@ -9,7 +9,7 @@ app.service("GBHDisplay", ["$rootScope", "GBHLogger", function ($rootScope, Logg
   }
 
   function addOrder(order) {
-    $rootScope.orders.push(makeUnique(order));
+    $rootScope.orders.push(order);
   }
   function resetOrders() {
     $rootScope.orders = [];
@@ -41,10 +41,10 @@ app.service("GBHDisplay", ["$rootScope", "GBHLogger", function ($rootScope, Logg
   };
 
   var actions = {};
-  function addAction(id, name, stats) {
+  function addAction(id, name, stats, visible) {
     var _stats = {};
     var _statsList = [];
-    for (stat in stats) {
+    for (var stat in stats) {
       if (stats.hasOwnProperty(stat)) {
         var s = stats[stat];
         var _stat;
@@ -54,7 +54,14 @@ app.service("GBHDisplay", ["$rootScope", "GBHLogger", function ($rootScope, Logg
         _statsList.push(_stat);
       }
     }
-    var action = {id: id, name: name, action: id, stats: _stats, statsList: _statsList, visible: false};
+    var action = {
+      id: id,
+      name: name,
+      action: id,
+      stats: _stats,
+      statsList: _statsList,
+      visible: visible !== false
+    };
     actions[id] = action;
     updateActions();
   };
@@ -62,7 +69,7 @@ app.service("GBHDisplay", ["$rootScope", "GBHLogger", function ($rootScope, Logg
     Logger.trace("updateAction({0}, {1})", id, stats);
     var action = actions[id];
     if (action) {
-      for (stat in stats) {
+      for (var stat in stats) {
         if (stats.hasOwnProperty(stat)) {
           Logger.trace("Update stat {0} of action {0}", stat, action)
           action.stats[stat].value = stats[stat];
@@ -91,7 +98,7 @@ app.service("GBHDisplay", ["$rootScope", "GBHLogger", function ($rootScope, Logg
   }
   function updateActions() {
     $rootScope.actions = [];
-    for (id in actions) {
+    for (var id in actions) {
       if (actions.hasOwnProperty(id)) {
         var action = actions[id];
         if (action.visible) {
@@ -114,7 +121,7 @@ app.service("GBHDisplay", ["$rootScope", "GBHLogger", function ($rootScope, Logg
   addStat("survivors", "Survivants");
   addStat("idle", "Survivants inactif");
   addStat("food", "Nourriture restante");
-  addAction("purify", "Purifier", {"safe": ["Sécurité", " %"]});
+  // addAction("purify", "Purifier", {"safe": ["Sécurité", " %"]});
   addAction("scavange", "Fouiller", {"safe": ["Sécurité", " %"], "loot": "Récolte"});
   addAction("fortify", "Fortifier", {"build": "Avancement"});
   addAction("convert", "Amenager", {"build": ["Avancement", " %"]});

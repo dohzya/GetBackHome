@@ -1,35 +1,5 @@
-app.service("GBHEngine", ["GBHDisplay", "GBHLogger", function (Display, Logger) {
+app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", function (Display, Logger, Orders) {
   "use strict";
-
-  var orders = [];
-  function addOrder(order) {
-    $.extend(order, {
-      turnToComplete: order.turns
-    });
-    orders.push(order);
-    Display.addOrder(order);
-  }
-  function ordersTurn() {
-    var newOrders = [];
-    for (var i=0; i<orders.length; i++) {
-      var order = orders[i];
-      order.turnToComplete--;
-      if (order.turnToComplete <= 0) {
-        order.run();
-      }
-      else {
-        newOrders.push(order);
-      }
-    }
-    orders = newOrders;
-    refreshOrders();
-  }
-  function refreshOrders() {
-    Display.resetOrders();
-    for (var i=0; i<orders.length; i++) {
-      Display.addOrder(orders[i]);
-    }
-  }
 
   function changeSelection(selected) {
     $("#selected").val(selected);
@@ -61,37 +31,24 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", function (Display, Logger) 
     return Math.round(positive(nb));
   }
 
-    function positiveFloor(nb) {
+  function positiveFloor(nb) {
     return Math.floor(positive(nb));
   }
 
-  function purify() {
-    Logger.trace("purify()");
-    if (selected == 0) { return; }
-    var survivors = sendSelected();
-    addOrder({
-      msg: "Nettoyer",
-      survivors: survivors,
-      turns: 2,
-      run: function(){
-        Logger.trace("Run purify()");
-        var ratio = computeRatio(survivors, zombies, random(70, 130)/100, COEF_PURIFY);
-        var killZombies = 0;
-        var killSurvivors = 0;
-        killZombies = positiveFloor(zombies * random(ratio*50, ratio*100)/100);
-        killSurvivors = positiveFloor(survivors * random((1-ratio)*50, (1-ratio)*100)/100);
-        zombies -= killZombies;
-        survivors -= killSurvivors;
-        Display.addMessage("La zone a été purifée ({0} zombies éliminés, {1} survivants tués)", killZombies, killSurvivors);
-        changed();
-      }
-    });
-    changed();
+  function sendOrder(name) {
+    Logger.trace("send order '"+ name +"'");
+    if (selected != 0) {
+      var survivors = sendSelected();
+      Orders.sendOrder(name, {survivors: survivors});
+      changed();
+    }
   }
+
+  function purify() { sendOrder("purify"); }
   function scavange() {
     if (selected == 0) { return; }
     var survivors = sendSelected();
-    addOrder({
+    Orders.addOrder({
       msg: "Fouiller",
       survivors: survivors,
       turns: 2,
@@ -133,7 +90,7 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", function (Display, Logger) 
 
   function turn() {
     resetSelected();
-    ordersTurn();
+    Orders.ordersTurn();
     var consumedFood = random(survivors*0.8, survivors*1.2);
     if (consumedFood < food) {
       food -= consumedFood;
@@ -169,8 +126,7 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", function (Display, Logger) 
   }
 
   function updateActions() {
-    Display.updateAction("purify", {"safe": Math.round(computeRatio(selected, zombies, 1, COEF_PURIFY)*100)});
-    Display.showAction("purify");
+    Orders.updateActions();
     Display.updateAction("scavange", {"safe": 100, "loot": 100});
     Display.showAction("scavange");
     Display.updateAction("fortify", {"build": 100});
@@ -207,18 +163,41 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", function (Display, Logger) 
   }
 
   var turnNb = 0;
+  var survivors = 10,
+      food = 50;
+  var defense = 1,
+      zombies = 100;
+  var selected = 0,
+      idle = 0;
+  var COEF_FORT = 10,
+      COEF_PURIFY = 20;
 
-  var survivors = 10;
-  var food = 50;
-
-  var defense = 1;
-  var zombies = 100;
-
-  var selected = 0;
-  var idle = 0;
-
-  var COEF_FORT = 10;
-  var COEF_PURIFY = 20;
+  Orders.defineOrder({
+    id: "purify",
+    name: "Purification",
+    action: {
+      name: "Purifier",
+      update: function() {
+        this.stats.safe = Math.round(computeRatio(selected, zombies, 1, COEF_PURIFY)*100);
+        Display.updateAction(this.order.id, this.stats);
+      },
+    },
+    turns: 2,
+    onSend: function(data) {
+      this.survivors = data.survivors;
+    },
+    run: function(){
+      var ratio = computeRatio(this.survivors, zombies, random(70, 130)/100, COEF_PURIFY);
+      var killZombies = 0;
+      var killSurvivors = 0;
+      killZombies = positiveFloor(zombies * random(ratio*50, ratio*100)/100);
+      killSurvivors = positiveFloor(this.survivors * random((1-ratio)*50, (1-ratio)*100)/100);
+      zombies -= killZombies;
+      survivors -= killSurvivors;
+      Display.addMessage("La zone a été purifée ({0} survivants impliqués dont {2} tués, {1} zombies éliminés)", this.survivors, killZombies, killSurvivors);
+      changed();
+    }
+  });
 
   resetSelected();
   changed();
