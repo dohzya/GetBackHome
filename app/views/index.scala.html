@@ -10,7 +10,7 @@
         <div class="gbh-contents">
           <div class="gbh-content" data-id="{{order.id}}" data-ng-repeat="order in orders">
             <span>{{order.name}}</span>
-            (<span>survivants : {{order.survivors}}</span>, <span>tours restants : {{order.turnToComplete}}</span>)
+            (<span>survivants : {{order.env.survivors}}</span>, <span>tours restants : {{order.turnToComplete}}</span>)
             <div class="btn btn-small" ng-click="cancelOrder({{order.id}})">
               <span>Annuler</span> (<span>1 tour</span>)
             </div>

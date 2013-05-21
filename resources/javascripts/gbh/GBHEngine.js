@@ -35,19 +35,19 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", function (Disp
     return Math.floor(positive(nb));
   }
 
-  function sendOrder(name) {
-    Logger.trace("send order '"+ name +"'");
+  function sendLocalOrder(name) {
+    Logger.trace("send local order '"+ name +"'");
     if (selected != 0) {
       var survivors = sendSelected();
-      Orders.sendOrder(name, {survivors: survivors});
+      Orders.sendOrder(name, {survivors: survivors, zombies: zombies});
       changed();
     }
   }
 
-  function purify() { sendOrder("purify"); }
+  function purify() { sendLocalOrder("purify"); }
   function scavange() {
     if (selected == 0) { return; }
-    var survivors = sendSelected();
+    var survivors = sendOrderSelected();
     Orders.addOrder({
       msg: "Fouiller",
       survivors: survivors,
@@ -61,9 +61,9 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", function (Disp
     });
     changed();
   }
-  function fortify() { sendOrder("fortify"); }
+  function fortify() { sendLocalOrder("fortify"); }
   function convert() {
-    var survivors = sendSelected();
+    var survivors = sendOrderSelected();
     Display.addMessage("La zone a été amenagée");
     changed();
   }
@@ -162,26 +162,27 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", function (Disp
       zombies = 100;
   var selected = 0,
       idle = 0;
-  var COEF_FORT = 10,
-      COEF_PURIFY = 20;
+  var COEF_FORT = 10;
 
   Orders.defineOrder({
     id: "purify",
     name: "Purification",
+    coefRatio: 20,
     turns: 2,
     run: function(){
-      console.log("this = ", this)
-      console.log("this.survivors = ", this.survivors)
-      var ratio = computeRatio(this.survivors, zombies, random(70, 130)/100, COEF_PURIFY);
+      console.log(this);
+      console.log(this.env);
+      var ratio = computeRatio(this.env.survivors, this.env.zombies, random(70, 130)/100, this.coefRatio);
       var killZombies = 0;
       var killSurvivors = 0;
-      killZombies = positiveFloor(zombies * random(ratio*50, ratio*100)/100);
-      killSurvivors = positiveFloor(this.survivors * random((1-ratio)*50, (1-ratio)*100)/100);
-      zombies -= killZombies;
-      survivors -= killSurvivors;
-      Display.addMessage("La zone a été purifée ({0} survivants impliqués dont {2} tués, {1} zombies éliminés)", this.survivors, killZombies, killSurvivors);
+      killZombies = positiveFloor(this.env.zombies * random(ratio*50, ratio*100)/100);
+      killSurvivors = positiveFloor(this.env.survivors * random((1-ratio)*50, (1-ratio)*100)/100);
+      this.env.zombies -= killZombies;
+      this.env.survivors -= killSurvivors;
+      Display.addMessage("La zone a été purifée ({0} survivants impliqués dont {2} tués, {1} zombies éliminés)", this.env.survivors, killZombies, killSurvivors);
       changed();
     },
+    onSend: function(){},
     action: {
       name: "Purifier",
       stats: {
@@ -191,7 +192,7 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", function (Disp
           value: 0,
           suffix: "%",
           update: function() {
-            this.value = Math.round(computeRatio(selected, zombies, 1, COEF_PURIFY)*100);
+            this.value = Math.round(computeRatio(selected, zombies, 1, this.order.coefRatio)*100);
           }
         }
       }
@@ -202,9 +203,9 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", function (Disp
     id: "fortify",
     name: "Fortifier",
     turns: 3,
-    run: function(){
+    run: function(env){
       var fortifying = random(10, 50) / 100;
-      defense += fortifying;
+      env.defense += fortifying;
       Display.addMessage("La zone a été fortifiée (de {0}%)", Math.round(fortifying*100));
       changed();
     },

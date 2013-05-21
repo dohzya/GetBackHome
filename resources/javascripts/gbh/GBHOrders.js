@@ -3,7 +3,7 @@ app.service("GBHOrders", ["GBHDisplay", "GBHLogger", function (Display, Logger) 
 
   var self = this;
 
-  var orders,      // defined orders
+  var templates,   // defined templates
       sentOrders;  // orders sent to some survivors
 
   var sentOrders = [];
@@ -12,7 +12,9 @@ app.service("GBHOrders", ["GBHDisplay", "GBHLogger", function (Display, Logger) 
     for (var i in sentOrders) {
       var order = sentOrders[i];
       order.turnToComplete--;
-      if (order.turnToComplete <= 0) { order.run(); }
+      if (order.turnToComplete <= 0) {
+        order.run();
+      }
       else {
         order.onTurn();
         newOrders.push(order);
@@ -28,28 +30,23 @@ app.service("GBHOrders", ["GBHDisplay", "GBHLogger", function (Display, Logger) 
     }
   }
 
-  function defineOrder(_order) {
-    var order = {
-      id: _order.id,
-      name: _order.name,
-      turns: _order.turns,
-      onSend: _order.onSend,
-      onSelect: _order.onSelect,
-      onTurn: _order.onTurn ? function(){ _order.onTurn(defaultOnTurn) } : defaultOnTurn,
-      run: _order.run
-    };
-    if (_order.action) {
-      order.action = {
-        order: order,
-        name: _order.action.name ? _order.action.name : _order.name,
-        update: (_order.action.update ? function(){ _order.action.update(defaultUpdate) } : defaultUpdate),
-        stats: _order.action.stats,
-        visible: _order.action.visible
-      };
-      Display.addAction(order);
+  function defineOrder(_template) {
+    var template = $.extend({}, _template, {
+      onTurn: _template.onTurn ? function(){ _template.onTurn(defaultOnTurn) } : defaultOnTurn,
+    });
+    if (_template.action) {
+      template.action = $.extend({}, _template.action, {
+        order: template,
+        name: _template.action.name ? _template.action.name : _template.name,
+        update: (_template.action.update ? function(){ _template.action.update(defaultUpdate) } : defaultUpdate)
+      });
+      for (var stat in template.action.stats) {
+        template.action.stats[stat].order = template;
+      }
+      Display.addAction(template);
     }
-    orders[order.id] = order;
-    return order;
+    templates[template.id] = template;
+    return template;
   }
 
   function updateAction(action) {
@@ -70,28 +67,27 @@ app.service("GBHOrders", ["GBHDisplay", "GBHLogger", function (Display, Logger) 
 
   var sentOrdersId = 0;
   function sendOrder(id, data) {
-    if (!data) { data = {}; }
-    var template = orders[id];
-    var order = new Object(template)
+    var template = templates[id];
+    var order = Object.create(template)
     order.id = sentOrdersId++;
+    order.env = data || {};
     if (order.turns) { order.turnToComplete = order.turns; }
-    if (data.survivors) { order.survivors = data.survivors; }
-    if (order.onSend) { order.onSend(data); }
+    if (order.onSend) { order.onSend(); }
     sentOrders.push(order);
     refreshOrders();
   }
 
   function updateActions() {
-    for (var id in orders) {
-      if (orders.hasOwnProperty(id)) {
-        var order = orders[id];
+    for (var id in templates) {
+      if (templates.hasOwnProperty(id)) {
+        var order = templates[id];
         if (order.action && order.action.update) { order.action.update(); }
       }
     }
   }
 
   // Init
-  orders = {};
+  templates = {};
   sentOrders = [];
 
   // Export
