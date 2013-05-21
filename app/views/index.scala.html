@@ -25,7 +25,7 @@
         <div class="gbh-contents">
           <div>Demander à <input type="number" id="selected" ng-model="selected" ng-change="select()" min="0" required /> survivants de</div>
           <div data-id="{{action.id}}" class="btn gbh-content" ng-click="{{action.id}}()" data-ng-repeat="action in actions">
-            <div>{{action.name}}</div>
+            <div>{{action.name}}<span> ({{action.order.turns}} tours)</span></div>
             <div data-ng-repeat="stat in action.statsList">
               <span>{{stat.name}}</span> : <span>{{stat.value}}{{stat.suffix}}</span>
             </div>

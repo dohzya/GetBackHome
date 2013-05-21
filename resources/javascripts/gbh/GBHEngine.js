@@ -39,7 +39,7 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", function (Disp
     Logger.trace("send local order '"+ name +"'");
     if (selected != 0) {
       var survivors = sendSelected();
-      Orders.sendOrder(name, {survivors: survivors, zombies: zombies});
+      Orders.sendOrder(name, {survivors: survivors, zombies: env.zombies});
       changed();
     }
   }
@@ -54,7 +54,7 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", function (Disp
       turns: 2,
       run: function(){
         var scavangedFood = random(2, 10);
-        food += scavangedFood;
+        env.food += scavangedFood;
         Display.addMessage("Du materiel a été récupéré ({0} nourritures)", scavangedFood);
         changed();
       }
@@ -68,16 +68,16 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", function (Disp
     changed();
   }
   function zombieAttack() {
-    var ratio = computeRatio(idle, zombies, defense, COEF_FORT);
+    var ratio = computeRatio(idle, env.zombies, env.defense, COEF_DEFENSE);
     var killZombies = 0;
     var killSurvivors = 0;
     var damage = 0;
     killZombies = positiveFloor(zombies * random(ratio*50, ratio*100)/100);
     killSurvivors = positiveFloor(survivors * random((1-ratio)*50, (1-ratio)*100)/100);
     damage = positiveFloor(defense*100 * random((1-ratio)*50, (1-ratio)*100)/100);
-    zombies -= killZombies;
-    survivors -= killSurvivors;
-    defense -= damage/100;
+    env.zombies -= killZombies;
+    env.survivors -= killSurvivors;
+    env.defense -= damage/100;
     Display.addMessage("La zone a été attaquée ! ({0} zombies éliminés, {1} survivants tués, {2}% de dégats)", killZombies, killSurvivors, damage);
     changed();
   }
@@ -85,25 +85,25 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", function (Disp
   function turn() {
     resetSelected();
     Orders.ordersTurn();
-    var consumedFood = random(survivors*0.8, survivors*1.2);
-    if (consumedFood < food) {
-      food -= consumedFood;
+    var consumedFood = random(env.survivors*0.8, env.survivors*1.2);
+    if (consumedFood < env.food) {
+      env.food -= consumedFood;
       Display.addMessage("{0} de nourritures ont été consommés.", consumedFood);
     }
     else {
-      var diff = consumedFood - food;
-      food = 0;
+      var diff = consumedFood - env.food;
+      env.food = 0;
       Display.addMessage("Il n'y a plus de nourriture (il aurait fallu {0} de plus).", diff);
     }
     var newZombies = random(10, 100);
-    zombies += newZombies;
+    env.zombies += newZombies;
     Display.addMessage("{0} zombies ont été aperçu.", newZombies);
     if (random() > 0.8) {
       var newSurvivors = Math.round(random(1, 6) / 2);
-      survivors += newSurvivors;
-      Display.addMessage("Vous avez été rejoins par {0} survivants", newSurvivors);
+      env.survivors += newSurvivors;
+      Display.addMessage("Vous avez été rejoin par {0} survivants", newSurvivors);
     }
-    if (zombies > 0 && random() > 0.7) zombieAttack();
+    if (env.zombies > 0 && random() > 0.7) zombieAttack();
     turnNb++;
     Display.addMessage("Tour {0}.", turnNb);
     changed();
@@ -111,12 +111,12 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", function (Disp
 
   function updateStats() {
     Display.updateStat("turn", turnNb);
-    Display.updateStat("ratio", Math.round(computeRatio(idle, zombies, defense, COEF_FORT)*100));
-    Display.updateStat("defense", Math.round(defense*100));
-    Display.updateStat("zombies", zombies);
-    Display.updateStat("survivors", survivors);
-    Display.updateStat("idle", idle);
-    Display.updateStat("food", "{0} ({1} | {2} jours)", food, -survivors, Math.round(food / survivors));
+    Display.updateStat("ratio", Math.round(computeRatio(idle, env.zombies, env.defense, COEF_DEFENSE)*100));
+    Display.updateStat("defense", Math.round(env.defense*100));
+    Display.updateStat("zombies", env.zombies);
+    Display.updateStat("survivors", env.survivors);
+    Display.updateStat("idle", env.idle);
+    Display.updateStat("food", "{0} ({1} | {2} jours)", env.food, -env.survivors, Math.round(env.food / env.survivors));
   }
 
   function updateActions() {
@@ -137,14 +137,14 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", function (Disp
   }
 
   function select(s) {
-    selected = Math.min(s, idle);
+    selected = Math.min(s, env.idle);
     if (selected != s) { changeSelection(selected); }
     changed();
     return selected;
   }
   function sendSelected() {
     var s = selected;
-    idle -= selected;
+    env.idle -= selected;
     selected = 0;
     changeSelection(0);
     return s;
@@ -152,17 +152,25 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", function (Disp
   function resetSelected() {
     selected = 0;
     changeSelection(0);
-    idle = survivors;
+    env.idle = env.survivors;
+  }
+
+  function createEnv(env) {
+    return $.extend({}, env, {
+      defense: 1,
+    });
   }
 
   var turnNb = 0;
-  var survivors = 10,
-      food = 50;
-  var defense = 1,
-      zombies = 100;
+  var env = createEnv({
+    survivors: 10,
+    food: 100,
+    defense: 1,
+    zombies: 100
+  });
   var selected = 0,
       idle = 0;
-  var COEF_FORT = 10;
+  var COEF_DEFENSE = 10;
 
   Orders.defineOrder({
     id: "purify",
@@ -192,7 +200,7 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", function (Disp
           value: 0,
           suffix: "%",
           update: function() {
-            this.value = Math.round(computeRatio(selected, zombies, 1, this.order.coefRatio)*100);
+            this.value = Math.round(computeRatio(selected, env.zombies, 1, this.order.coefRatio)*100);
           }
         }
       }
