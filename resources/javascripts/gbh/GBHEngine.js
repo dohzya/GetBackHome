@@ -39,7 +39,7 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", function (Disp
     Logger.trace("send local order '"+ name +"'");
     if (selected != 0) {
       var survivors = sendSelected();
-      Orders.sendOrder(name, {survivors: survivors, zombies: env.zombies});
+      Orders.sendOrder(name, {survivors: survivors}, env);
       changed();
     }
   }
@@ -68,13 +68,13 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", function (Disp
     changed();
   }
   function zombieAttack() {
-    var ratio = computeRatio(idle, env.zombies, env.defense, COEF_DEFENSE);
+    var ratio = computeRatio(env.idle, env.zombies, env.defense, COEF_DEFENSE);
     var killZombies = 0;
     var killSurvivors = 0;
     var damage = 0;
-    killZombies = positiveFloor(zombies * random(ratio*50, ratio*100)/100);
-    killSurvivors = positiveFloor(survivors * random((1-ratio)*50, (1-ratio)*100)/100);
-    damage = positiveFloor(defense*100 * random((1-ratio)*50, (1-ratio)*100)/100);
+    killZombies = positiveFloor(env.zombies * random(ratio*50, ratio*100)/100);
+    killSurvivors = positiveFloor(env.survivors * random((1-ratio)*50, (1-ratio)*100)/100);
+    damage = positiveFloor(env.defense*100 * random((1-ratio)*50, (1-ratio)*100)/100);
     env.zombies -= killZombies;
     env.survivors -= killSurvivors;
     env.defense -= damage/100;
@@ -111,7 +111,7 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", function (Disp
 
   function updateStats() {
     Display.updateStat("turn", turnNb);
-    Display.updateStat("ratio", Math.round(computeRatio(idle, env.zombies, env.defense, COEF_DEFENSE)*100));
+    Display.updateStat("ratio", Math.round(computeRatio(env.idle, env.zombies, env.defense, COEF_DEFENSE)*100));
     Display.updateStat("defense", Math.round(env.defense*100));
     Display.updateStat("zombies", env.zombies);
     Display.updateStat("survivors", env.survivors);
@@ -155,21 +155,15 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", function (Disp
     env.idle = env.survivors;
   }
 
-  function createEnv(env) {
-    return $.extend({}, env, {
-      defense: 1,
-    });
-  }
-
   var turnNb = 0;
-  var env = createEnv({
+  var env = {
     survivors: 10,
     food: 100,
     defense: 1,
-    zombies: 100
-  });
-  var selected = 0,
-      idle = 0;
+    zombies: 100,
+    idle: 10
+  };
+  var selected = 0;
   var COEF_DEFENSE = 10;
 
   Orders.defineOrder({
@@ -211,9 +205,9 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", function (Disp
     id: "fortify",
     name: "Fortifier",
     turns: 3,
-    run: function(env){
+    run: function(){
       var fortifying = random(10, 50) / 100;
-      env.defense += fortifying;
+      this.env.defense += fortifying;
       Display.addMessage("La zone a été fortifiée (de {0}%)", Math.round(fortifying*100));
       changed();
     },

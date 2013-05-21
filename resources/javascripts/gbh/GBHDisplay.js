@@ -59,7 +59,6 @@ app.service("GBHDisplay", ["$rootScope", "GBHLogger", function ($rootScope, Logg
       statsList: statsList,
       visible: order.action.visible !== false
     };
-    console.log(action)
     actions[order.id] = action;
     updateActions();
   };

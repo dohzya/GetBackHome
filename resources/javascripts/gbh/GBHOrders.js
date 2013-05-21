@@ -66,11 +66,12 @@ app.service("GBHOrders", ["GBHDisplay", "GBHLogger", function (Display, Logger) 
     updateAction(this); }
 
   var sentOrdersId = 0;
-  function sendOrder(id, data) {
+  function sendOrder(id, data, env) {
     var template = templates[id];
     var order = Object.create(template)
     order.id = sentOrdersId++;
-    order.env = data || {};
+    if (!env) { env = {}; }
+    order.env = $.extend(Object.create(env), data || {});
     if (order.turns) { order.turnToComplete = order.turns; }
     if (order.onSend) { order.onSend(); }
     sentOrders.push(order);
