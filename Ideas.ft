@@ -1,27 +1,123 @@
-- ratio de survivants morts qui deviennent zombies
-  - important en cas de fuite
+# Ideas
 
-- un {{ordre}} contient
-  - une action (purifier, fortifier, etc)
-  - un nombre de personnes
-    - plus il y a de monde, moins c'est dangereux,
-    - plus il y a de monde, moins ça prend de temps (jusqu'à un certain point)
-  - un temps donné ⁇
-    - plus c'est long, moins c'est dangereux
-    - plus c'est long, mieux on réussi
-  - un comportement ⁇
-    - normal
-    - agressif ⇒ plus rapide, plus dangereux
-    - minutieux ⇒ plus lent, plus sûr
+## Vrac
 
-- on peut construire d'autres forts
-  - on aura des news en retard
-    - faut-il une IA pour les gérer ⁇
 
-- un ordre dure plusieurs tours
-  - on a des news en temps réel quand ça se passe dans le fort
-  - on _peut_ avoir des news en cours de route sinon
 
-- les groupes de survivants emportent de la nourriture avec eux
-  - seulement si nécessaire
-  - permet (demande ?) de séparer groupes de survivants et lieux
+## Models
+
+- Groupe
+	- survivants: num
+	- nourriture: num
+	- défense: num
+	- dégâts: num
+
+- Lieu
+	- groupe: Groupe
+	- nourriture: num
+	- défense: num
+	- zombies: Horde
+
+- Env
+	- groupe: Groupe
+	- zombies: Horde
+	- lieu: Lieu
+
+- Horde
+	- zombies: Zombie
+	- spéciaux: Spéciaux @oupa
+
+- Zombie
+	- résistance
+	- dégâts
+	- affut
+	- excitation
+	- dégradation
+
+- Mission
+	- ordre: Ordre
+	- env: env
+	- trajet: [Lieux]
+	- temps: Temps
+
+- Temps
+	- min: num
+	- standard: num
+
+### Groupes
+
+- Les groupes emportent de la nourriture avec eux lorsqu'ils partent en mission
+- Un groupe a un comportement @oupa
+	- normal : Ø
+	- discret : réduit les risques d'attaque | -vitesse
+	- combat : +défense | -vitesse
+	- construction : -défense | +vitesse
+	- minutieux : -vitesse
+
+### Lieux
+
+- Les lieux contiennent des réserves de nourritures
+	- Les groupes consomment en priorité celle du lieu, ensuite ils tapent dans les réserves
+	- Les groupes en profitent pour se reconstituer des réserves
+- Les messages (ordres de mission, infos) ne passent pas automatiquement d'un lieu à un autre
+	- Il faut qu'un groupe fasse le relais ⇒ cela met du temps
+	- On peut avoir les infos des lieux adjacents
+- Un lieu peut-être piégé @oupa
+
+### Envs
+
+### Zombies
+
+- Les zombies ont plusieurs caractéristiques @oupa
+	- résistance : la résistance des zombies
+	- dégâts : les dégâts que les zombies infligent
+	- affut : chances d'être attiré par l'activité d'un lieu
+		- augmente les chances d'être attiré par l'activité d'un lieu
+		- augmente les chances que des zombies repartent
+		- plus facile à regrouper / piéger @oupa
+	- excitation : chances d'attaquer
+		- augmente les chances d'attaque
+		- les attaques seront donc composées de moins de zombies
+	- dégradation : état des zombies
+		- baisse la dangerosité des zombies
+		- baisse le moral des survivants @oupa
+
+- Les zombies peuvent avoir des modificateurs @oupa
+	- gras : résistance+ | affut-
+	- putréfié : moral--- | résistance--
+
+- Zombies spéciaux @oupa
+	- tank : plus fort
+	- boomer : augmente plus facilement la taille de la horde
+	- prof : affut+++
+	- gobelin : excitation+++
+
+### Missions
+
+- Le groupe part en mission, et traverse N zones par tour
+	- certaines zones prennent plus de temps
+	- il consomme de la nourriture sur le chemin
+- On peut aller plus/moins vite, ça influe sur le risque
+- Il peut se passer des choses durant le trajet
+  - Les attaques ralentissent le trajet
+- Les news arrivent lorsqu'un survivant (au moins) revient
+- Le temps prend en compte le retour (ainsi que les attaques probables)
+
+## Gameplay
+
+- les zombies arrivent au fur et à mesure
+	- certains attaque de suite, d'autres trainent
+	- plus il y a de zombies, plus ça en attire
+		- surtout si les zombies sont en chasse
+	- aller dans un lieu augmente les chances que les zombies suivent (attaquent)
+		- si personne n'entre, il y a peu de chance d'attaque
+- la problématique est la nourriture
+	- c'est difficile de la maintenir
+		- champs @oupa
+	- il faut aller la chercher au loin
+		- on consomme de la nourriture lors du trajet
+
+- Lorsqu'un survivant meurt :
+	- S'il tous les zombies ont été tués : il est enterré
+	- S'il reste des zombies : il devient un zombie
+		- Il y a des chances qu'il devienne un special @oupa
