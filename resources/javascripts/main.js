@@ -20,4 +20,6 @@ var app = angular
     $rootScope.logs = [];
     $rootScope.stats = [];
     $rootScope.actions = [];
+    $rootScope.buttons = [];
+    $rootScope.missions = [];
   }]);

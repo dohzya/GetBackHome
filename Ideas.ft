@@ -7,37 +7,41 @@
 ## Models
 
 - Groupe
-	- survivants: num
+	- survivants: [Survivant]
+	
+- Survivant
 	- nourriture: num
+	- combat: Combat
+	
+- Combat
 	- défense: num
 	- dégâts: num
 
 - Lieu
-	- groupe: Groupe
 	- nourriture: num
-	- défense: num
+	- combat: Combat
 	- zombies: Horde
 
 - Env
 	- groupe: Groupe
-	- zombies: Horde
 	- lieu: Lieu
 
 - Horde
-	- zombies: Zombie
-	- spéciaux: Spéciaux @oupa
+	- zombies: [Zombie]
+	- spéciaux: [Spécial] @oupa
 
 - Zombie
-	- résistance
-	- dégâts
-	- affut
-	- excitation
-	- dégradation
+	- combat: Combat
+	- affut: num
+	- excitation: num
+	- dégradation: num
 
 - Mission
 	- ordre: Ordre
-	- env: env
-	- trajet: [Lieux]
+	- groupe: Groupe
+
+- Order
+	- trajet: [Lieu]
 	- temps: Temps
 
 - Temps

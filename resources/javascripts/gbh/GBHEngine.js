@@ -1,4 +1,4 @@
-app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", function (Display, Logger, Orders) {
+app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "GBHActions", function (Display, Logger, Orders, Models, Actions) {
   "use strict";
 
   function changeSelection(selected) {
@@ -39,7 +39,7 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", function (Disp
     Logger.trace("send local order '"+ name +"'");
     if (selected != 0) {
       var survivors = sendSelected();
-      Orders.sendOrder(name, {survivors: survivors}, env);
+      Orders.sendOrder(name, {survivors: survivors}, mainEnv);
       changed();
     }
   }
@@ -54,7 +54,7 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", function (Disp
       turns: 2,
       run: function(){
         var scavangedFood = random(2, 10);
-        env.food += scavangedFood;
+        mainEnv.food += scavangedFood;
         Display.addMessage("Du materiel a été récupéré ({0} nourritures)", scavangedFood);
         changed();
       }
@@ -68,42 +68,42 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", function (Disp
     changed();
   }
   function zombieAttack() {
-    var ratio = computeRatio(env.idle, env.zombies, env.defense, COEF_DEFENSE);
+    var ratio = computeRatio(mainEnv.idle, mainEnv.zombies, mainEnv.defense, COEF_DEFENSE);
     var killZombies = 0;
     var killSurvivors = 0;
     var damage = 0;
-    killZombies = positiveFloor(env.zombies * random(ratio*50, ratio*100)/100);
-    killSurvivors = positiveFloor(env.survivors * random((1-ratio)*50, (1-ratio)*100)/100);
-    damage = positiveFloor(env.defense*100 * random((1-ratio)*50, (1-ratio)*100)/100);
-    env.zombies -= killZombies;
-    env.survivors -= killSurvivors;
-    env.defense -= damage/100;
+    killZombies = positiveFloor(mainEnv.zombies * random(ratio*50, ratio*100)/100);
+    killSurvivors = positiveFloor(mainEnv.survivors * random((1-ratio)*50, (1-ratio)*100)/100);
+    damage = positiveFloor(mainEnv.defense*100 * random((1-ratio)*50, (1-ratio)*100)/100);
+    mainEnv.zombies -= killZombies;
+    mainEnv.survivors -= killSurvivors;
+    mainEnv.defense -= damage/100;
     Display.addMessage("La zone a été attaquée ! ({0} zombies éliminés, {1} survivants tués, {2}% de dégats)", killZombies, killSurvivors, damage);
     changed();
   }
 
-  function turn() {
+  function old_turn() {
     resetSelected();
     Orders.ordersTurn();
-    var consumedFood = random(env.survivors*0.8, env.survivors*1.2);
-    if (consumedFood < env.food) {
-      env.food -= consumedFood;
+    var consumedFood = random(mainEnv.survivors*0.8, mainEnv.survivors*1.2);
+    if (consumedFood < mainEnv.food) {
+      mainEnv.food -= consumedFood;
       Display.addMessage("{0} de nourritures ont été consommés.", consumedFood);
     }
     else {
-      var diff = consumedFood - env.food;
-      env.food = 0;
+      var diff = consumedFood - mainEnv.food;
+      mainEnv.food = 0;
       Display.addMessage("Il n'y a plus de nourriture (il aurait fallu {0} de plus).", diff);
     }
     var newZombies = random(10, 100);
-    env.zombies += newZombies;
+    mainEnv.zombies += newZombies;
     Display.addMessage("{0} zombies ont été aperçu.", newZombies);
     if (random() > 0.8) {
       var newSurvivors = Math.round(random(1, 6) / 2);
-      env.survivors += newSurvivors;
+      mainEnv.survivors += newSurvivors;
       Display.addMessage("Vous avez été rejoin par {0} survivants", newSurvivors);
     }
-    if (env.zombies > 0 && random() > 0.7) zombieAttack();
+    if (mainEnv.zombies > 0 && random() > 0.7) zombieAttack();
     turnNb++;
     Display.addMessage("Tour {0}.", turnNb);
     changed();
@@ -111,12 +111,12 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", function (Disp
 
   function updateStats() {
     Display.updateStat("turn", turnNb);
-    Display.updateStat("ratio", Math.round(computeRatio(env.idle, env.zombies, env.defense, COEF_DEFENSE)*100));
-    Display.updateStat("defense", Math.round(env.defense*100));
-    Display.updateStat("zombies", env.zombies);
-    Display.updateStat("survivors", env.survivors);
-    Display.updateStat("idle", env.idle);
-    Display.updateStat("food", "{0} ({1} | {2} jours)", env.food, -env.survivors, Math.round(env.food / env.survivors));
+    Display.updateStat("ratio", Math.round(computeRatio(mainEnv.idle, mainEnv.zombies, mainEnv.defense, mainEnv.coef)*100));
+    Display.updateStat("defense", Math.round(mainEnv.defense*100));
+    Display.updateStat("zombies", mainEnv.zombies);
+    Display.updateStat("survivors", mainEnv.survivors);
+    Display.updateStat("idle", mainEnv.idle);
+    Display.updateStat("food", "{0} ({1} | {2} jours)", mainEnv.food, -mainEnv.survivors, Math.round(mainEnv.food / mainEnv.survivors));
   }
 
   function updateActions() {
@@ -137,14 +137,14 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", function (Disp
   }
 
   function select(s) {
-    selected = Math.min(s, env.idle);
+    selected = Math.min(s, mainEnv.idle);
     if (selected != s) { changeSelection(selected); }
     changed();
     return selected;
   }
   function sendSelected() {
     var s = selected;
-    env.idle -= selected;
+    mainEnv.idle -= selected;
     selected = 0;
     changeSelection(0);
     return s;
@@ -152,87 +152,145 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", function (Disp
   function resetSelected() {
     selected = 0;
     changeSelection(0);
-    env.idle = env.survivors;
+    mainEnv.idle = mainEnv.survivors;
   }
 
+  // Global
   var turnNb = 0;
-  var env = {
-    survivors: 10,
+  var selected = 0;
+
+  // Stats
+  var totalSurvivors;
+  var totalKilledZombies;
+  var totalKilledSurvivors;
+
+  // Main
+  var mainGroup = Models.createGroup(10);
+  var mainPlace = Models.createPlace({
     food: 100,
     defense: 1,
-    zombies: 100,
-    idle: 10
-  };
-  var selected = 0;
-  var COEF_DEFENSE = 10;
-
-  Orders.defineOrder({
-    id: "purify",
-    name: "Purification",
-    coefRatio: 20,
-    turns: 2,
-    run: function(){
-      console.log(this);
-      console.log(this.env);
-      var ratio = computeRatio(this.env.survivors, this.env.zombies, random(70, 130)/100, this.coefRatio);
-      var killZombies = 0;
-      var killSurvivors = 0;
-      killZombies = positiveFloor(this.env.zombies * random(ratio*50, ratio*100)/100);
-      killSurvivors = positiveFloor(this.env.survivors * random((1-ratio)*50, (1-ratio)*100)/100);
-      this.env.zombies -= killZombies;
-      this.env.survivors -= killSurvivors;
-      Display.addMessage("La zone a été purifée ({0} survivants impliqués dont {2} tués, {1} zombies éliminés)", this.env.survivors, killZombies, killSurvivors);
-      changed();
-    },
-    onSend: function(){},
-    action: {
-      name: "Purifier",
-      stats: {
-        safe: {
-          id: "safe",
-          name: "Sécurité",
-          value: 0,
-          suffix: "%",
-          update: function() {
-            this.value = Math.round(computeRatio(selected, env.zombies, 1, this.order.coefRatio)*100);
-          }
-        }
-      }
-    }
+    horde: Models.createHorde(100)
+  });
+  var mainEnv = Models.createEnv({
+    group: mainGroup,
+    place: mainPlace
   });
 
-  Orders.defineOrder({
+  // Orders.defineOrder({
+  //   id: "purify",
+  //   name: "Purification",
+  //   coefRatio: 20,
+  //   turns: 2,
+  //   run: function(){
+  //     console.log(this);
+  //     console.log(this.env);
+  //     var ratio = computeRatio(this.env.survivors, this.env.zombies, random(70, 130)/100, this.coefRatio);
+  //     var killZombies = 0;
+  //     var killSurvivors = 0;
+  //     killZombies = positiveFloor(this.env.zombies * random(ratio*50, ratio*100)/100);
+  //     killSurvivors = positiveFloor(this.env.survivors * random((1-ratio)*50, (1-ratio)*100)/100);
+  //     this.env.zombies -= killZombies;
+  //     this.env.survivors -= killSurvivors;
+  //     Display.addMessage("La zone a été purifée ({0} survivants impliqués dont {2} tués, {1} zombies éliminés)", this.env.survivors, killZombies, killSurvivors);
+  //     changed();
+  //   },
+  //   onSend: function(){},
+  //   action: {
+  //     name: "Purifier",
+  //     stats: {
+  //       safe: {
+  //         id: "safe",
+  //         name: "Sécurité",
+  //         value: 0,
+  //         suffix: "%",
+  //         update: function() {
+  //           this.value = Math.round(computeRatio(selected, mainEnv.zombies, 1, this.order.coefRatio)*100);
+  //         }
+  //       }
+  //     }
+  //   }
+  // });
+
+  var order = Models.createOrder({
     id: "fortify",
     name: "Fortifier",
-    turns: 3,
+    time: Models.createTime({
+      min: 1,
+      standard: 2
+    }),
     run: function(){
       var fortifying = random(10, 50) / 100;
       this.env.defense += fortifying;
       Display.addMessage("La zone a été fortifiée (de {0}%)", Math.round(fortifying*100));
       changed();
-    },
-    action: {
-      name: "Fortifier",
-      stats: {
-        build: {
-          id: "build",
-          name: "Avancement",
-          value: 100
-        }
-      }
     }
   });
+  var action = Actions.createAction({
+    id: "fortify",
+    name: "Fortifier",
+    stats: {
+      build: Actions.createStat({
+        id: "build",
+        name: "Avancement",
+        value: 100
+      })
+    },
+    order: "fortify"
+  });
+  Display.addButton(action);
+
+  function splitGroup(group, nb) {
+    var removed = [];
+    for (var i=0; i<nb; i++) {
+      removed.push(group.survivors.shift());
+    }
+    return Models.createGroup({
+      survivors: removed
+    });
+  }
+
+  function doAction(id) {
+    var mission = Models.createMission({
+      order: Actions.action(id).order,
+      group: splitGroup(mainGroup, 10)  // s/10/selected/
+    });
+    Display.addMission(mission);
+  }
+
+  function turn() {
+    Models.eachMission(function(mission){
+      mission.turn();
+    });
+  }
+
+  // Orders.defineOrder({
+  //   id: "fortify",
+  //   name: "Fortifier",
+  //   turns: 3,
+  //   run: function(){
+  //     var fortifying = random(10, 50) / 100;
+  //     this.env.defense += fortifying;
+  //     Display.addMessage("La zone a été fortifiée (de {0}%)", Math.round(fortifying*100));
+  //     changed();
+  //   },
+  //   action: {
+  //     name: "Fortifier",
+  //     stats: {
+  //       build: {
+  //         id: "build",
+  //         name: "Avancement",
+  //         value: 100
+  //       }
+  //     }
+  //   }
+  // });
 
   resetSelected();
   changed();
 
   // Export
   $.extend(self, {
-    purify: purify,
-    scavange: scavange,
-    fortify: fortify,
-    convert: convert,
-    zombieAttack: zombieAttack,
+    doAction: doAction,
     turn: turn,
     select: select
   });

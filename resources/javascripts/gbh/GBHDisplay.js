@@ -96,6 +96,14 @@ app.service("GBHDisplay", ["$rootScope", "GBHLogger", function ($rootScope, Logg
     }
   }
 
+  function addButton(action) {
+    $rootScope.buttons.push(action);
+  }
+
+  function addMission(mission) {
+    $rootScope.missions.push(mission);
+  }
+
   var id = 0;
   function makeUnique(obj) {
     if (!obj.id) { obj.id = id++; }
@@ -122,7 +130,9 @@ app.service("GBHDisplay", ["$rootScope", "GBHLogger", function ($rootScope, Logg
     addAction: addAction,
     updateAction: updateAction,
     showAction: showAction,
-    hideAction: hideAction
+    hideAction: hideAction,
+    addButton: addButton,
+    addMission: addMission
   });
 
 }]);
