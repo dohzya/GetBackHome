@@ -1,4 +1,4 @@
-app.service("GBHModels", ["GBHLogger", function (Logger) {
+app.service("GBHModels", ["$rootScope", "GBHLogger", function ($rootScope, Logger) {
   "use strict";
 
   var self = this;
@@ -46,6 +46,14 @@ app.service("GBHModels", ["GBHLogger", function (Logger) {
     }
     return attack;
   };
+  Group.prototype.Tooling = function() {
+    var attack = 0;
+    for (var i in this.survivors) {
+      var survivor = this.survivors[i];
+      attack += survivor.tooling;
+    }
+    return attack;
+  };
   Group.prototype.Length = function() {
     return this.survivors.Length;
   };
@@ -66,6 +74,7 @@ app.service("GBHModels", ["GBHLogger", function (Logger) {
   function Survivor(args) {
     this.food = args.food;
     this.fighting = args.fighting;
+    this.tooling = args.tooling;
   }
   Survivor.prototype.Defense = function() {
     return this.fighting.defense;
@@ -81,7 +90,8 @@ app.service("GBHModels", ["GBHLogger", function (Logger) {
     for (var i=0; i<nb; i++) {
       survivors.push(createSurvivors({
         food: 30,
-        fighting: createFighting()
+        fighting: createFighting(),
+        tooling: 5
       }));
     }
     return survivors;
@@ -115,7 +125,7 @@ app.service("GBHModels", ["GBHLogger", function (Logger) {
   }
   Env.prototype.Ratio = function(coef) {
     return minmax(
-      ( this.group.Attack() - this.horde.Defence() ) /
+      ( this.group.Attack() - this.horde.Defense() ) /
       ( this.horde.Attack() - this.group.Defense() )
     );
   };
@@ -194,22 +204,46 @@ app.service("GBHModels", ["GBHLogger", function (Logger) {
   // Mission:
   // - order: Order
   // - group: Group
-  var missions = [];
+  var missionId = 0;
   function Mission(args) {
+    this.id = missionId++;
     this.order = args.order;
     this.group = args.group;
+    this.remainingPath = this.order.path;
+    this.elapsedPath = [];
+    this.remainingTime = this.order.time.rand();
+    this.elapsedTime = 0;
   }
   Mission.prototype.turn = function() {
-    this.order.turn();
+    if (this.remainingPath.length == 0) {
+      var remove = this.order.run.apply(this);
+      console.log("remove: ", remove);
+      if (remove) {
+        var newMissions = [];
+        for (var i in $rootScope.missions) {
+          var mission = $rootScope.missions[i];
+          if (mission.id != this.id) {
+            newMissions.push(mission);
+          }
+        }
+        console.log("missions: ", $rootScope.missions);
+        console.log("newMissions: ", newMissions);
+        $rootScope.missions = newMissions;
+      }
+    }
+    else {
+      console.log("NON")
+      // TODO
+    }
   }
   function createMission(args) {
     var mission = new Mission(args);
-    missions.push(mission);
+    $rootScope.missions.push(mission);
     return mission;
   }
   function eachMission(func) {
-    for (var i in missions) {
-      func(missions[i]);
+    for (var i in $rootScope.missions) {
+      func($rootScope.missions[i]);
     }
   }
 
@@ -223,23 +257,9 @@ app.service("GBHModels", ["GBHLogger", function (Logger) {
     this.id = args.id;
     this.name = args.name;
     this.path = args.path || [];
-    this.remainingPath = this.path;
-    this.elapsedPath = [];
     this.time = args.time;
-    this.remainingTime = args.time.rand();
-    this.elapsedTime = 0;
     this.onTurn = args.onTurn || noop;
     this.run = args.run;
-  }
-  Order.prototype.turn = function() {
-    if (this.remainingPath.length == 0) {
-      console.log("Oui")
-      this.run();
-    }
-    else {
-      console.log("NON")
-      // TODO
-    }
   }
   function createOrder(args) {
     var order = new Order(args);

@@ -101,7 +101,7 @@ app.service("GBHDisplay", ["$rootScope", "GBHLogger", function ($rootScope, Logg
   }
 
   function addMission(mission) {
-    $rootScope.missions.push(mission);
+    // $rootScope.missions.push(mission);
   }
 
   var id = 0;

@@ -220,9 +220,10 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
     }),
     run: function(){
       var fortifying = random(10, 50) / 100;
-      this.env.defense += fortifying;
+      this.group.tooling += fortifying;
       Display.addMessage("La zone a été fortifiée (de {0}%)", Math.round(fortifying*100));
       changed();
+      return true;
     }
   });
   var action = Actions.createAction({
