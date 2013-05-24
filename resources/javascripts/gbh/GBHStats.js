@@ -5,18 +5,29 @@ app.service("GBHStats", ["$rootScope", "GBHLogger", function ($rootScope, Logger
 
   function Stat(args) {
     this.id = args.id;
-    this.name = args.name;
+    this.label = args.label;
+    this.suffix = args.suffix;
     this.value = args.value;
+    this.update = args.update;
   }
   function createStat(args) {
-    return new Stat(args);
+    var stat = new Stat(args);
+    $rootScope.stats.push(stat);
+    return stat;
+  }
+  function updateStats() {
+    for (var i in $rootScope.stats) {
+      var stat = $rootScope.stats[i];
+      stat.update();
+    }
   }
 
   var actions = {};
 
   // Export
   $.extend(self, {
-    createStat: createStat
+    createStat: createStat,
+    updateStats: updateStats
   });
 
 }]);

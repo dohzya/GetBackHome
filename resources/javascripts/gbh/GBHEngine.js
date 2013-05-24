@@ -1,4 +1,4 @@
-app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "GBHActions", function (Display, Logger, Orders, Models, Actions) {
+app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "GBHActions", "GBHStats", function (Display, Logger, Orders, Models, Actions, Stats) {
   "use strict";
 
   function changeSelection(selected) {
@@ -108,29 +108,47 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
   var turnNb = 0;
   var selected = 0;
 
-  // Stats
-  var totalSurvivors;
-  var totalKilledZombies;
-  var totalKilledSurvivors;
-
   // Main
   var mainGroup = Models.createGroup(10);
   var mainPlace = Models.createPlace({
     food: 100,
-    defense: 1,
-    horde: Models.createHorde(100)
+    defense: 1
   });
   var mainEnv = Models.createEnv({
     group: mainGroup,
-    place: mainPlace
+    place: mainPlace,
+    horde: Models.createHorde(100)
+  });
+
+  Stats.createStat({
+    id: "turn",
+    label: "Tour",
+    update: function(){ this.value = turnNb; }
+  });
+  // "turn", "Tour");
+  // "ratio", "Sécurité", " %");
+  // "defense", "Étant du fort", " %");
+  // "zombies", "Zombies aux alentour");
+  // "survivors", "Survivants");
+  console.log(mainPlace);
+  console.log(mainEnv);
+  Stats.createStat({
+    id: "zombies",
+    label: "Zombies",
+    update: function(){ this.value = mainEnv.horde.Length(); }
+  });
+  Stats.createStat({
+    id: "survivors",
+    label: "Survivants",
+    update: function(){ this.value = mainGroup.Length(); }
   });
 
   function select(s) {
     selected = Math.min(s, mainGroup.Length());
-    if (selected != s) { changeSelection(selected); }
+    if (selected !== s) { changeSelection(selected); }
     return selected;
   }
-  setTimeout(function(){ changeSelection(0) }, 10);
+  setTimeout(function(){ changeSelection(0); }, 10);
 
   var order = Models.createOrder({
     id: "fortify",
@@ -143,6 +161,7 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
       var fortifying = random(10, 50) / 100;
       this.group.tooling += fortifying;
       Display.addMessage("La zone a été fortifiée (de {0}%)", Math.round(fortifying*100));
+      finishMission(this);
       return true;
     }
   });
@@ -164,6 +183,8 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
     var group = splitGroup(mainGroup, nb);
     selected = 0;
     changeSelection(selected);
+    changed();
+    return group;
   }
 
   function splitGroup(group, nb) {
@@ -179,9 +200,16 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
   function doAction(id) {
     var mission = Models.createMission({
       order: Actions.action(id).order,
-      group: splitGroup(mainGroup, 10)  // s/10/selected/
+      group: sendSelected(selected)
     });
     Display.addMission(mission);
+  }
+  function finishMission(mission) {
+    for (var i in mission.group.survivors) {
+      var survivor = mission.group.survivors[i];
+      mainGroup.survivors.push(survivor);
+    }
+    changed();
   }
 
   function turn() {
@@ -189,6 +217,12 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
       mission.turn();
     });
   }
+
+  function changed() {
+    Stats.updateStats();
+  }
+
+  Stats.updateStats();
 
   // Export
   $.extend(self, {

@@ -110,13 +110,13 @@ app.service("GBHDisplay", ["$rootScope", "GBHLogger", function ($rootScope, Logg
     return obj;
   }
 
-  addStat("turn", "Tour");
-  addStat("ratio", "Sécurité", " %");
-  addStat("defense", "Étant du fort", " %");
-  addStat("zombies", "Zombies aux alentour");
-  addStat("survivors", "Survivants");
-  addStat("idle", "Survivants inactif");
-  addStat("food", "Nourriture restante");
+  // addStat("turn", "Tour");
+  // addStat("ratio", "Sécurité", " %");
+  // addStat("defense", "Étant du fort", " %");
+  // addStat("zombies", "Zombies aux alentour");
+  // addStat("survivors", "Survivants");
+  // addStat("idle", "Survivants inactif");
+  // addStat("food", "Nourriture restante");
   // addAction("scavange", "Fouiller", {"safe": ["Sécurité", " %"], "loot": "Récolte"});
   // addAction("convert", "Amenager", {"build": ["Avancement", " %"]});
 
