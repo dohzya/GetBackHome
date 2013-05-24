@@ -55,7 +55,7 @@ app.service("GBHModels", ["$rootScope", "GBHLogger", function ($rootScope, Logge
     return attack;
   };
   Group.prototype.Length = function() {
-    return this.survivors.Length;
+    return this.survivors.length;
   };
   function createGroup(args) {
     if (typeof(args) == "number") {
@@ -217,7 +217,6 @@ app.service("GBHModels", ["$rootScope", "GBHLogger", function ($rootScope, Logge
   Mission.prototype.turn = function() {
     if (this.remainingPath.length == 0) {
       var remove = this.order.run.apply(this);
-      console.log("remove: ", remove);
       if (remove) {
         var newMissions = [];
         for (var i in $rootScope.missions) {
@@ -226,8 +225,6 @@ app.service("GBHModels", ["$rootScope", "GBHLogger", function ($rootScope, Logge
             newMissions.push(mission);
           }
         }
-        console.log("missions: ", $rootScope.missions);
-        console.log("newMissions: ", newMissions);
         $rootScope.missions = newMissions;
       }
     }

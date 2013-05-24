@@ -35,15 +35,6 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
     return Math.floor(positive(nb));
   }
 
-  function sendLocalOrder(name) {
-    Logger.trace("send local order '"+ name +"'");
-    if (selected != 0) {
-      var survivors = sendSelected();
-      Orders.sendOrder(name, {survivors: survivors}, mainEnv);
-      changed();
-    }
-  }
-
   function purify() { sendLocalOrder("purify"); }
   function scavange() {
     if (selected == 0) { return; }
@@ -59,12 +50,6 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
         changed();
       }
     });
-    changed();
-  }
-  function fortify() { sendLocalOrder("fortify"); }
-  function convert() {
-    var survivors = sendOrderSelected();
-    Display.addMessage("La zone a été amenagée");
     changed();
   }
   function zombieAttack() {
@@ -119,42 +104,6 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
     Display.updateStat("food", "{0} ({1} | {2} jours)", mainEnv.food, -mainEnv.survivors, Math.round(mainEnv.food / mainEnv.survivors));
   }
 
-  function updateActions() {
-    Orders.updateActions();
-    Display.updateAction("scavange", {"safe": 100, "loot": 100});
-    Display.showAction("scavange");
-    Display.showAction("fortify");
-  }
-
-  function changed() {
-    updateStats();
-    updateActions();
-  }
-
-  function computeRatio(nbSurvivors, nbZombies, defense, coef) {
-    var r = (nbSurvivors * defense  * coef) / nbZombies;
-    return Math.max(Math.min(0.999, r), 0.01);
-  }
-
-  function select(s) {
-    selected = Math.min(s, mainEnv.idle);
-    if (selected != s) { changeSelection(selected); }
-    changed();
-    return selected;
-  }
-  function sendSelected() {
-    var s = selected;
-    mainEnv.idle -= selected;
-    selected = 0;
-    changeSelection(0);
-    return s;
-  }
-  function resetSelected() {
-    selected = 0;
-    changeSelection(0);
-    mainEnv.idle = mainEnv.survivors;
-  }
-
   // Global
   var turnNb = 0;
   var selected = 0;
@@ -176,40 +125,12 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
     place: mainPlace
   });
 
-  // Orders.defineOrder({
-  //   id: "purify",
-  //   name: "Purification",
-  //   coefRatio: 20,
-  //   turns: 2,
-  //   run: function(){
-  //     console.log(this);
-  //     console.log(this.env);
-  //     var ratio = computeRatio(this.env.survivors, this.env.zombies, random(70, 130)/100, this.coefRatio);
-  //     var killZombies = 0;
-  //     var killSurvivors = 0;
-  //     killZombies = positiveFloor(this.env.zombies * random(ratio*50, ratio*100)/100);
-  //     killSurvivors = positiveFloor(this.env.survivors * random((1-ratio)*50, (1-ratio)*100)/100);
-  //     this.env.zombies -= killZombies;
-  //     this.env.survivors -= killSurvivors;
-  //     Display.addMessage("La zone a été purifée ({0} survivants impliqués dont {2} tués, {1} zombies éliminés)", this.env.survivors, killZombies, killSurvivors);
-  //     changed();
-  //   },
-  //   onSend: function(){},
-  //   action: {
-  //     name: "Purifier",
-  //     stats: {
-  //       safe: {
-  //         id: "safe",
-  //         name: "Sécurité",
-  //         value: 0,
-  //         suffix: "%",
-  //         update: function() {
-  //           this.value = Math.round(computeRatio(selected, mainEnv.zombies, 1, this.order.coefRatio)*100);
-  //         }
-  //       }
-  //     }
-  //   }
-  // });
+  function select(s) {
+    selected = Math.min(s, mainGroup.Length());
+    if (selected != s) { changeSelection(selected); }
+    return selected;
+  }
+  setTimeout(function(){ changeSelection(0) }, 10);
 
   var order = Models.createOrder({
     id: "fortify",
@@ -222,7 +143,6 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
       var fortifying = random(10, 50) / 100;
       this.group.tooling += fortifying;
       Display.addMessage("La zone a été fortifiée (de {0}%)", Math.round(fortifying*100));
-      changed();
       return true;
     }
   });
@@ -239,6 +159,12 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
     order: "fortify"
   });
   Display.addButton(action);
+
+  function sendSelected(nb) {
+    var group = splitGroup(mainGroup, nb);
+    selected = 0;
+    changeSelection(selected);
+  }
 
   function splitGroup(group, nb) {
     var removed = [];
@@ -263,31 +189,6 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
       mission.turn();
     });
   }
-
-  // Orders.defineOrder({
-  //   id: "fortify",
-  //   name: "Fortifier",
-  //   turns: 3,
-  //   run: function(){
-  //     var fortifying = random(10, 50) / 100;
-  //     this.env.defense += fortifying;
-  //     Display.addMessage("La zone a été fortifiée (de {0}%)", Math.round(fortifying*100));
-  //     changed();
-  //   },
-  //   action: {
-  //     name: "Fortifier",
-  //     stats: {
-  //       build: {
-  //         id: "build",
-  //         name: "Avancement",
-  //         value: 100
-  //       }
-  //     }
-  //   }
-  // });
-
-  resetSelected();
-  changed();
 
   // Export
   $.extend(self, {
