@@ -112,7 +112,11 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
   var mainGroup = Models.createGroup(10);
   var mainPlace = Models.createPlace({
     food: 100,
-    defense: 1
+    defense: 1,
+    fighting: Models.createFighting({
+      defense: 1,
+      power: 1
+    })
   });
   var mainEnv = Models.createEnv({
     group: mainGroup,
@@ -133,14 +137,42 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
   console.log(mainPlace);
   console.log(mainEnv);
   Stats.createStat({
+    id: "ratio",
+    label: "Sécurité",
+    suffix: " %",
+    update: function(){ this.value = mainEnv.Ratio(); }
+  });
+  Stats.createStat({
+    id: "defense",
+    label: "Étant du fort",
+    suffix: " %",
+    update: function(){ this.value = mainPlace.Defense(); }
+  });
+  Stats.createStat({
     id: "zombies",
-    label: "Zombies",
+    label: "Zombies aux alentour",
     update: function(){ this.value = mainEnv.horde.Length(); }
   });
   Stats.createStat({
     id: "survivors",
     label: "Survivants",
+    update: function(){
+      var value = mainGroup.Length();
+      Models.eachMission(function(mission){
+        value += mission.group.Length();
+      });
+      this.value = value;
+    }
+  });
+  Stats.createStat({
+    id: "idle",
+    label: "Survivants inactif",
     update: function(){ this.value = mainGroup.Length(); }
+  });
+  Stats.createStat({
+    id: "food",
+    label: "Nourriture restante",
+    update: function(){ this.value = mainPlace.food; }
   });
 
   function select(s) {
@@ -150,7 +182,7 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
   }
   setTimeout(function(){ changeSelection(0); }, 10);
 
-  var order = Models.createOrder({
+  Models.createOrder({
     id: "fortify",
     name: "Fortifier",
     time: Models.createTime({
@@ -183,7 +215,6 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
     var group = splitGroup(mainGroup, nb);
     selected = 0;
     changeSelection(selected);
-    changed();
     return group;
   }
 
@@ -198,13 +229,16 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
   }
 
   function doAction(id) {
-    var mission = Models.createMission({
+    Models.createMission({
       order: Actions.action(id).order,
       group: sendSelected(selected)
     });
-    Display.addMission(mission);
+    changed();
   }
   function finishMission(mission) {
+    // Si on veut la mettre dans Models, il faut automatiser le concept
+    // d'une mission qui arrive ou fini dans un env, et merger avec cet
+    // env en question
     for (var i in mission.group.survivors) {
       var survivor = mission.group.survivors[i];
       mainGroup.survivors.push(survivor);
@@ -216,6 +250,7 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
     Models.eachMission(function(mission){
       mission.turn();
     });
+    changed();
   }
 
   function changed() {

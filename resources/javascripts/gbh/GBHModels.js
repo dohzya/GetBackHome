@@ -6,7 +6,7 @@ app.service("GBHModels", ["$rootScope", "GBHLogger", function ($rootScope, Logge
   function random(arg1, arg2) {
     var min, max;
     if (arguments.length > 0) {
-      if (arguments.length == 1) {
+      if (arguments.length === 1) {
         min = 0;
         max = arg1;
       }
@@ -16,7 +16,7 @@ app.service("GBHModels", ["$rootScope", "GBHLogger", function ($rootScope, Logge
       }
       return Math.floor((Math.random() * (max-min)) + min);
     }
-    else return Math.random();
+    else { return Math.random(); }
   }
 
   function minmax(nb) {
@@ -58,7 +58,7 @@ app.service("GBHModels", ["$rootScope", "GBHLogger", function ($rootScope, Logge
     return this.survivors.length;
   };
   function createGroup(args) {
-    if (typeof(args) == "number") {
+    if (typeof(args) === "number") {
       return createGroup({
         survivors: createSurvivors(args)
       });
@@ -89,7 +89,7 @@ app.service("GBHModels", ["$rootScope", "GBHLogger", function ($rootScope, Logge
   function createSurvivors(nb) {
     var survivors = [];
     for (var i=0; i<nb; i++) {
-      survivors.push(createSurvivors({
+      survivors.push(createSurvivor({
         food: 30,
         fighting: createFighting(),
         tooling: 5,
@@ -222,16 +222,7 @@ app.service("GBHModels", ["$rootScope", "GBHLogger", function ($rootScope, Logge
   Mission.prototype.turn = function() {
     if (this.remainingPath.length === 0) {
       var remove = this.order.run.apply(this);
-      if (remove) {
-        var newMissions = [];
-        for (var i in $rootScope.missions) {
-          var mission = $rootScope.missions[i];
-          if (mission.id !== this.id) {
-            newMissions.push(mission);
-          }
-        }
-        $rootScope.missions = newMissions;
-      }
+      if (remove) { removeMission(this); }
     }
     else {
       console.log("NON");
@@ -247,6 +238,16 @@ app.service("GBHModels", ["$rootScope", "GBHLogger", function ($rootScope, Logge
     for (var i in $rootScope.missions) {
       func($rootScope.missions[i]);
     }
+  }
+  function removeMission(missionToRemove) {
+    var newMissions = [];
+    for (var i in $rootScope.missions) {
+      var mission = $rootScope.missions[i];
+      if (mission.id !== missionToRemove.id) {
+        newMissions.push(mission);
+      }
+    }
+    $rootScope.missions = newMissions;
   }
 
 
@@ -310,9 +311,11 @@ app.service("GBHModels", ["$rootScope", "GBHLogger", function ($rootScope, Logge
     createZombies: createZombies,
     createMission: createMission,
     eachMission: eachMission,
+    removeMission: removeMission,
     createOrder: createOrder,
     order: order,
-    createTime: createTime
+    createTime: createTime,
+    createFighting: createFighting
   });
 
 }]);
