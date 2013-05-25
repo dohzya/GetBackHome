@@ -9,7 +9,8 @@
         <div class="gbh-title">Ordres</div>
         <div class="gbh-contents">
           <div class="gbh-content" data-id="{{mission.id}}" data-ng-repeat="mission in missions">
-            <span>{{mission.name}}</span>
+            <span>{{mission.order.name}}</span>
+            (<span>{{mission.status}}</span>)
             (<span>survivants : {{mission.env.survivors}}</span>, <span>tours restants : {{mission.turnToComplete}}</span>)
             <div class="btn btn-small" ng-click="cancelOrder({{mission.id}})">
               <span>Annuler</span> (<span>1 tour</span>)

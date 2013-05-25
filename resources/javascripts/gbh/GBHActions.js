@@ -1,4 +1,4 @@
-app.service("GBHActions", ["GBHLogger", "GBHModels", function (Logger, Models) {
+app.service("GBHActions", ["$rootScope", "GBHLogger", "GBHModels", function ($rootScope, Logger, Models) {
   "use strict";
 
   var self = this;
@@ -17,7 +17,7 @@ app.service("GBHActions", ["GBHLogger", "GBHModels", function (Logger, Models) {
   function Action(args) {
     this.id = args.id;
     this.name = args.name;
-    if (typeof(args.order) == "string") {
+    if (typeof(args.order) === "string") {
       this.order = Models.order(args.order);
     }
     else {
@@ -28,6 +28,7 @@ app.service("GBHActions", ["GBHLogger", "GBHModels", function (Logger, Models) {
   function createAction(args) {
     var action = new Action(args);
     actions[action.id] = action;
+    $rootScope.buttons.push(action);
     return action;
   }
 

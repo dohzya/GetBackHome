@@ -10,7 +10,7 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
   function random(arg1, arg2) {
     var min, max;
     if (arguments.length > 0) {
-      if (arguments.length == 1) {
+      if (arguments.length === 1) {
         min = 0;
         max = arg1;
       }
@@ -20,22 +20,20 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
       }
       return Math.floor((Math.random() * (max-min)) + min);
     }
-    else return Math.random();
+    else { return Math.random(); }
   }
 
   function positive(nb) {
     return Math.max(nb, 0);
   }
-
-  function positiveRound(nb) {
-    return Math.round(positive(nb));
-  }
-
   function positiveFloor(nb) {
     return Math.floor(positive(nb));
   }
 
-  function purify() { sendLocalOrder("purify"); }
+  function to2digits(nb) {
+    return Math.round(nb * 100) / 100;
+  }
+
   function scavange() {
     if (selected == 0) { return; }
     var survivors = sendOrderSelected();
@@ -88,20 +86,10 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
       mainEnv.survivors += newSurvivors;
       Display.addMessage("Vous avez été rejoin par {0} survivants", newSurvivors);
     }
-    if (mainEnv.zombies > 0 && random() > 0.7) zombieAttack();
+    if (mainEnv.zombies > 0 && random() > 0.7) { zombieAttack(); }
     turnNb++;
     Display.addMessage("Tour {0}.", turnNb);
     changed();
-  }
-
-  function updateStats() {
-    Display.updateStat("turn", turnNb);
-    Display.updateStat("ratio", Math.round(computeRatio(mainEnv.idle, mainEnv.zombies, mainEnv.defense, mainEnv.coef)*100));
-    Display.updateStat("defense", Math.round(mainEnv.defense*100));
-    Display.updateStat("zombies", mainEnv.zombies);
-    Display.updateStat("survivors", mainEnv.survivors);
-    Display.updateStat("idle", mainEnv.idle);
-    Display.updateStat("food", "{0} ({1} | {2} jours)", mainEnv.food, -mainEnv.survivors, Math.round(mainEnv.food / mainEnv.survivors));
   }
 
   // Global
@@ -124,29 +112,29 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
     horde: Models.createHorde(100)
   });
 
+  function select(s) {
+    selected = Math.min(s, mainGroup.Length());
+    if (selected !== s) { changeSelection(selected); }
+    return selected;
+  }
+  setTimeout(function(){ changeSelection(0); }, 10);
+
   Stats.createStat({
     id: "turn",
     label: "Tour",
     update: function(){ this.value = turnNb; }
   });
-  // "turn", "Tour");
-  // "ratio", "Sécurité", " %");
-  // "defense", "Étant du fort", " %");
-  // "zombies", "Zombies aux alentour");
-  // "survivors", "Survivants");
-  console.log(mainPlace);
-  console.log(mainEnv);
   Stats.createStat({
     id: "ratio",
     label: "Sécurité",
     suffix: " %",
-    update: function(){ this.value = mainEnv.Ratio(); }
+    update: function(){ this.value = to2digits(mainEnv.Ratio() * 100); }
   });
   Stats.createStat({
     id: "defense",
     label: "Étant du fort",
     suffix: " %",
-    update: function(){ this.value = mainPlace.Defense(); }
+    update: function(){ this.value = to2digits(mainPlace.Defense() * 100); }
   });
   Stats.createStat({
     id: "zombies",
@@ -175,13 +163,6 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
     update: function(){ this.value = mainPlace.food; }
   });
 
-  function select(s) {
-    selected = Math.min(s, mainGroup.Length());
-    if (selected !== s) { changeSelection(selected); }
-    return selected;
-  }
-  setTimeout(function(){ changeSelection(0); }, 10);
-
   Models.createOrder({
     id: "fortify",
     name: "Fortifier",
@@ -197,7 +178,7 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
       return true;
     }
   });
-  var action = Actions.createAction({
+  Actions.createAction({
     id: "fortify",
     name: "Fortifier",
     stats: {
@@ -209,7 +190,6 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
     },
     order: "fortify"
   });
-  Display.addButton(action);
 
   function sendSelected(nb) {
     var group = splitGroup(mainGroup, nb);
@@ -250,6 +230,7 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
     Models.eachMission(function(mission){
       mission.turn();
     });
+    turnNb++;
     changed();
   }
 

@@ -20,13 +20,20 @@ app.service("GBHModels", ["$rootScope", "GBHLogger", function ($rootScope, Logge
   }
 
   function minmax(nb) {
-    Math.max(0.001, Math.min(nb, 0.99));
+    return min0(max100(nb));
+  }
+  function min0(nb) {
+    return Math.max(0.00001, nb);
+  }
+  function max100(nb) {
+    return Math.min(nb, 0.99999);
   }
 
   function noop() {}
 
-  // Group:
-  // - survivors: num
+  /*
+   * Group
+   */
   function Group(args) {
     this.survivors = args.survivors;
   }
@@ -68,9 +75,9 @@ app.service("GBHModels", ["$rootScope", "GBHLogger", function ($rootScope, Logge
     }
   }
 
-  // Survivor:
-  // - food: num
-  // - fighting: num
+  /*
+   * Survivor
+   */
   function Survivor(args) {
     this.food = args.food;
     this.fighting = args.fighting;
@@ -91,7 +98,7 @@ app.service("GBHModels", ["$rootScope", "GBHLogger", function ($rootScope, Logge
     for (var i=0; i<nb; i++) {
       survivors.push(createSurvivor({
         food: 30,
-        fighting: createFighting(),
+        fighting: createFighting("survivor"),
         tooling: 5,
         level: 1
       }));
@@ -99,9 +106,9 @@ app.service("GBHModels", ["$rootScope", "GBHLogger", function ($rootScope, Logge
     return survivors;
   }
 
-  // Place:
-  // - food: num
-  // - fighting: num
+  /*
+   * Place
+   */
   function Place(args) {
     this.food = args.food;
     this.fighting = args.fighting;
@@ -116,10 +123,9 @@ app.service("GBHModels", ["$rootScope", "GBHLogger", function ($rootScope, Logge
     return new Place(args);
   }
 
-  // Env:
-  // - group: Groupe
-  // - place: Place
-  // - horde: Horde
+  /*
+   * Env
+   */
   function Env(args) {
     this.group = args.group;
     this.place = args.place;
@@ -127,17 +133,17 @@ app.service("GBHModels", ["$rootScope", "GBHLogger", function ($rootScope, Logge
   }
   Env.prototype.Ratio = function() {
     return minmax(
-      ( this.group.Attack() - this.horde.Defense() ) /
-      ( this.horde.Attack() - this.group.Defense() )
+      min0( this.group.Attack() - this.horde.Defense() ) /
+      min0( this.horde.Attack() - this.group.Defense() )
     );
   };
   function createEnv(args) {
     return new Env(args);
   }
 
-  // Horde:
-  // - zombies: [Zombie]
-  // - specials: [Special] @oupa
+  /*
+   * Horde
+   */
   function Horde(args) {
     this.zombies = args.zombies;
     this.specials = args.specials;
@@ -173,11 +179,9 @@ app.service("GBHModels", ["$rootScope", "GBHLogger", function ($rootScope, Logge
     }
   }
 
-  // Zombie:
-  // - fighting: num
-  // - affut: num
-  // - excitation: num
-  // - state: num
+  /*
+   * Zombie
+   */
   function Zombie(args) {
     this.fighting = args.fighting;
     this.affut = args.affut;
@@ -197,7 +201,7 @@ app.service("GBHModels", ["$rootScope", "GBHLogger", function ($rootScope, Logge
     var zombies = [];
     for (var i=0; i<nb; i++) {
       zombies.push(createZombie({
-        fighting: createFighting(),
+        fighting: createFighting("zombie"),
         affut: 0.5,
         excitation: 0.5,
         state: 0.5
@@ -206,12 +210,13 @@ app.service("GBHModels", ["$rootScope", "GBHLogger", function ($rootScope, Logge
     return zombies;
   }
 
-  // Mission:
-  // - order: Order
-  // - group: Group
+  /*
+   * Mission
+   */
   var missionId = 0;
   function Mission(args) {
     this.id = missionId++;
+    this.status = "walking";
     this.order = args.order;
     this.group = args.group;
     this.remainingPath = this.order.path;
@@ -221,13 +226,23 @@ app.service("GBHModels", ["$rootScope", "GBHLogger", function ($rootScope, Logge
   }
   Mission.prototype.turn = function() {
     if (this.remainingPath.length === 0) {
-      var remove = this.order.run.apply(this);
-      if (remove) { removeMission(this); }
+      this.status = "running";
+      if (this.remainingTime === 0) {
+        this.status = "finished";
+        var remove = this.order.run.apply(this);
+        if (remove) { removeMission(this); }
+      }
+      else {
+        this.remainingTime--;
+        this.elapsedTime++;
+        this.order.onRun.apply(this);
+      }
     }
     else {
-      console.log("NON");
-      // TODO
+      Logger.warn("Mission is walking but this is not implemented ({0})", this);
+      this.order.onWalk.apply(this);
     }
+    Logger.trace("Mission#turn: {0}", this);
   };
   function createMission(args) {
     var mission = new Mission(args);
@@ -250,18 +265,18 @@ app.service("GBHModels", ["$rootScope", "GBHLogger", function ($rootScope, Logge
     $rootScope.missions = newMissions;
   }
 
-
+  /*
+   * Order
+   */
   var orders = {};
-
-  // Order:
-  // - path: [Place]
-  // - time: Time
   function Order(args) {
     this.id = args.id;
     this.name = args.name;
     this.path = args.path || [];
     this.time = args.time;
+    this.onWalk = args.onWalk || noop;
     this.onTurn = args.onTurn || noop;
+    this.onRun = args.onRun || noop;
     this.run = args.run;
   }
   function createOrder(args) {
@@ -269,25 +284,36 @@ app.service("GBHModels", ["$rootScope", "GBHLogger", function ($rootScope, Logge
     orders[order.id] = order;
     return order;
   }
-
   function order(id) {
     return orders[id];
   }
 
-  // Fighting:
-  // - defence: num
-  // - power: num
+  /*
+   * Fighting
+   */
   function Fighting(args) {
-    this.defence = args.defence || 0.5;
-    this.power = args.power || 0.5;
+    this.attack = args.attack;
+    this.defense = args.defense;
   }
   function createFighting(args) {
-    return new Fighting(args || {});
+    if (args === "survivor") {
+      args = {
+        attack: 10,
+        defense: 10
+      };
+    }
+    else if (args === "zombie") {
+      args = {
+        attack: 0.1,
+        defense: 0.1
+      };
+    }
+    return new Fighting(args);
   }
 
-  // Time:
-  // - min: num
-  // - standard: num
+  /*
+   * Time
+   */
   function Time(args) {
     this.min = args.min;
     this.standard = args.standard;
