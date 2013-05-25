@@ -11,13 +11,16 @@
           <div class="gbh-content" data-id="{{mission.id}}" data-ng-repeat="mission in missions">
             <span>{{mission.order.name}}</span>
             (<span>{{mission.status}}</span>)
-            (<span>survivants : {{mission.env.survivors}}</span>, <span>tours restants : {{mission.turnToComplete}}</span>)
             <div class="btn btn-small" ng-click="cancelOrder({{mission.id}})">
               <span>Annuler</span> (<span>1 tour</span>)
             </div>
             <div class="btn btn-small" ng-click="sendBackup({{mission.id}})">
               <span>Envoyer du renfort</span> (<span>1 tour</span>)
             </div>
+            <div>(
+              <span>survivants : {{mission.group.Length()}}</span>,
+              <span>tours restants : {{mission.EstimatedTimeToComplete()}}</span>
+            )</div>
           </div>
         </div>
       </div>

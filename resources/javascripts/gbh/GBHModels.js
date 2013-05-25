@@ -224,6 +224,9 @@ app.service("GBHModels", ["$rootScope", "GBHLogger", function ($rootScope, Logge
     this.remainingTime = this.order.time.rand();
     this.elapsedTime = 0;
   }
+  Mission.prototype.EstimatedTimeToComplete = function() {
+    return this.remainingPath.length + this.remainingTime;
+  };
   Mission.prototype.turn = function() {
     if (this.remainingPath.length === 0) {
       this.status = "running";
