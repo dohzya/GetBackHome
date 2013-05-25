@@ -164,8 +164,40 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
   });
 
   Models.createOrder({
+    id: "purify",
+    name: "Purification",
+    time: Models.createTime({
+      min: 1,
+      standard: 3
+    }),
+    run: function(env){
+      var ratio = env.Ratio(); // TODO
+      var killZombies = 0;
+      var killSurvivors = 0;
+      killZombies = positiveFloor(env.horde.Length() * random(ratio*50, ratio*100)/100);
+      killSurvivors = positiveFloor(env.group.Length() * random((1-ratio)*50, (1-ratio)*100)/100);
+      env.horde.KillZombies(killZombies);
+      env.group.KillSurvivors(killSurvivors);
+      Display.addMessage("La zone a été purifée ({0} survivants impliqués dont {2} tués, {1} zombies éliminés)", env.group.Length(), killZombies, killSurvivors);
+      changed();
+      return true;
+    }
+  });
+  Actions.createAction({
+    id: "purify",
+    name: "Purifier",
+    stats: {
+      build: Actions.createStat({
+        id: "safe",
+        name: "Sécurité",
+        value: 100
+      })
+    },
+    order: "purify"
+  });
+  Models.createOrder({
     id: "fortify",
-    name: "Fortifier",
+    name: "Fortification",
     time: Models.createTime({
       min: 1,
       standard: 2
@@ -211,7 +243,8 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
   function doAction(id) {
     Models.createMission({
       order: Actions.action(id).order,
-      group: sendSelected(selected)
+      group: sendSelected(selected),
+      place: mainPlace
     });
     changed();
   }

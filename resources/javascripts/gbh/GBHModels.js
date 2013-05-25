@@ -37,6 +37,13 @@ app.service("GBHModels", ["$rootScope", "GBHLogger", function ($rootScope, Logge
   function Group(args) {
     this.survivors = args.survivors;
   }
+  Group.prototype.KillSurvivors = function(nb) {
+    var survivors = [];
+    for (var i=0; i<survivors-nb; i++) {
+      survivors.push(this.survivors[i]);
+    }
+    this.survivors = survivors;
+  };
   Group.prototype.Defense = function() {
     var defense = 0;
     for (var i in this.survivors) {
@@ -146,8 +153,14 @@ app.service("GBHModels", ["$rootScope", "GBHLogger", function ($rootScope, Logge
    */
   function Horde(args) {
     this.zombies = args.zombies;
-    this.specials = args.specials;
   }
+  Horde.prototype.KillZombies = function(nb) {
+    var zombies = [];
+    for (var i=0; i<zombies-nb; i++) {
+      zombies.push(this.zombies[i]);
+    }
+    this.zombies = zombies;
+  };
   Horde.prototype.Defense = function() {
     var defense = 0;
     for (var i in this.zombies) {
@@ -165,13 +178,12 @@ app.service("GBHModels", ["$rootScope", "GBHLogger", function ($rootScope, Logge
     return attack;
   };
   Horde.prototype.Length = function() {
-    return this.zombies.length + this.specials.length;
+    return this.zombies.length;
   };
   function createHorde(args) {
     if (typeof(args) === "number") {
       return createHorde({
-        zombies: createZombies(args),
-        specials: []
+        zombies: createZombies(args)
       });
     }
     else {
@@ -219,11 +231,20 @@ app.service("GBHModels", ["$rootScope", "GBHLogger", function ($rootScope, Logge
     this.status = "walking";
     this.order = args.order;
     this.group = args.group;
-    this.remainingPath = this.order.path;
+    this.path = args.path || [];
+    this.place = args.place;
+    this.remainingPath = this.path;
     this.elapsedPath = [];
     this.remainingTime = this.order.time.rand();
     this.elapsedTime = 0;
   }
+  Mission.prototype.CurrentEnv = function() {
+    return createEnv({
+      group: this.group,
+      place: this.place,
+      horde: createHorde(10)  // CHANGEME
+    });
+  };
   Mission.prototype.EstimatedTimeToComplete = function() {
     return this.remainingPath.length + this.remainingTime;
   };
@@ -232,7 +253,7 @@ app.service("GBHModels", ["$rootScope", "GBHLogger", function ($rootScope, Logge
       this.status = "running";
       if (this.remainingTime === 0) {
         this.status = "finished";
-        var remove = this.order.run.apply(this);
+        var remove = this.order.run.call(this, this.CurrentEnv());
         if (remove) { removeMission(this); }
       }
       else {
@@ -275,7 +296,6 @@ app.service("GBHModels", ["$rootScope", "GBHLogger", function ($rootScope, Logge
   function Order(args) {
     this.id = args.id;
     this.name = args.name;
-    this.path = args.path || [];
     this.time = args.time;
     this.onWalk = args.onWalk || noop;
     this.onTurn = args.onTurn || noop;
