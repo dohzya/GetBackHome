@@ -39,7 +39,7 @@ app.service("GBHModels", ["$rootScope", "GBHLogger", function ($rootScope, Logge
   }
   Group.prototype.KillSurvivors = function(nb) {
     var survivors = [];
-    for (var i=0; i<survivors-nb; i++) {
+    for (var i=0; i<this.survivors.length-nb; i++) {
       survivors.push(this.survivors[i]);
     }
     this.survivors = survivors;
@@ -156,7 +156,7 @@ app.service("GBHModels", ["$rootScope", "GBHLogger", function ($rootScope, Logge
   }
   Horde.prototype.KillZombies = function(nb) {
     var zombies = [];
-    for (var i=0; i<zombies-nb; i++) {
+    for (var i=0; i<this.zombies.length-nb; i++) {
       zombies.push(this.zombies[i]);
     }
     this.zombies = zombies;
