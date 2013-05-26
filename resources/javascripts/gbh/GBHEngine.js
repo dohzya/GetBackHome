@@ -174,7 +174,7 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
       env.Horde().KillZombies(killZombies);
       env.Group().KillSurvivors(killSurvivors);
       Display.addMessage("La zone a été purifée ({0} survivants impliqués dont {2} tués, {1} zombies éliminés)", env.Group().Length(), killZombies, killSurvivors);
-      changed();
+      finishMission(this);
       return true;
     }
   });
