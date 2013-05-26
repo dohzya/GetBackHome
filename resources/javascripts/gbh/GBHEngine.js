@@ -166,7 +166,7 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
       standard: 3
     }),
     run: function(env){
-      var ratio = env.Ratio(); // TODO
+      var ratio = env.Ratio();
       var killZombies = 0;
       var killSurvivors = 0;
       killZombies = positiveFloor(env.Horde().Length() * random(ratio*50, ratio*100)/100);
