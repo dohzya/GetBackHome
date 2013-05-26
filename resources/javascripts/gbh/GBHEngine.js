@@ -101,15 +101,11 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
   var mainPlace = Models.createPlace({
     food: 100,
     defense: 1,
-    fighting: Models.createFighting({
-      defense: 1,
-      power: 1
-    })
+    horde: Models.createHorde(100)
   });
   var mainEnv = Models.createEnv({
     group: mainGroup,
     place: mainPlace,
-    horde: Models.createHorde(100)
   });
 
   function select(s) {
@@ -139,7 +135,7 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
   Stats.createStat({
     id: "zombies",
     label: "Zombies aux alentour",
-    update: function(){ this.value = mainEnv.horde.Length(); }
+    update: function(){ this.value = mainEnv.Horde().Length(); }
   });
   Stats.createStat({
     id: "survivors",
@@ -174,11 +170,11 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
       var ratio = env.Ratio(); // TODO
       var killZombies = 0;
       var killSurvivors = 0;
-      killZombies = positiveFloor(env.horde.Length() * random(ratio*50, ratio*100)/100);
-      killSurvivors = positiveFloor(env.group.Length() * random((1-ratio)*50, (1-ratio)*100)/100);
-      env.horde.KillZombies(killZombies);
-      env.group.KillSurvivors(killSurvivors);
-      Display.addMessage("La zone a été purifée ({0} survivants impliqués dont {2} tués, {1} zombies éliminés)", env.group.Length(), killZombies, killSurvivors);
+      killZombies = positiveFloor(env.Horde().Length() * random(ratio*50, ratio*100)/100);
+      killSurvivors = positiveFloor(env.Group().Length() * random((1-ratio)*50, (1-ratio)*100)/100);
+      env.Horde().KillZombies(killZombies);
+      env.Group().KillSurvivors(killSurvivors);
+      Display.addMessage("La zone a été purifée ({0} survivants impliqués dont {2} tués, {1} zombies éliminés)", env.Group().Length(), killZombies, killSurvivors);
       changed();
       return true;
     }
@@ -195,6 +191,7 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
     },
     order: "purify"
   });
+
   Models.createOrder({
     id: "fortify",
     name: "Fortification",
