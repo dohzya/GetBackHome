@@ -240,13 +240,17 @@ app.service("GBHModels", ["$rootScope", "GBHLogger", function ($rootScope, Logge
     this.status = "walking";
     this.order = args.order;
     this.group = args.group;
-    this.path = args.path || [];
     this.place = args.place;
+    this.path = args.path || [];
     this.remainingPath = this.path;
     this.elapsedPath = [];
-    this.remainingTime = this.order.time.rand();
+    this.time = this.order.time.rand();
+    this.remainingTime = this.time;
     this.elapsedTime = 0;
   }
+  Mission.prototype.estimatedTime = function() {
+    return this.order.time.standard + this.path.length;
+  };
   Mission.prototype.CurrentEnv = function() {
     return createEnv({
       group: this.group,
@@ -255,7 +259,7 @@ app.service("GBHModels", ["$rootScope", "GBHLogger", function ($rootScope, Logge
     });
   };
   Mission.prototype.EstimatedTimeToComplete = function() {
-    return this.remainingPath.length + this.remainingTime;
+    return this.estimatedTime() - this.elapsedTime;
   };
   Mission.prototype.turn = function() {
     if (this.remainingPath.length === 0) {
