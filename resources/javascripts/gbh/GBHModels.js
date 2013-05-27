@@ -351,8 +351,8 @@ app.service("GBHModels", ["$rootScope", "GBHLogger", function ($rootScope, Logge
     this.standard = args.standard;
   }
   Time.prototype.rand = function() {
-    var r = random(0.5, 1.5);
-    return random(this.min, this.standard * r);
+    var r = random(50, 150);
+    return Math.round(random(this.min, this.standard * r) / 100);
   };
   function createTime(args) {
     return new Time(args);
