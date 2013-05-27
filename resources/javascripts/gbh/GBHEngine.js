@@ -100,7 +100,11 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
   var mainGroup = Models.createGroup(10);
   var mainPlace = Models.createPlace({
     food: 100,
-    horde: Models.createHorde(100)
+    horde: Models.createHorde(100),
+    fighting: Models.createFighting({
+      attack: 0,
+      defense: 1
+    })
   });
   var mainEnv = Models.createEnv({
     group: mainGroup,
@@ -125,12 +129,12 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
     suffix: " %",
     update: function(){ this.value = to2digits(mainEnv.Ratio() * 100); }
   });
-  // Stats.createStat({
-  //   id: "defense",
-  //   label: "Étant du fort",
-  //   suffix: " %",
-  //   update: function(){ this.value = to2digits(mainPlace.Defense() * 100); }
-  // });
+  Stats.createStat({
+    id: "defense",
+    label: "Étant du fort",
+    suffix: " %",
+    update: function(){ this.value = to2digits(mainPlace.Defense() * 100); }
+  });
   Stats.createStat({
     id: "zombies",
     label: "Zombies aux alentour",

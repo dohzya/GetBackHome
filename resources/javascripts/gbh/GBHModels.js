@@ -119,12 +119,13 @@ app.service("GBHModels", ["$rootScope", "GBHLogger", function ($rootScope, Logge
   function Place(args) {
     this.food = args.food;
     this.horde = args.horde;
+    this.fighting = args.fighting;
   }
   Place.prototype.Defense = function() {
-    return this.horde.defense;
+    return this.fighting.defense;
   };
   Place.prototype.Attack = function() {
-    return this.horde.attack;
+    return this.fighting.attack;
   };
   function createPlace(args) {
     return new Place(args);
@@ -137,6 +138,9 @@ app.service("GBHModels", ["$rootScope", "GBHLogger", function ($rootScope, Logge
     this.place = args.place;
     this.group = args.group;
   }
+  Env.prototype.Place = function() {
+    return this.place;
+  };
   Env.prototype.Group = function() {
     return this.group;
   };
@@ -145,8 +149,8 @@ app.service("GBHModels", ["$rootScope", "GBHLogger", function ($rootScope, Logge
   };
   Env.prototype.Ratio = function() {
     return minmax(
-      min0( this.Group().Attack() - this.Horde().Defense() ) /
-      min0( this.Horde().Attack() - this.Group().Defense() )
+      min0( this.Group().Attack() + this.Place().Attack() - this.Horde().Defense() ) /
+      min0( this.Horde().Attack() - this.Place().Defense() - this.Group().Defense() )
     );
   };
   function createEnv(args) {
