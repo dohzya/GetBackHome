@@ -23,8 +23,6 @@ app.service("GBHStats", ["$rootScope", "GBHLogger", function ($rootScope, Logger
     }
   }
 
-  var actions = {};
-
   // Export
   $.extend(self, {
     createStat: createStat,
