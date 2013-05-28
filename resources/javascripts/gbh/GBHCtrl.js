@@ -1,12 +1,22 @@
-app.controller("GBHCtrl", ["$scope", "GBHEngine", "GBHLogger", function ($scope, Engine, Logger) {
+app.controller("GBHCtrl", ["$scope", "GBHEngine", function ($scope, Engine) {
   "use strict";
 
-  var self = this;
+  var inAction = false;
 
-  $scope.nextTurn = function(){ Engine.turn(); };
+  function doAction(func) {
+    return function() {
+      if (!inAction) {
+        inAction = true;
+        func.apply(this, arguments);
+        inAction = false;
+      }
+    };
+  }
 
-  $scope.action = function(id){ Engine.doAction(id) };
+  $scope.nextTurn = doAction(function(){ Engine.turn(); });
 
-  $scope.select = function(){ Engine.select($scope.selected); };
+  $scope.action = doAction(function(id){ Engine.doAction(id); });
+
+  $scope.select = doAction(function(){ Engine.select($scope.selected); });
 
 }]);
