@@ -106,7 +106,7 @@ app.service("GBHModels", ["$rootScope", "GBHLogger", function ($rootScope, Logge
       survivors.push(createSurvivor({
         food: 30,
         fighting: createFighting("survivor"),
-        tooling: 5,
+        tooling: 0.5,
         level: 1
       }));
     }
@@ -121,8 +121,12 @@ app.service("GBHModels", ["$rootScope", "GBHLogger", function ($rootScope, Logge
     this.horde = args.horde;
     this.fighting = args.fighting;
   }
-  Place.prototype.Defense = function() {
+  Place.prototype.Defense = function(value) {
+    if (value) { this.fighting.defense = value; }
     return this.fighting.defense;
+  };
+  Place.prototype.AddDefense = function(value) {
+    return this.Defense(this.Defense() + value);
   };
   Place.prototype.Attack = function() {
     return this.fighting.attack;

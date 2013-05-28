@@ -103,7 +103,7 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
     horde: Models.createHorde(100),
     fighting: Models.createFighting({
       attack: 0,
-      defense: 1
+      defense: 0.7
     })
   });
   var mainEnv = Models.createEnv({
@@ -202,9 +202,10 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
       min: 1,
       standard: 2
     }),
-    run: function(){
-      var fortifying = random(10, 50) / 100;
-      this.group.tooling += fortifying;
+    run: function(env){
+      var max = Math.min(env.Group().Tooling(), 1-env.Place().Defense()) * 100;
+      var fortifying = random(max/2, max) / 100;
+      env.Place().AddDefense(fortifying);
       Display.addMessage("La zone a été fortifiée (de {0}%)", Math.round(fortifying*100));
       finishMission(this);
       return true;
