@@ -203,10 +203,11 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
       standard: 2
     }),
     run: function(env){
-      var max = Math.min(env.Group().Tooling(), 1-env.Place().Defense()) * 100;
+      var tooling = env.Group().Tooling() / 10;
+      var max = Math.min(tooling, 1-env.Place().Defense()) * 100;
       var fortifying = random(max/2, max) / 100;
       env.Place().AddDefense(fortifying);
-      Display.addMessage("La zone a été fortifiée (de {0}%)", Math.round(fortifying*100));
+      Display.addMessage("La zone a été fortifiée (de {0}%) par {1} survivants", Math.round(fortifying*100), env.Group().Length());
       finishMission(this);
       return true;
     }
