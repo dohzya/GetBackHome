@@ -118,49 +118,53 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
   }
   setTimeout(function(){ changeSelection(0); }, 10);
 
-  Stats.createStat({
-    id: "turn",
-    label: "Tour",
-    update: function(){ this.value = turnNb; }
-  });
-  Stats.createStat({
-    id: "ratio",
-    label: "Sécurité",
-    suffix: " %",
-    update: function(){ this.value = to2digits(mainEnv.Ratio() * 100); }
-  });
-  Stats.createStat({
-    id: "defense",
-    label: "Étant du fort",
-    suffix: " %",
-    update: function(){ this.value = to2digits(mainPlace.Defense() * 100); }
-  });
-  Stats.createStat({
-    id: "zombies",
-    label: "Zombies aux alentour",
-    update: function(){ this.value = mainEnv.Horde().Length(); }
-  });
-  Stats.createStat({
-    id: "survivors",
-    label: "Survivants",
-    update: function(){
-      var value = mainGroup.Length();
-      Models.eachMission(function(mission){
-        value += mission.group.Length();
-      });
-      this.value = value;
+    function sendSelected(nb) {
+    var group = splitGroup(mainGroup, nb);
+    selected = 0;
+    changeSelection(selected);
+    return group;
+  }
+
+  function splitGroup(group, nb) {
+    var removed = [];
+    for (var i=0; i<nb; i++) {
+      removed.push(group.survivors.shift());
     }
-  });
-  Stats.createStat({
-    id: "idle",
-    label: "Survivants inactif",
-    update: function(){ this.value = mainGroup.Length(); }
-  });
-  Stats.createStat({
-    id: "food",
-    label: "Nourriture restante",
-    update: function(){ this.value = mainPlace.food; }
-  });
+    return Models.createGroup({
+      survivors: removed
+    });
+  }
+
+  function doAction(id) {
+    Models.createMission({
+      order: Actions.action(id).order,
+      group: sendSelected(selected),
+      place: mainPlace
+    });
+    changed();
+  }
+  function finishMission(mission) {
+    // Si on veut la mettre dans Models, il faut automatiser le concept
+    // d'une mission qui arrive ou fini dans un env, et merger avec cet
+    // env en question
+    for (var i in mission.group.survivors) {
+      var survivor = mission.group.survivors[i];
+      mainGroup.survivors.push(survivor);
+    }
+    changed();
+  }
+
+  function turn() {
+    Models.eachMission(function(mission){
+      mission.turn();
+    });
+    turnNb++;
+    changed();
+  }
+
+  function changed() {
+    Stats.updateStats();
+  }
 
   Models.createOrder({
     id: "purify",
@@ -225,53 +229,49 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
     order: "fortify"
   });
 
-  function sendSelected(nb) {
-    var group = splitGroup(mainGroup, nb);
-    selected = 0;
-    changeSelection(selected);
-    return group;
-  }
-
-  function splitGroup(group, nb) {
-    var removed = [];
-    for (var i=0; i<nb; i++) {
-      removed.push(group.survivors.shift());
+  Stats.createStat({
+    id: "turn",
+    label: "Tour",
+    update: function(){ this.value = turnNb; }
+  });
+  Stats.createStat({
+    id: "ratio",
+    label: "Sécurité",
+    suffix: " %",
+    update: function(){ this.value = to2digits(mainEnv.Ratio() * 100); }
+  });
+  Stats.createStat({
+    id: "defense",
+    label: "Étant du fort",
+    suffix: " %",
+    update: function(){ this.value = to2digits(mainPlace.Defense() * 100); }
+  });
+  Stats.createStat({
+    id: "zombies",
+    label: "Zombies aux alentour",
+    update: function(){ this.value = mainEnv.Horde().Length(); }
+  });
+  Stats.createStat({
+    id: "survivors",
+    label: "Survivants",
+    update: function(){
+      var value = mainGroup.Length();
+      Models.eachMission(function(mission){
+        value += mission.group.Length();
+      });
+      this.value = value;
     }
-    return Models.createGroup({
-      survivors: removed
-    });
-  }
-
-  function doAction(id) {
-    Models.createMission({
-      order: Actions.action(id).order,
-      group: sendSelected(selected),
-      place: mainPlace
-    });
-    changed();
-  }
-  function finishMission(mission) {
-    // Si on veut la mettre dans Models, il faut automatiser le concept
-    // d'une mission qui arrive ou fini dans un env, et merger avec cet
-    // env en question
-    for (var i in mission.group.survivors) {
-      var survivor = mission.group.survivors[i];
-      mainGroup.survivors.push(survivor);
-    }
-    changed();
-  }
-
-  function turn() {
-    Models.eachMission(function(mission){
-      mission.turn();
-    });
-    turnNb++;
-    changed();
-  }
-
-  function changed() {
-    Stats.updateStats();
-  }
+  });
+  Stats.createStat({
+    id: "idle",
+    label: "Survivants inactif",
+    update: function(){ this.value = mainGroup.Length(); }
+  });
+  Stats.createStat({
+    id: "food",
+    label: "Nourriture restante",
+    update: function(){ this.value = mainPlace.food; }
+  });
 
   Stats.updateStats();
 
