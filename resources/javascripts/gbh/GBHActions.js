@@ -5,7 +5,7 @@ app.service("GBHActions", ["$rootScope", "GBHLogger", "GBHModels", function ($ro
 
   function Stat(args) {
     this.id = args.id;
-    this.name = args.name;
+    this.label = args.label;
     this.value = args.value;
   }
   function createStat(args) {

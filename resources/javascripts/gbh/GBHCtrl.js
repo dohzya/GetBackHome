@@ -15,8 +15,12 @@ app.controller("GBHCtrl", ["$scope", "GBHEngine", function ($scope, Engine) {
 
   $scope.nextTurn = doAction(function(){ Engine.turn(); });
 
-  $scope.action = doAction(function(id){ Engine.doAction(id); });
+  $scope.sendOrder = doAction(function(id){ Engine.sendOrder(id); });
 
-  $scope.select = doAction(function(){ Engine.select($scope.selected); });
+  $scope.selectSurvivors = doAction(function(){ Engine.selectSurvivors($scope.selectedSurvivors); });
+
+  $scope.selectOrder = doAction(function(){
+    $scope.currentOrder = Engine.selectOrder($scope.selectedOrder);
+  });
 
 }]);

@@ -94,7 +94,8 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
 
   // Global
   var turnNb = 0;
-  var selected = 0;
+  var selectedSurvivors = 0;
+  var selectedOrder = null;
 
   // Main
   var mainGroup = Models.createGroup(10);
@@ -111,17 +112,23 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
     place: mainPlace,
   });
 
-  function select(s) {
-    selected = Math.min(s, mainGroup.Length());
-    if (selected !== s) { changeSelection(selected); }
-    return selected;
+  function selectSurvivors(s) {
+    selectedSurvivors = Math.min(s, mainGroup.Length());
+    if (selectedSurvivors !== s) { changeSelection(selectedSurvivors); }
+    return selectedSurvivors;
   }
   setTimeout(function(){ changeSelection(0); }, 10);
 
-    function sendSelected(nb) {
+  function selectOrder(id) {
+    var action = Actions.action(id);
+    selectedOrder = action.order;
+    return action;
+  }
+
+  function sendSelected(nb) {
     var group = splitGroup(mainGroup, nb);
-    selected = 0;
-    changeSelection(selected);
+    selectedSurvivors = 0;
+    changeSelection(selectedSurvivors);
     return group;
   }
 
@@ -135,10 +142,10 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
     });
   }
 
-  function doAction(id) {
+  function sendOrder() {
     Models.createMission({
-      order: Actions.action(id).order,
-      group: sendSelected(selected),
+      order: selectedOrder,
+      group: sendSelected(selectedSurvivors),
       place: mainPlace
     });
     changed();
@@ -190,10 +197,15 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
     id: "purify",
     name: "Purifier",
     stats: {
-      build: Actions.createStat({
+      safe: Actions.createStat({
         id: "safe",
-        name: "Sécurité",
+        label: "Sécurité",
         value: 100
+      }),
+      turns: Actions.createStat({
+        id: "turns",
+        label: "Tours",
+        value: 3
       })
     },
     order: "purify"
@@ -222,8 +234,22 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
     stats: {
       build: Actions.createStat({
         id: "build",
-        name: "Avancement",
+        label: "Avancement",
+        value: 100,
+        update: function(env) {
+          console.log("env:", env);
+          // var middle = max - max/4;
+        }
+      }),
+      safe: Actions.createStat({
+        id: "safe",
+        label: "Sécurité",
         value: 100
+      }),
+      turns: Actions.createStat({
+        id: "turns",
+        label: "Tours",
+        value: 3
       })
     },
     order: "fortify"
@@ -277,9 +303,10 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
 
   // Export
   $.extend(self, {
-    doAction: doAction,
+    sendOrder: sendOrder,
     turn: turn,
-    select: select
+    selectSurvivors: selectSurvivors,
+    selectOrder: selectOrder
   });
 
 }]);
