@@ -166,8 +166,12 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
       mission.turn();
     });
     turnNb++;
-    consumeFood(mainEnv);
+    turnForEnv(mainEnv);
     changed();
+  }
+
+  function turnForEnv(env) {
+    consumeFood(env);
   }
 
   function consumeFood(env) {
