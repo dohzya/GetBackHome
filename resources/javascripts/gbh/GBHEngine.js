@@ -172,6 +172,7 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
 
   function turnForEnv(env) {
     consumeFood(env);
+    addZombies(env);
   }
 
   function consumeFood(env) {
@@ -186,6 +187,12 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
       env.place.food = 0;
       Display.addMessage("Il n'y a plus de nourriture (il aurait fallu {0} de plus).", diff);
     }
+  }
+
+  function addZombies(env) {
+    var newZombies = random(10, 100);
+    env.place.horde.AddZombies(newZombies);
+    Display.addMessage("{0} zombies ont été aperçu.", newZombies);
   }
 
   function changed() {

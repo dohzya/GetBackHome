@@ -211,6 +211,12 @@ app.service("GBHModels", ["$rootScope", "GBHLogger", function ($rootScope, Logge
   Horde.prototype.Length = function() {
     return this.zombies.length;
   };
+  Horde.prototype.AddZombies = function(nb) {
+    var newZombies = createZombies(nb);
+    for (var i in newZombies) {
+      this.zombies.push(newZombies[i]);
+    }
+  };
   function createHorde(args) {
     if (typeof(args) === "number") {
       return createHorde({
