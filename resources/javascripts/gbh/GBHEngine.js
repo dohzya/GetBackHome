@@ -166,7 +166,22 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
       mission.turn();
     });
     turnNb++;
+    consumeFood(mainEnv);
     changed();
+  }
+
+  function consumeFood(env) {
+    var nb = env.group.Length();
+    var consumedFood = random(nb*0.8, nb*1.2);
+    if (consumedFood < env.place.food) {
+      env.place.food -= consumedFood;
+      Display.addMessage("{0} de nourritures ont été consommés.", consumedFood);
+    }
+    else {
+      var diff = consumedFood - env.place.food;
+      env.place.food = 0;
+      Display.addMessage("Il n'y a plus de nourriture (il aurait fallu {0} de plus).", diff);
+    }
   }
 
   function changed() {
