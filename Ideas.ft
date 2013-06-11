@@ -2,6 +2,44 @@
 
 ## Vrac
 
+- ajouter des prérequis pour les actions
+	- rechercher -> labo
+- recherche : permet de faire des découvertes
+	- découvertes
+		- remède : permet de soigner des zombies
+			- il faut les attraper
+			- prérequis sur leur état
+			- que deviennent-ils ?
+				- Des survivants avec des malus ?
+				- in the flesh ?
+		- vaccin : permet de ne pas être infecté
+		- divers bonus
+		- matériel
+			- regarde le matos accumulé et tente d'en faire quelque chose
+			- radio, armes
+	- certaines sont possibles, d'autres non
+		- décidé en random à chaque partie
+		- on peut découvrir que X est impossible
+			- mais on peut se tromper
+	- on ne sait pas combien de temps ça prend
+	- on peut avoir une indication « On a fait un pas en avant vers ça »
+	- on peut choisir des domaines privilégiés
+- Multi : les tours avancent tout seuls toutes les 5sec... bref tout avance en continue mais lentement…
+	- On voit la vitesse actuelle et on peut la changer, mais elle sera modifiée au max à la valeur proposée par les joueurs qui sera la plus proche. Par exemple si on est a 5 et que A propose 10, B peut proposer 7 et cette valeur sera effective.
+		- Si on va à une vitesse de 5 (tour par minute par exemple)
+			- on peut avoir les proposition suivantes :
+				- 5===============7---------------9
+					^               ^               ^
+					actuelle        min proposée    max proposée
+					⇒ nouvelle valeur : 7
+				- 1---------------3===============5
+					^               ^               ^
+					min proposée    max proposée    actuelle
+					⇒ nouvelle valeur : 3
+				- 3---------------5---------------7
+					^               ^               ^
+					min proposée    actuelle        max proposée
+					⇒ la valeur ne change pas
 
 
 ## Models
