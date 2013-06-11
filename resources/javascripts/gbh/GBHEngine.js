@@ -173,6 +173,7 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
   function turnForEnv(env) {
     consumeFood(env);
     addZombies(env);
+    addSurvivors(env);
   }
 
   function consumeFood(env) {
@@ -193,6 +194,14 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
     var newZombies = random(10, 100);
     env.place.horde.AddZombies(newZombies);
     Display.addMessage("{0} zombies ont été aperçu.", newZombies);
+  }
+
+  function addSurvivors(env) {
+    if (random() > 0.8) {
+      var newSurvivors = Math.round(random(1, 6) / 2);
+      env.group.AddSurvivors += newSurvivors;
+      Display.addMessage("Vous avez été rejoint par {0} survivants", newSurvivors);
+    }
   }
 
   function changed() {

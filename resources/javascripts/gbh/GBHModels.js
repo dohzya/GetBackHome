@@ -71,6 +71,12 @@ app.service("GBHModels", ["$rootScope", "GBHLogger", function ($rootScope, Logge
   Group.prototype.Length = function() {
     return this.survivors.length;
   };
+  Group.prototype.AddSurvivors = function(nb) {
+    var newSurvivors = createSurvivors(nb);
+    for (var i in newSurvivors) {
+      this.survivors.push(newSurvivors[i]);
+    }
+  };
   function createGroup(args) {
     if (typeof(args) === "number") {
       return createGroup({
