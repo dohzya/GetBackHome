@@ -34,64 +34,6 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
     return Math.round(nb * 100) / 100;
   }
 
-  function scavange() {
-    if (selected == 0) { return; }
-    var survivors = sendOrderSelected();
-    Orders.addOrder({
-      msg: "Fouiller",
-      survivors: survivors,
-      turns: 2,
-      run: function(){
-        var scavangedFood = random(2, 10);
-        mainEnv.food += scavangedFood;
-        Display.addMessage("Du materiel a été récupéré ({0} nourritures)", scavangedFood);
-        changed();
-      }
-    });
-    changed();
-  }
-  function oldZombieAttack() {
-    var ratio = computeRatio(mainEnv.idle, mainEnv.zombies, mainEnv.defense, COEF_DEFENSE);
-    var killZombies = 0;
-    var killSurvivors = 0;
-    var damage = 0;
-    killZombies = positiveFloor(mainEnv.zombies * random(ratio*50, ratio*100)/100);
-    killSurvivors = positiveFloor(mainEnv.survivors * random((1-ratio)*50, (1-ratio)*100)/100);
-    damage = positiveFloor(mainEnv.defense*100 * random((1-ratio)*50, (1-ratio)*100)/100);
-    mainEnv.zombies -= killZombies;
-    mainEnv.survivors -= killSurvivors;
-    mainEnv.defense -= damage/100;
-    Display.addMessage("La zone a été attaquée ! ({0} zombies éliminés, {1} survivants tués, {2}% de dégats)", killZombies, killSurvivors, damage);
-    changed();
-  }
-
-  function old_turn() {
-    resetSelected();
-    Orders.ordersTurn();
-    var consumedFood = random(mainEnv.survivors*0.8, mainEnv.survivors*1.2);
-    if (consumedFood < mainEnv.food) {
-      mainEnv.food -= consumedFood;
-      Display.addMessage("{0} de nourritures ont été consommés.", consumedFood);
-    }
-    else {
-      var diff = consumedFood - mainEnv.food;
-      mainEnv.food = 0;
-      Display.addMessage("Il n'y a plus de nourriture (il aurait fallu {0} de plus).", diff);
-    }
-    var newZombies = random(10, 100);
-    mainEnv.zombies += newZombies;
-    Display.addMessage("{0} zombies ont été aperçu.", newZombies);
-    if (random() > 0.8) {
-      var newSurvivors = Math.round(random(1, 6) / 2);
-      mainEnv.survivors += newSurvivors;
-      Display.addMessage("Vous avez été rejoin par {0} survivants", newSurvivors);
-    }
-    if (mainEnv.zombies > 0 && random() > 0.7) { zombieAttack(); }
-    turnNb++;
-    Display.addMessage("Tour {0}.", turnNb);
-    changed();
-  }
-
   // Global
   var turnNb = 0;
   var selectedSurvivors = 0;
