@@ -50,7 +50,7 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
     });
     changed();
   }
-  function zombieAttack() {
+  function oldZombieAttack() {
     var ratio = computeRatio(mainEnv.idle, mainEnv.zombies, mainEnv.defense, COEF_DEFENSE);
     var killZombies = 0;
     var killSurvivors = 0;
@@ -174,6 +174,7 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
     consumeFood(env);
     addZombies(env);
     addSurvivors(env);
+    if (env.Horde().Length() > 0 && random() > 0.7) { zombieAttack(env); }
   }
 
   function consumeFood(env) {
@@ -202,6 +203,21 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
       env.group.AddSurvivors += newSurvivors;
       Display.addMessage("Vous avez été rejoint par {0} survivants", newSurvivors);
     }
+  }
+
+  function zombieAttack(env) {
+    var ratio = env.Ratio();
+    var killZombies = 0;
+    var killSurvivors = 0;
+    var damage = 0;
+    killZombies = positiveFloor(env.Horde().Length() * random(ratio*50, ratio*100)/100);
+    killSurvivors = positiveFloor(env.Group().Length() * random((1-ratio)*50, (1-ratio)*100)/100);
+    damage = positiveFloor(env.Place().Defense()*100 * random((1-ratio)*50, (1-ratio)*100)/100);
+    env.Horde().removeZombies(killZombies);
+    env.Group().removeSurvivors(killSurvivors);
+    env.Place().AddDefense(- damage/100);
+    Display.addMessage("La zone a été attaquée ! ({0} zombies éliminés, {1} survivants tués, {2}% de dégats)", killZombies, killSurvivors, damage);
+    changed();
   }
 
   function changed() {

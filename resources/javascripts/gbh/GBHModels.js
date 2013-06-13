@@ -77,6 +77,11 @@ app.service("GBHModels", ["$rootScope", "GBHLogger", function ($rootScope, Logge
       this.survivors.push(newSurvivors[i]);
     }
   };
+  Group.prototype.removeSurvivors = function(nb) {
+    for (var i=0; i<nb; i++) {
+      this.survivors.pop();
+    }
+  };
   function createGroup(args) {
     if (typeof(args) === "number") {
       return createGroup({
@@ -221,6 +226,11 @@ app.service("GBHModels", ["$rootScope", "GBHLogger", function ($rootScope, Logge
     var newZombies = createZombies(nb);
     for (var i in newZombies) {
       this.zombies.push(newZombies[i]);
+    }
+  };
+  Horde.prototype.removeZombies = function(nb) {
+    for (var i=0; i<nb; i++) {
+      this.zombies.pop();
     }
   };
   function createHorde(args) {
