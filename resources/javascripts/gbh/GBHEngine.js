@@ -306,6 +306,44 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
     order: "fortify"
   });
 
+  Models.createOrder({
+    id: "scavange",
+    name: "Fouille",
+    time: Models.createTime({
+      min: 1,
+      standard: 2
+    }),
+    run: function(env){
+      var scavangedFood = random(2, 10);
+      env.Place().food += scavangedFood;
+      Display.addMessage("Du materiel a été récupéré ({0} nourritures)", scavangedFood);
+      finishMission(this);
+      return true;
+    }
+  });
+  Actions.createAction({
+    id: "scavange",
+    name: "Fouiller",
+    stats: {
+      build: Actions.createStat({
+        id: "scavange",
+        label: "Récupération",
+        value: 6
+      }),
+      safe: Actions.createStat({
+        id: "safe",
+        label: "Sécurité",
+        value: 100
+      }),
+      turns: Actions.createStat({
+        id: "turns",
+        label: "Tours",
+        value: 2
+      })
+    },
+    order: "scavange"
+  });
+
   Stats.createStat({
     id: "turn",
     label: "Tour",
