@@ -10,10 +10,10 @@ var app = angular
       })
       .otherwise({
         redirectTo: "/"
-      })
+      });
   }])
   .config(["$locationProvider", function ($locationProvider) {
-    $locationProvider.html5Mode(true)
+    $locationProvider.html5Mode(true);
   }])
   .run(["$rootScope", function ($rootScope) {
     $rootScope.orders = [];
