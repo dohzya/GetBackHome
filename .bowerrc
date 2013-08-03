@@ -1,6 +1,3 @@
 {
-  "directory": "components",
-  "searchpath": [
-    "https://github.com/angular/bower-angular/tree/unstable"
-  ]
+  "directory": "components"
 }

@@ -15,6 +15,16 @@ dist
 /RUNNING_PID
 /.settings
 /node_modules
-/public/*
 *.swp
 *.swo
+
+conf/local.conf
+.DS_Store
+
+/public/javascripts/vendors
+/public/javascripts/app.*.min.js
+/public/stylesheets/fonts
+/public/stylesheets/less/vendors/
+/public/stylesheets/less/vendors/angular-snap/*
+/public/stylesheets/main.*.min.css
+/public/stylesheets/main.css
