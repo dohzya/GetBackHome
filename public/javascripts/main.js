@@ -8,6 +8,10 @@ var app = angular
         templateUrl: "/views/index",
         controller: "GBHCtrl"
       })
+      .when("/map", {
+        templateUrl: "/views/map",
+        controller: "GBHCtrl"
+      })
       .otherwise({
         redirectTo: "/"
       });

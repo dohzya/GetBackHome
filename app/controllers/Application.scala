@@ -12,6 +12,10 @@ object Application extends Controller {
     Ok(views.html.index())
   }
 
+  def map = Action { implicit request =>
+    Ok(views.html.map())
+  }
+
   def notFound(url: String) = Action {
     NotFound
   }
