@@ -1,7 +1,7 @@
 "use strict"
 
 var app = angular
-  .module("app", ["ngResource"])
+  .module("app", ["ngResource", "restangular"])
   .config(["$routeProvider", function ($routeProvider) {
     $routeProvider
       .when("/", {
@@ -16,8 +16,11 @@ var app = angular
         redirectTo: "/"
       });
   }])
+  .config(["RestangularProvider", function (RestangularProvider) {
+    RestangularProvider.setBaseUrl('/api');
+  }])
   .config(["$locationProvider", function ($locationProvider) {
-    $locationProvider.html5Mode(true);
+    $locationProvider.html5Mode(true).hashPrefix("!");
   }])
   .run(["$rootScope", function ($rootScope) {
     $rootScope.orders = [];
