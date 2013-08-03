@@ -83,8 +83,8 @@ GetBackHome.drawer = (function(GetBackHome){
             var dy = e.globalY - c.y;
             drawer.x = d.x - dx;
             drawer.y = d.y - dy;
+            drawer.redraw();
         }
-        drawer.redraw();
     };
 
     drawer.onMouseDown = function(e){

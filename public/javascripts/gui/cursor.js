@@ -3,7 +3,7 @@ GetBackHome.Cursor = (function(GetBackHome){
 
     var cursor = {};
 
-    cursor.init = function(drawer, opts){
+    cursor.init = function(drawer){
         cursor.drawer = drawer;
         cursor.x = 100;
         cursor.y = 100;
@@ -73,12 +73,7 @@ GetBackHome.Cursor = (function(GetBackHome){
     };
 
     cursor.draw = function(ctx, x, y){
-        if (cursor.mode === "selected") {
-            cursor.selected.draw(ctx, cursor.x-x, cursor.y-y);
-        }
-        else {
-            cursor.normal.draw(ctx, cursor.x-x, cursor.y-y);
-        }
+        // The cursor is not displayed anymore because we use the browser's one
     };
 
     return cursor;
