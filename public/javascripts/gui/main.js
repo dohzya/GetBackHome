@@ -5,11 +5,9 @@ var GetBackHome = (function(){
 
     GetBackHome.init = function(canvas, status, opts, andThen){
         GetBackHome.sprites.init(opts, function(){
-            GetBackHome.drawer.init(canvas, opts);
             GetBackHome.status.init(status, opts);
             GetBackHome.game.init(opts);
             GetBackHome.opts = opts;
-            if (opts.zones) GetBackHome.addZones(opts.zones);
             andThen();
         });
     };
@@ -20,11 +18,6 @@ var GetBackHome = (function(){
         });
     };
 
-    GetBackHome.addZones = function(zones){
-        for(var i in zones){
-            GetBackHome.drawer.addZone(GetBackHome.Zone(zones[i], GetBackHome.opts));
-        }
-    };
 
     return GetBackHome;
 

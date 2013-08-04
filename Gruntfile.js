@@ -208,6 +208,14 @@ module.exports = function (grunt) {
           dest: "<%= config.dir.public.fonts %>/fontawesome/"
         }]
       },
+      bowerQ: {
+        files: [{
+          expand: true,
+          cwd: "<%= config.dir.components.root %>/q/",
+          src: ["q.js", "q.min.js"],
+          dest: "<%= config.dir.public.scripts %>/vendors/q/"
+        }]
+      },
       bowerJQuery: {
         files: [{
           expand: true,
@@ -342,6 +350,7 @@ module.exports = function (grunt) {
       bowerCopy: {
         tasks: [
           "copy:bowerFontAwesome",
+          "copy:bowerQ",
           "copy:bowerJQuery",
           "copy:bowerModernizr",
           "copy:bowerLodash",

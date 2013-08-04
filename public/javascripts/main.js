@@ -5,12 +5,11 @@ var app = angular
   .config(["$routeProvider", function ($routeProvider) {
     $routeProvider
       .when("/", {
-        templateUrl: "/views/index",
-        controller: "GBHCtrl"
+        templateUrl: "/views/index"
       })
       .when("/map", {
         templateUrl: "/views/map",
-        controller: "GBHCtrl"
+        controller: "GUICtrl"
       })
       .otherwise({
         redirectTo: "/"
