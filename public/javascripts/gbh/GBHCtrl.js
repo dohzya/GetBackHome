@@ -13,11 +13,17 @@ app.controller("GBHCtrl", ["$scope", "GBHEngine", function ($scope, Engine) {
     };
   }
 
+  $scope.game = {
+    selectedSurvivors: 5
+  };
+
   $scope.nextTurn = doAction(function(){ Engine.turn(); });
 
   $scope.sendOrder = doAction(function(id){ Engine.sendOrder(id); });
 
-  $scope.selectSurvivors = doAction(function(){ Engine.selectSurvivors($scope.selectedSurvivors); });
+  $scope.selectSurvivors = doAction(function(selectedSurvivors){
+    $scope.game.selectedSurvivors = Engine.selectSurvivors(selectedSurvivors);
+  });
 
   $scope.selectOrder = doAction(function(){
     $scope.currentOrder = Engine.selectOrder($scope.selectedOrder);

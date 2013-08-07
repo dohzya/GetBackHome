@@ -1,10 +1,6 @@
 app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "GBHActions", "GBHStats", function (Display, Logger, Orders, Models, Actions, Stats) {
   "use strict";
 
-  function changeSelection(selected) {
-    $("#selected").val(selected);
-  }
-
   var self = this;
 
   function random(arg1, arg2) {
@@ -56,10 +52,8 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
 
   function selectSurvivors(s) {
     selectedSurvivors = Math.min(s, mainGroup.Length());
-    if (selectedSurvivors !== s) { changeSelection(selectedSurvivors); }
     return selectedSurvivors;
   }
-  setTimeout(function(){ changeSelection(0); }, 10);
 
   function selectOrder(id) {
     var action = Actions.action(id);
@@ -70,7 +64,6 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
   function sendSelected(nb) {
     var group = splitGroup(mainGroup, nb);
     selectedSurvivors = 0;
-    changeSelection(selectedSurvivors);
     return group;
   }
 
