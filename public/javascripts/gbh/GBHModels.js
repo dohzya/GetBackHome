@@ -149,11 +149,11 @@ app.service("GBHModels", ["$rootScope", "GBHLogger", function ($rootScope, Logge
     this.food = args.food;
     this.horde = args.horde;
     this.fighting = args.fighting;
-    this.pos = [1, 1];
-    this.height = 120.0;
-    this.types = ["plain", "forrest"];
-    this.infection = 4;
-    this.youth = 60;
+    this.pos = args.pos;
+    this.height = args.height;
+    this.types = args.types;
+    this.infection = args.infection;
+    this.youth = args.youth;
   }
   Place.prototype.Defense = function(value) {
     if (value) { this.fighting.defense = value; }
@@ -164,6 +164,12 @@ app.service("GBHModels", ["$rootScope", "GBHLogger", function ($rootScope, Logge
   };
   Place.prototype.Attack = function() {
     return this.fighting.attack;
+  };
+  Place.prototype.biome = function() {
+    return this.types[0];
+  };
+  Place.prototype.type2 = function() {  // FUUUUUUUUU
+    return this.types[1];
   };
   function createPlace(args) {
     return new Place(args);
