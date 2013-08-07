@@ -1,4 +1,4 @@
-app.factory("GUIMap", ["GUISprites", "GUIZone", function (Sprites, Zone) {
+app.factory("GUIMap", ["GUISprites", "GUIZone", "UTGenerator", function (Sprites, Zone, Generator) {
   "use strict";
 
   var canvas = document.getElementById("mainDrawer");
@@ -22,8 +22,8 @@ app.factory("GUIMap", ["GUISprites", "GUIZone", function (Sprites, Zone) {
 
   var zones = [];
   Sprites.isLoaded().then( function() {
-    zones = _.map(window.global_zones, function (rawZone) {
-      return Zone.create(rawZone, opts);
+    zones = Generator.generate("001", 0, 80, 0, 80, function(zone){
+      return Zone.create(zone, opts);
     });
   });
 

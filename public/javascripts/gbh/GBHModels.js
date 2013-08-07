@@ -149,6 +149,11 @@ app.service("GBHModels", ["$rootScope", "GBHLogger", function ($rootScope, Logge
     this.food = args.food;
     this.horde = args.horde;
     this.fighting = args.fighting;
+    this.pos = [1, 1];
+    this.height = 120.0;
+    this.types = ["plain", "forrest"];
+    this.infection = 4;
+    this.youth = 60;
   }
   Place.prototype.Defense = function(value) {
     if (value) { this.fighting.defense = value; }
