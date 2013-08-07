@@ -9,35 +9,11 @@
       <br/>
       <input class="zoomer" type="range"  min="10" max="200" ng-model="zoom" ng-change="onZoomChange()" />
 
-      <div id="status" class="sidebar">
-        <div id="global" class="status">
-          <div class="title">Guest</div>
-          <div class="fields">
-            <dl>
-              <dt>Killed Zombies</dt><dd>3,000</dd>
-            </dl>
-          </div>
-        </div>
-        <div id="zones" class="status">
-          <div class="title">Zone <span class="number">30</span></div>
-          <div class="fields">
-            <dl>
-              <dt>type</dt><dd>city</dd>
-            </dl>
-          </div>
-        </div>
-        <div id="guys" class="status">
-          <div class="title">Guy <span class="number">30</span></div>
-          <div class="fields">
-            <dl>
-              <dt>Dis Gail</dt><dd>10 / 150</dd>
-            </dl>
-          </div>
-        </div>
-        <div id="cursor" class="status">
-          <div class="title"></div>
-          <div class="fields"></div>
-        </div>
+      <div ng-repeat="zone in selectedZones">
+        <h3>Zone {{zone.x}} x {{zone.y}}</h3>
+        Infection: {{zone.infos.infection}}<br/>
+        Main type: {{zone.infos.type1}}<br/>
+        Secondary type: {{zone.infos.type2}}<br/>
       </div>
 
     </div>

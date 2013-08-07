@@ -2,7 +2,7 @@ app.controller("GUICtrl", ["$scope", "GUIMap", "GUISprites", "GUIZone", function
   "use strict";
 
   var drawer = {};
-  $scope.zoom = 50;
+  $scope.zoom = 48;
   $scope.selectedZones = [];
 
   function init (canvas, opts){
@@ -64,7 +64,7 @@ app.controller("GUICtrl", ["$scope", "GUIMap", "GUISprites", "GUIZone", function
   };
 
   drawer.getDrawable = function(x, y){
-      Map.interpolateZone(x, y);
+      return Map.interpolateZone(x, y);
   };
   // TODO merge these 2 functions
   drawer.eachDrawables = function(f){
@@ -78,9 +78,8 @@ app.controller("GUICtrl", ["$scope", "GUIMap", "GUISprites", "GUIZone", function
   function handlePointerEvent(e) {
     e.globalX = getGlobalX(e);
     e.globalY = getGlobalY(e);
-    e.x = getX(e);
-    e.y = getY(e);
-
+    e.localX = getX(e);
+    e.localY = getY(e);
     return e;
   }
 
@@ -120,7 +119,8 @@ app.controller("GUICtrl", ["$scope", "GUIMap", "GUISprites", "GUIZone", function
   };
 
   drawer.onMouseDown = function(e){
-    var underMouse = drawer.getDrawable(e.x, e.y);
+    handlePointerEvent(e);
+    var underMouse = drawer.getDrawable(e.localX, e.localY);
     drawer.whenSelected = {
         drawer: {
             x: drawer.x,
@@ -131,13 +131,6 @@ app.controller("GUICtrl", ["$scope", "GUIMap", "GUISprites", "GUIZone", function
             y: e.globalY
         }
     };
-    console.log(e.x, e.y);
-    console.log(underMouse);
-    console.log(drawer.underMouse);
-
-    // drawer.eachDrawables(function (z) {
-    //   console.log(z.points);
-    // });
 
     if (underMouse === drawer.underMouse) {
         // no nothing
@@ -148,10 +141,12 @@ app.controller("GUICtrl", ["$scope", "GUIMap", "GUISprites", "GUIZone", function
   };
 
   drawer.onMouseUp = function(e){
+    handlePointerEvent(e);
     drawer.whenSelected = null;
   };
 
   drawer.onClick = function(e){
+    handlePointerEvent(e);
     var res = true;
     if (drawer.movedWhenSelected) {
       // do nothing
@@ -172,13 +167,15 @@ app.controller("GUICtrl", ["$scope", "GUIMap", "GUISprites", "GUIZone", function
   };
 
   drawer.select = function(arr){
-    console.log(arr);
       this.eachSelected(function(s){
           s.onUnSelected();
       });
       this.selected = arr.length ? arr : [arr];
       this.eachSelected(function(s){
           s.onSelected();
+      });
+      $scope.$apply( function() {
+        $scope.selectedZones = arr.length ? arr : [arr];
       });
   };
 

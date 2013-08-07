@@ -93,6 +93,9 @@ app.factory("GUIZone", ["$log", "GUISprites", function ($log, Sprites) {
           ctx.globalAlpha = this.alphaYouth;
           this.image.draw(ctx, cx, cy, 11/10*this.width(), 11/10*this.height());
           ctx.globalAlpha = oldGlobalAlpha;
+          var point = this.buildPoints(x, y)[0];
+          ctx.fillStyle = "#000000";
+          ctx.fillText(this.x + "x" + this.y, point.x, point.y + 15);
       } else {
         $log.error("No img for Zone (" + x + " x " + y + ")");
       }

@@ -28,13 +28,13 @@ app.factory("GUIMap", ["GUISprites", "GUIZone", function (Sprites, Zone) {
   });
 
   function getZone(x, y) {
-    _.find(zones, function (zone) {
+    return _.find(zones, function (zone) {
       return zone.x == x && zone.y == y;
     });
   }
 
   function interpolateZone(x, y) {
-    _.find(zones, function (zone) {
+    return _.find(zones, function (zone) {
       return zone.contains(x, y);
     });
   }
