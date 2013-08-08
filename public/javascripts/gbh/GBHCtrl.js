@@ -15,6 +15,7 @@ app.controller("GBHCtrl", ["$scope", "GBHEngine", function ($scope, Engine) {
 
   $scope.game = {
     selectedSurvivors: Engine.selectSurvivors(0),
+    selectedOrder: null
   };
 
   $scope.nextTurn = doAction(function(){ Engine.turn(); });
@@ -28,8 +29,8 @@ app.controller("GBHCtrl", ["$scope", "GBHEngine", function ($scope, Engine) {
     $scope.game.selectedSurvivors = Engine.selectSurvivors(selectedSurvivors);
   });
 
-  $scope.selectOrder = doAction(function(){
-    $scope.currentOrder = Engine.selectOrder($scope.selectedOrder);
+  $scope.selectOrder = doAction(function(selectedOrder){
+    $scope.currentOrder = Engine.selectOrder(selectedOrder);
   });
 
 }]);
