@@ -4,7 +4,7 @@ app.controller("GUICtrl", ["$scope", "GUIMap", "GUISprites", "GUIZone", function
 
   var drawer = {};
   $scope.gui.zoom = 48;
-  $scope.gui.selectedZones = [];
+  $scope.gui.selectedZone = null;
 
   function init (canvas){
     drawer.canvas = canvas;
@@ -174,7 +174,7 @@ app.controller("GUICtrl", ["$scope", "GUIMap", "GUISprites", "GUIZone", function
       s.onSelected();
     });
     $scope.$apply( function() {
-      $scope.gui.selectedZones = arr.length ? arr : [arr];
+      $scope.gui.selectedZone = arr;
     });
   };
 

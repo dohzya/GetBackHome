@@ -77,11 +77,15 @@ app.service("UTGenerator", ["UTPerlinSimplex", "Rc4Random", function (PerlinSimp
           types = ["mountainous", t2];
         }
         var zone = {
-          pos: [x, y],
-          ts: 0,
+          // fighting: args.fighting,
+          // food: args.food,
           height: height,
-          types: types,
+          // horde: args.horde,
           infection: infection,
+          pos: [x, y],
+          // pos: args.pos,
+          ts: 0,
+          types: types,
           youth: youth
         };
         zones.push(f ? f(zone) : zone);

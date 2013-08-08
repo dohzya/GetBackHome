@@ -9,11 +9,11 @@
       <br/>
       <input class="zoomer" type="range"  min="10" max="200" ng-model="zoom" ng-change="onZoomChange()" />
 
-      <div ng-repeat="zone in gui.selectedZones">
-        <h3>Zone {{zone.x()}} x {{zone.y()}}</h3>
-        Infection: {{zone.place.infection}}<br/>
-        Biome: {{zone.place.biome()}}<br/>
-        Secondary type: {{zone.place.type2()}}<br/>
+      <div>
+        <h3>Zone {{gui.selectedZone.x()}} x {{gui.selectedZone.y()}}</h3>
+        Infection: {{gui.selectedZone.place.infection}}<br/>
+        Biome: {{gui.selectedZone.place.biome()}}<br/>
+        Secondary type: {{gui.selectedZone.place.type2()}}<br/>
       </div>
 
     </div>
