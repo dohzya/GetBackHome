@@ -19,7 +19,10 @@ app.controller("GBHCtrl", ["$scope", "GBHEngine", function ($scope, Engine) {
 
   $scope.nextTurn = doAction(function(){ Engine.turn(); });
 
-  $scope.sendOrder = doAction(function(id){ Engine.sendOrder(id); });
+  $scope.sendOrder = doAction(function(id){
+    Engine.sendOrder(id);
+    $scope.game.selectedSurvivors = Engine.selectSurvivors(0);
+  });
 
   $scope.selectSurvivors = doAction(function(selectedSurvivors){
     $scope.game.selectedSurvivors = Engine.selectSurvivors(selectedSurvivors);
