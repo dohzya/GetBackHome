@@ -163,3 +163,7 @@
 	- S'il tous les zombies ont été tués : il est enterré
 	- S'il reste des zombies : il devient un zombie
 		- Il y a des chances qu'il devienne un special @oupa
+
+## Interface
+
+- On a quelques blocs qu'on peut garder tels quels, réduire ou agrandir
