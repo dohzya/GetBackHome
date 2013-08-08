@@ -9,7 +9,7 @@
       <br/>
       <input class="zoomer" type="range"  min="10" max="200" ng-model="zoom" ng-change="onZoomChange()" />
 
-      <div ng-repeat="zone in selectedZones">
+      <div ng-repeat="zone in gui.selectedZones">
         <h3>Zone {{zone.x()}} x {{zone.y()}}</h3>
         Infection: {{zone.place.infection}}<br/>
         Biome: {{zone.place.biome()}}<br/>

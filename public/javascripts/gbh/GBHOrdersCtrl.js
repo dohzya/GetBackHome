@@ -13,10 +13,8 @@ app.controller("GBHOrders", ["$scope", "GBHEngine", function ($scope, Engine) {
     };
   }
 
-  $scope.game = {
-    selectedSurvivors: Engine.selectSurvivors(0),
-    selectedOrder: null
-  };
+  $scope.game.selectedSurvivors = Engine.selectSurvivors(0);
+  $scope.game.selectedOrder = null;
 
   $scope.nextTurn = doAction(function(){ Engine.turn(); });
 

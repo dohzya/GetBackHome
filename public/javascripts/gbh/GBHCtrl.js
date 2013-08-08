@@ -5,6 +5,9 @@ app.controller("GBHCtrl", ["$scope", function ($scope) {
     selectedView: "orders"
   };
 
+  $scope.game = {};
+  $scope.gui = {};
+
   $scope.selectView = function(name) {
     $scope.views.selectedView = name;
   };

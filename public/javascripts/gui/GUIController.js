@@ -3,8 +3,8 @@ app.controller("GUICtrl", ["$scope", "GUIMap", "GUISprites", "GUIZone", function
   var Q = window.Q;
 
   var drawer = {};
-  $scope.zoom = 48;
-  $scope.selectedZones = [];
+  $scope.gui.zoom = 48;
+  $scope.gui.selectedZones = [];
 
   function init (canvas){
     drawer.canvas = canvas;
@@ -34,7 +34,7 @@ app.controller("GUICtrl", ["$scope", "GUIMap", "GUISprites", "GUIZone", function
     var centerX = (drawer.x + drawer.width/2) / Zone.getWidth();
     var centerY = (drawer.y + drawer.height/2) / Zone.getHeight();
 
-    Zone.setSize($scope.zoom, $scope.zoom);
+    Zone.setSize($scope.gui.zoom, $scope.gui.zoom);
 
     drawer.x = centerX * Zone.getWidth() - drawer.width/2;
     drawer.y = centerY * Zone.getHeight() - drawer.height/2;
@@ -174,7 +174,7 @@ app.controller("GUICtrl", ["$scope", "GUIMap", "GUISprites", "GUIZone", function
       s.onSelected();
     });
     $scope.$apply( function() {
-      $scope.selectedZones = arr.length ? arr : [arr];
+      $scope.gui.selectedZones = arr.length ? arr : [arr];
     });
   };
 
