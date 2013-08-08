@@ -43,10 +43,10 @@
 
       <div class="nav-collapse collapse navbar-responsive-collapse">
         <ul class="nav navbar-nav">
-          <li class="active">
+          <li ng-class="{active: views.selectedView == 'orders'}">
             <a href="#" ng-click="selectView('orders')">Home</a>
           </li>
-          <li>
+          <li ng-class="{active: views.selectedView == 'map'}">
             <a href="#" ng-click="selectView('map')">Map</a>
           </li>
         </ul>
