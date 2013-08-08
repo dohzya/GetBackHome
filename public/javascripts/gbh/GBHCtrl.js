@@ -14,7 +14,7 @@ app.controller("GBHCtrl", ["$scope", "GBHEngine", function ($scope, Engine) {
   }
 
   $scope.game = {
-    selectedSurvivors: 5
+    selectedSurvivors: Engine.selectSurvivors(0),
   };
 
   $scope.nextTurn = doAction(function(){ Engine.turn(); });
