@@ -44,10 +44,10 @@
       <div class="nav-collapse collapse navbar-responsive-collapse">
         <ul class="nav navbar-nav">
           <li class="active">
-            <a href="/">Home</a>
+            <a href="#" ng-click="selectView('orders')">Home</a>
           </li>
           <li>
-            <a href="/map">Map</a>
+            <a href="#" ng-click="selectView('map')">Map</a>
           </li>
         </ul>
       </div>
@@ -56,7 +56,8 @@
   </div>
 
   <div class="container">
-    <div data-ng-view="view"></div>
+    <div class="tab tab-orders {{viewClass('orders')}}" ng-controller="GBHOrders">@views.html.index()</div>
+    <div class="tab tab-map {{viewClass('map')}}" ng-controller="GUICtrl">@views.html.map()</div>
   </div>
 
   @if(conf.livereload) {
@@ -92,6 +93,7 @@
 
     <script src="@routes.Assets.at("javascripts/app/app-controller.js")"></script>
     <script src="@routes.Assets.at("javascripts/gbh/GBHCtrl.js")"></script>
+    <script src="@routes.Assets.at("javascripts/gbh/GBHOrdersCtrl.js")"></script>
     <script src="@routes.Assets.at("javascripts/gbh/GBHDisplay.js")"></script>
     <script src="@routes.Assets.at("javascripts/gbh/GBHLogger.js")"></script>
     <script src="@routes.Assets.at("javascripts/gbh/GBHOrders.js")"></script>
