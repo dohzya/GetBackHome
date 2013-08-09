@@ -1,4 +1,4 @@
-app.service("UTGenerator", ["UTPerlinSimplex", "Rc4Random", function (PerlinSimplex, Rc4Random) {
+app.service("UTGenerator", ["UTPerlinSimplex", "Rc4Random", "GBHModels", function (PerlinSimplex, Rc4Random, Models) {
   "use strict";
 
   function initNoise(seed) {
@@ -77,13 +77,15 @@ app.service("UTGenerator", ["UTPerlinSimplex", "Rc4Random", function (PerlinSimp
           types = ["mountainous", t2];
         }
         var zone = {
-          // fighting: args.fighting,
-          // food: args.food,
+          fighting: Models.createFighting({
+            attack: 0,  // TODO generate
+            defense: 0.7  // TODO generate
+          }),
+          food: 100,  // TODO generate
           height: height,
-          // horde: args.horde,
+          horde: Models.createHorde(infection),  // TODO generate
           infection: infection,
           pos: [x, y],
-          // pos: args.pos,
           ts: 0,
           types: types,
           youth: youth

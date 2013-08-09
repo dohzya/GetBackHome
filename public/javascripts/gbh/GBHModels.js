@@ -146,13 +146,14 @@ app.service("GBHModels", ["$rootScope", "GBHLogger", function ($rootScope, Logge
    * Place
    */
   function Place(args) {
-    this.food = args.food;
-    this.horde = args.horde;
     this.fighting = args.fighting;
-    this.pos = args.pos;
+    this.food = args.food;
     this.height = args.height;
-    this.types = args.types;
+    this.horde = args.horde;
     this.infection = args.infection;
+    this.pos = args.pos;
+    this.ts = args.ts;
+    this.types = args.types;
     this.youth = args.youth;
   }
   Place.prototype.Defense = function(value) {
