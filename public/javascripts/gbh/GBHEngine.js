@@ -1,4 +1,4 @@
-app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "GBHActions", "GBHStats", function (Display, Logger, Orders, Models, Actions, Stats) {
+app.service("GBHEngine", ["$rootScope", "GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "GBHActions", "GBHStats", function ($rootScope, Display, Logger, Orders, Models, Actions, Stats) {
   "use strict";
 
   var self = this;
@@ -50,6 +50,16 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
     place: mainPlace,
   });
 
+  function selectedPlace() {
+    return $rootScope.gui.selectedZone ? $rootScope.gui.selectedZone.place : mainPlace;
+  }
+  function selectedEnv() {
+    return Models.createEnv({
+      group: mainGroup,
+      place: selectedPlace(),
+    });
+  }
+
   function selectSurvivors(s) {
     selectedSurvivors = Math.min(s, mainGroup.Length());
     return selectedSurvivors;
@@ -81,7 +91,7 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
     Models.createMission({
       order: selectedOrder,
       group: sendSelected(selectedSurvivors),
-      place: mainPlace
+      place: selectedPlace()
     });
     changed();
   }
@@ -288,18 +298,18 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
     id: "ratio",
     label: "Sécurité",
     suffix: " %",
-    update: function(){ this.value = to2digits(mainEnv.Ratio() * 100); }
+    update: function(){ this.value = to2digits(selectedEnv().Ratio() * 100); }
   });
   Stats.createStat({
     id: "defense",
     label: "Étant du fort",
     suffix: " %",
-    update: function(){ this.value = to2digits(mainPlace.Defense() * 100); }
+    update: function(){ this.value = to2digits(selectedPlace().Defense() * 100); }
   });
   Stats.createStat({
     id: "zombies",
     label: "Zombies aux alentour",
-    update: function(){ this.value = mainEnv.Horde().Length(); }
+    update: function(){ this.value = selectedEnv().Horde().Length(); }
   });
   Stats.createStat({
     id: "survivors",
@@ -320,7 +330,7 @@ app.service("GBHEngine", ["GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "
   Stats.createStat({
     id: "food",
     label: "Nourriture restante",
-    update: function(){ this.value = mainPlace.food; }
+    update: function(){ this.value = selectedPlace().food; }
   });
 
   Stats.updateStats();
