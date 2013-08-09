@@ -1,12 +1,12 @@
-app.controller("GBHCtrl", ["$scope", function ($scope) {
+app.controller("GBHCtrl", ["$rootScope", "$scope", function ($rootScope, $scope) {
   "use strict";
 
-  $scope.views = {
+  $rootScope.views = {
     selectedView: "orders"
   };
 
-  $scope.game = {};
-  $scope.gui = {};
+  $rootScope.game = {};
+  $rootScope.gui = {};
 
   $scope.selectView = function(name) {
     $scope.views.selectedView = name;
