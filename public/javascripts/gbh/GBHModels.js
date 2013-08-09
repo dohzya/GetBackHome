@@ -142,6 +142,22 @@ app.service("GBHModels", ["$rootScope", "GBHLogger", function ($rootScope, Logge
     return survivors;
   }
 
+  var Map = {
+    places: []
+  };
+  Map.addPlace = function(place) {
+    this.places.push(place);
+  };
+  function getPlace(x, y) {
+    for (var i in Map.places) {
+      var place = Map.places[i];
+      if (place.pos[x] === x && place.pos[y] === y) {
+        return place;
+      }
+    }
+    return null;
+  }
+
   /*
    * Place
    */
@@ -173,7 +189,9 @@ app.service("GBHModels", ["$rootScope", "GBHLogger", function ($rootScope, Logge
     return this.types[1];
   };
   function createPlace(args) {
-    return new Place(args);
+    var place = new Place(args);
+    Map.addPlace(place);
+    return place;
   }
 
   /*
@@ -423,6 +441,7 @@ app.service("GBHModels", ["$rootScope", "GBHLogger", function ($rootScope, Logge
     createGroup: createGroup,
     createSurvivors: createSurvivors,
     createPlace: createPlace,
+    getPlace: getPlace,
     createEnv: createEnv,
     createHorde: createHorde,
     createZombie: createZombie,
