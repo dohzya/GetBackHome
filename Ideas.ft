@@ -167,3 +167,13 @@
 ## Interface
 
 - On a quelques blocs qu'on peut garder tels quels, réduire ou agrandir
+
+
+
+# V2
+
+- arbre de matériaux
+	- bois > bois travaillé > outils
+- arbre de batiments
+	- atelier
+	- hopital
