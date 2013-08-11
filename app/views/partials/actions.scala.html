@@ -1,0 +1,21 @@
+@()
+
+<div id="ghb-frame-actions" class="gbh-frame gbh-frame-actions">
+  <div class="gbh-title">Actions</div>
+  <div class="gbh-visible-contents">
+    <div>Demander à <input type="number" id="selected" ng-model="game.selectedSurvivors" ng-change="selectSurvivors(game.selectedSurvivors)" min="0" required /> survivants de</div>
+    <select ng-model="game.selectedOrder" ng-change="selectOrder(game.selectedOrder)">
+      <option data-ng-repeat="button in buttons" value="{{button.id}}">{{button.name}}</option>
+    </select>
+    <button class="btn" ng-click="sendOrder('{{selectedOrder}}')">Envoyer l'ordre</button>
+    <div class="gbh-contents">
+      <!-- <div data-ng-repeat="stat in currentOrder.stats">
+        <span>{{stat.name}}</span> : <span>{{stat.value}}{{stat.suffix}}</span>
+      </div> -->
+      <div data-id="{{stat.id}}" class="gbh-content" data-ng-repeat="stat in currentOrder.stats">
+        <div class="gbh-content-label">{{stat.label}}</div>
+        <div class="gbh-content-value">{{stat.value}}{{stat.suffix}}</div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,23 @@
+@()
+
+<div id="ghb-frame-orders" class="gbh-frame gbh-frame-orders">
+  <div class="gbh-title">Ordres</div>
+  <div class="gbh-visible-contents">
+    <div class="gbh-contents">
+      <div class="gbh-content" data-id="{{mission.id}}" data-ng-repeat="mission in missions">
+        <span>{{mission.order.name}}</span>
+        (<span>{{mission.status}}</span>)
+        <div class="btn btn-default btn-small" ng-click="cancelOrder({{mission.id}})">
+          <span>Annuler</span> (<span>1 tour</span>)
+        </div>
+        <div class="btn btn-default btn-small" ng-click="sendBackup({{mission.id}})">
+          <span>Envoyer du renfort</span> (<span>1 tour</span>)
+        </div>
+        <div>(
+          <span>survivants : {{mission.group.Length()}}</span>,
+          <span>tours restants : {{mission.EstimatedTimeToComplete()}}</span>
+        )</div>
+      </div>
+    </div>
+  </div>
+</div>

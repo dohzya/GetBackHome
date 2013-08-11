@@ -1,0 +1,11 @@
+@()
+
+<div id="ghb-frame-stats" class="gbh-frame gbh-frame-stats">
+  <div class="gbh-title">Stats</div>
+  <div class="gbh-contents">
+    <div data-id="{{stat.id}}" class="gbh-content" data-ng-repeat="stat in stats">
+      <div class="gbh-content-label">{{stat.label}}</div>
+      <div class="gbh-content-value">{{stat.value}}{{stat.suffix}}</div>
+    </div>
+  </div>
+</div>

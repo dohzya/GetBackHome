@@ -7,10 +7,6 @@ var app = angular
       .when("/", {
         templateUrl: "/views/index"
       })
-      .when("/map", {
-        templateUrl: "/views/map",
-        controller: "GUICtrl"
-      })
       .otherwise({
         redirectTo: "/"
       });

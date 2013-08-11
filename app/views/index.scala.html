@@ -2,67 +2,29 @@
 
 
 @templates.default() {
-    <div data-id="next-turn" class="btn" data-ng-click="nextTurn()">FIN DE TOUR</div>
-    <div class="gbh-frames"><div>
-
-      <div id="ghb-frame-orders" class="gbh-frame gbh-frame-orders">
-        <div class="gbh-title">Ordres</div>
-        <div class="gbh-visible-contents">
-          <div class="gbh-contents">
-            <div class="gbh-content" data-id="{{mission.id}}" data-ng-repeat="mission in missions">
-              <span>{{mission.order.name}}</span>
-              (<span>{{mission.status}}</span>)
-              <div class="btn btn-small" ng-click="cancelOrder({{mission.id}})">
-                <span>Annuler</span> (<span>1 tour</span>)
-              </div>
-              <div class="btn btn-small" ng-click="sendBackup({{mission.id}})">
-                <span>Envoyer du renfort</span> (<span>1 tour</span>)
-              </div>
-              <div>(
-                <span>survivants : {{mission.group.Length()}}</span>,
-                <span>tours restants : {{mission.EstimatedTimeToComplete()}}</span>
-              )</div>
-            </div>
-          </div>
-        </div>
+    
+  <div>
+    <div class="row" ng-controller="GUICtrl">
+      <div class="col-12">
+        @views.html.partials.map()
       </div>
-      <div id="ghb-frame-actions" class="gbh-frame gbh-frame-actions">
-        <div class="gbh-title">Actions</div>
-        <div class="gbh-visible-contents">
-          <div>Demander à <input type="number" id="selected" ng-model="game.selectedSurvivors" ng-change="selectSurvivors(game.selectedSurvivors)" min="0" required /> survivants de</div>
-          <select ng-model="game.selectedOrder" ng-change="selectOrder(game.selectedOrder)">
-            <option data-ng-repeat="button in buttons" value="{{button.id}}">{{button.name}}</option>
-          </select>
-          <button class="btn" ng-click="sendOrder('{{selectedOrder}}')">Envoyer l'ordre</button>
-          <div class="gbh-contents">
-            <!-- <div data-ng-repeat="stat in currentOrder.stats">
-              <span>{{stat.name}}</span> : <span>{{stat.value}}{{stat.suffix}}</span>
-            </div> -->
-            <div data-id="{{stat.id}}" class="gbh-content" data-ng-repeat="stat in currentOrder.stats">
-              <div class="gbh-content-label">{{stat.label}}</div>
-              <div class="gbh-content-value">{{stat.value}}{{stat.suffix}}</div>
-            </div>
-          </div>
-        </div>
+    </div>
+    <div class="row" ng-controller="GBHOrders">
+      <div class="col-lg-6">
+        @views.html.partials.orders()
       </div>
-      <div id="ghb-frame-stats" class="gbh-frame gbh-frame-stats">
-        <div class="gbh-title">Stats</div>
-        <div class="gbh-contents">
-          <div data-id="{{stat.id}}" class="gbh-content" data-ng-repeat="stat in stats">
-            <div class="gbh-content-label">{{stat.label}}</div>
-            <div class="gbh-content-value">{{stat.value}}{{stat.suffix}}</div>
-          </div>
-        </div>
+      <div class="col-lg-6">
+        @views.html.partials.messages()
       </div>
-      <div id="ghb-frame-logs" class="gbh-frame gbh-frame-logs">
-        <div class="gbh-title">Messages</div>
-        <div class="gbh-visible-contents">
-          <div class="gbh-contents">
-            <div class="gbh-content" data-id="{{log.id}}" data-ng-repeat="log in logs">{{log.msg}}</div>
-          </div>
-        </div>
+    </div>
+    <div class="row" ng-controller="GBHOrders">
+      <div class="col-lg-6">
+        @views.html.partials.actions()
       </div>
-
-    </div></div>
+      <div class="col-lg-6">
+        @views.html.partials.stats()
+      </div>
+    </div>
+  </div>
 
 }
