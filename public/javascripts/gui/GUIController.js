@@ -9,8 +9,7 @@ app.controller("GUICtrl", ["$scope", "GUIMap", "GUISprites", "GUIZone", function
 
   function init (canvas) {
     drawer.canvas = canvas;
-    drawer.$canvas = angular.element(canvas);
-    drawer.offset = drawer.$canvas.offset();
+    drawer.bounding = drawer.canvas.getBoundingClientRect();
     drawer.ctx = canvas.getContext("2d");
     drawer.x = 0;
     drawer.y = 0;
@@ -42,11 +41,11 @@ app.controller("GUICtrl", ["$scope", "GUIMap", "GUISprites", "GUIZone", function
   };
 
   function globalToRelativeX(x){
-    return x - drawer.offset.left + drawer.x;
+    return x - drawer.bounding.left + drawer.x;
   };
 
   function globalToRelativeY(y){
-    return y - drawer.offset.top + drawer.y;
+    return y - drawer.bounding.top + drawer.y;
   };
 
   function redraw(){
