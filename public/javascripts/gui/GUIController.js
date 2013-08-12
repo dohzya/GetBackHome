@@ -2,16 +2,15 @@ app.controller("GUICtrl", ["$scope", "GUIMap", "GUISprites", "GUIZone", function
   "use strict";
   var Q = window.Q;
 
-  var drawer = {};
   $scope.gui.zoom = 48;
   $scope.gui.selectedZone = null;
 
-  function init (canvas){
+  var drawer = {};
+
+  function init (canvas) {
     drawer.canvas = canvas;
-    drawer.offsetTop = canvas.offsetTop;
-    drawer.offsetLeft = canvas.offsetLeft;
-    drawer.offsetRight = canvas.offsetRight;
-    drawer.offsetBottom = canvas.offsetBottom;
+    drawer.$canvas = angular.element(canvas);
+    drawer.offset = drawer.$canvas.offset();
     drawer.ctx = canvas.getContext("2d");
     drawer.x = 0;
     drawer.y = 0;
@@ -20,14 +19,14 @@ app.controller("GUICtrl", ["$scope", "GUIMap", "GUISprites", "GUIZone", function
     drawer.underMouse = null;
     drawer.selected = [];
 
-    canvas.onclick = drawer.onClick;
-    canvas.onmouseup = drawer.onMouseUp;
-    canvas.onmousedown = drawer.onMouseDown;
-    canvas.onmousemove = drawer.onMouseMove;
+    canvas.onclick = onClick;
+    canvas.onmouseup = onMouseUp;
+    canvas.onmousedown = onMouseDown;
+    canvas.onmousemove = onMouseMove;
   }
 
-  drawer.start = function(){
-    drawer.redraw();
+  function start(){
+    redraw();
   };
 
   $scope.onZoomChange = function() {
@@ -39,34 +38,34 @@ app.controller("GUICtrl", ["$scope", "GUIMap", "GUISprites", "GUIZone", function
     drawer.x = centerX * Zone.getWidth() - drawer.width/2;
     drawer.y = centerY * Zone.getHeight() - drawer.height/2;
 
-    drawer.redraw();
+    redraw();
   };
 
-  drawer.globalToRelativeX = function(x){
-    return x - drawer.offsetLeft + drawer.x;
+  function globalToRelativeX(x){
+    return x - drawer.offset.left + drawer.x;
   };
 
-  drawer.globalToRelativeY = function(y){
-    return y - drawer.offsetTop + drawer.y;
+  function globalToRelativeY(y){
+    return y - drawer.offset.top + drawer.y;
   };
 
-  drawer.redraw = function(){
-    drawer.drawBackground();
-    drawer.eachDrawables(function(d){
+  function redraw(){
+    drawBackground();
+    eachDrawables(function(d){
       d.draw(drawer.ctx, drawer.x, drawer.y);
     });
   };
 
-  drawer.drawBackground = function(){
+  function drawBackground(){
     drawer.ctx.fillStyle = "rgb(0, 0, 0)";
     drawer.ctx.fillRect(0, 0, drawer.width, drawer.height);
   };
 
-  drawer.getDrawable = function(x, y){
+  function getDrawable(x, y){
     return Map.interpolateZone(x, y);
   };
   // TODO merge these 2 functions
-  drawer.eachDrawables = function(f){
+  function eachDrawables(f){
     _.each(Map.getZones(), function (zone) {
       if (zone.isContained(drawer.x, drawer.y, drawer.width, drawer.height)) {
         f(zone);
@@ -88,7 +87,7 @@ app.controller("GUICtrl", ["$scope", "GUIMap", "GUISprites", "GUIZone", function
 
   function getX(e){
     var x = getGlobalX(e);
-    x = drawer.globalToRelativeX(x);
+    x = globalToRelativeX(x);
     return x;
   }
 
@@ -98,11 +97,11 @@ app.controller("GUICtrl", ["$scope", "GUIMap", "GUISprites", "GUIZone", function
 
   function getY(e){
     var y = getGlobalY(e);
-    y = drawer.globalToRelativeY(y);
+    y = globalToRelativeY(y);
     return y;
   }
 
-  drawer.onMouseMove = function(e){
+  function onMouseMove(e){
     if (drawer.whenSelected) {
       handlePointerEvent(e);
       drawer.movedWhenSelected = true;
@@ -113,13 +112,13 @@ app.controller("GUICtrl", ["$scope", "GUIMap", "GUISprites", "GUIZone", function
       var dy = e.globalY - c.y;
       drawer.x = d.x - dx;
       drawer.y = d.y - dy;
-      drawer.redraw();
+      redraw();
     }
   };
 
-  drawer.onMouseDown = function(e){
+  function onMouseDown(e){
     handlePointerEvent(e);
-    var underMouse = drawer.getDrawable(e.localX, e.localY);
+    var underMouse = getDrawable(e.localX, e.localY);
     drawer.whenSelected = {
       drawer: {
         x: drawer.x,
@@ -139,38 +138,38 @@ app.controller("GUICtrl", ["$scope", "GUIMap", "GUISprites", "GUIZone", function
     }
   };
 
-  drawer.onMouseUp = function(e){
+  function onMouseUp(e){
     handlePointerEvent(e);
     drawer.whenSelected = null;
   };
 
-  drawer.onClick = function(e){
+  function onClick(e){
     handlePointerEvent(e);
     var res = true;
     if (drawer.movedWhenSelected) {
       // do nothing
     }
     else if (drawer.underMouse) {
-      drawer.select(drawer.underMouse);
+      select(drawer.underMouse);
       res = drawer.underMouse.onClick(e);
     }
-    drawer.redraw();
+    redraw();
     drawer.movedWhenSelected = false;
     return res;
   };
 
-  drawer.eachSelected = function(func){
-    for (var i in this.selected) {
-      func(this.selected[i]);
+  function eachSelected(func){
+    for (var i in drawer.selected) {
+      func(drawer.selected[i]);
     }
   };
 
-  drawer.select = function(arr){
-    this.eachSelected(function(s){
+  function select(arr){
+    eachSelected(function(s){
       s.onUnSelected();
     });
-    this.selected = arr.length ? arr : [arr];
-    this.eachSelected(function(s){
+    drawer.selected = arr.length ? arr : [arr];
+    eachSelected(function(s){
       s.onSelected();
     });
     $scope.$apply( function() {
@@ -181,6 +180,6 @@ app.controller("GUICtrl", ["$scope", "GUIMap", "GUISprites", "GUIZone", function
   init(Map.getCanvas(), Map.getOpts());
 
   Q.when(Map.isReady(), function(){
-    drawer.start();
+    start();
   });
 }]);

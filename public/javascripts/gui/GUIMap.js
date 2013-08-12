@@ -1,7 +1,7 @@
 app.factory("GUIMap", ["GBHModels", "GUISprites", "GUIZone", "UTGenerator", function (Models, Sprites, Zone, Generator) {
   "use strict";
 
-  var canvas = document.getElementById("mainDrawer");
+  var canvas = document.getElementById("map");
 
   var opts = {
     sprites: {

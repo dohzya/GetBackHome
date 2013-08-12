@@ -18,6 +18,8 @@ var app = angular
     $locationProvider.html5Mode(true).hashPrefix("!");
   }])
   .run(["$rootScope", function ($rootScope) {
+    $rootScope.game = {};
+    $rootScope.gui = {};
     $rootScope.orders = [];
     $rootScope.logs = [];
     $rootScope.stats = [];
