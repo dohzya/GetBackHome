@@ -17,13 +17,8 @@ var app = angular
   .config(["$locationProvider", function ($locationProvider) {
     $locationProvider.html5Mode(true).hashPrefix("!");
   }])
-  .run(["$rootScope", function ($rootScope) {
+  .run(["$rootScope", "Player", function ($rootScope, Player) {
     $rootScope.game = {};
     $rootScope.gui = {};
-    $rootScope.orders = [];
-    $rootScope.logs = [];
-    $rootScope.stats = [];
-    $rootScope.actions = [];
-    $rootScope.buttons = [];
-    $rootScope.missions = [];
+    $rootScope.currentPlayer = Player.create();
   }]);

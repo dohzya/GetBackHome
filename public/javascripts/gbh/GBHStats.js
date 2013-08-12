@@ -13,7 +13,7 @@ app.service("GBHStats", ["$rootScope", "GBHLogger", function ($rootScope, Logger
   function createStat(args) {
     var stat = new Stat(args);
     Logger.trace("Add stat: {0}", stat);
-    $rootScope.stats.push(stat);
+    $rootScope.currentPlayer.stats.push(stat);
     return stat;
   }
   function updateStats() {

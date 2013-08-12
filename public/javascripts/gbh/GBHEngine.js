@@ -40,10 +40,10 @@ app.service("GBHEngine", ["$rootScope", "GBHDisplay", "GBHLogger", "GBHOrders", 
   var mainPlace = Models.createPlace({
     food: 100,
     horde: Models.createHorde(100),
-    fighting: Models.createFighting({
+    fighting: {
       attack: 0,
       defense: 0.7
-    })
+    }
   });
   var mainEnv = Models.createEnv({
     group: mainGroup,
@@ -61,7 +61,7 @@ app.service("GBHEngine", ["$rootScope", "GBHDisplay", "GBHLogger", "GBHOrders", 
   }
 
   function selectSurvivors(s) {
-    selectedSurvivors = Math.min(s, mainGroup.Length());
+    selectedSurvivors = Math.min(s, mainGroup.length());
     return selectedSurvivors;
   }
 
@@ -119,11 +119,11 @@ app.service("GBHEngine", ["$rootScope", "GBHDisplay", "GBHLogger", "GBHOrders", 
     consumeFood(env);
     addZombies(env);
     addSurvivors(env);
-    if (env.Horde().Length() > 0 && random() > 0.7) { zombieAttack(env); }
+    if (env.Horde().length() > 0 && random() > 0.7) { zombieAttack(env); }
   }
 
   function consumeFood(env) {
-    var nb = env.group.Length();
+    var nb = env.group.length();
     var consumedFood = random(nb*0.8, nb*1.2);
     if (consumedFood < env.place.food) {
       env.place.food -= consumedFood;
@@ -155,8 +155,8 @@ app.service("GBHEngine", ["$rootScope", "GBHDisplay", "GBHLogger", "GBHOrders", 
     var killZombies = 0;
     var killSurvivors = 0;
     var damage = 0;
-    killZombies = positiveFloor(env.Horde().Length() * random(ratio*50, ratio*100)/100);
-    killSurvivors = positiveFloor(env.Group().Length() * random((1-ratio)*50, (1-ratio)*100)/100);
+    killZombies = positiveFloor(env.Horde().length() * random(ratio*50, ratio*100)/100);
+    killSurvivors = positiveFloor(env.Group().length() * random((1-ratio)*50, (1-ratio)*100)/100);
     damage = positiveFloor(env.Place().Defense()*100 * random((1-ratio)*50, (1-ratio)*100)/100);
     env.Horde().removeZombies(killZombies);
     env.Group().removeSurvivors(killSurvivors);
@@ -180,11 +180,11 @@ app.service("GBHEngine", ["$rootScope", "GBHDisplay", "GBHLogger", "GBHOrders", 
       var ratio = env.Ratio();
       var killZombies = 0;
       var killSurvivors = 0;
-      killZombies = positiveFloor(env.Horde().Length() * random(ratio*50, ratio*100)/100);
-      killSurvivors = positiveFloor(env.Group().Length() * random((1-ratio)*50, (1-ratio)*100)/100);
+      killZombies = positiveFloor(env.Horde().length() * random(ratio*50, ratio*100)/100);
+      killSurvivors = positiveFloor(env.Group().length() * random((1-ratio)*50, (1-ratio)*100)/100);
       env.Horde().KillZombies(killZombies);
       env.Group().KillSurvivors(killSurvivors);
-      Display.addMessage("La zone a été purifée ({0} survivants impliqués dont {2} tués, {1} zombies éliminés)", env.Group().Length(), killZombies, killSurvivors);
+      Display.addMessage("La zone a été purifée ({0} survivants impliqués dont {2} tués, {1} zombies éliminés)", env.Group().length(), killZombies, killSurvivors);
       finishMission(this);
       return true;
     }
@@ -219,7 +219,7 @@ app.service("GBHEngine", ["$rootScope", "GBHDisplay", "GBHLogger", "GBHOrders", 
       var max = Math.min(tooling, 1-env.Place().Defense()) * 100;
       var fortifying = random(max/2, max) / 100;
       env.Place().AddDefense(fortifying);
-      Display.addMessage("La zone a été fortifiée (de {0}%) par {1} survivants", Math.round(fortifying*100), env.Group().Length());
+      Display.addMessage("La zone a été fortifiée (de {0}%) par {1} survivants", Math.round(fortifying*100), env.Group().length());
       finishMission(this);
       return true;
     }
@@ -309,15 +309,15 @@ app.service("GBHEngine", ["$rootScope", "GBHDisplay", "GBHLogger", "GBHOrders", 
   Stats.createStat({
     id: "zombies",
     label: "Zombies aux alentour",
-    update: function(){ this.value = selectedEnv().Horde().Length(); }
+    update: function(){ this.value = selectedEnv().Horde().length(); }
   });
   Stats.createStat({
     id: "survivors",
     label: "Survivants",
     update: function(){
-      var value = mainGroup.Length();
+      var value = mainGroup.length();
       Models.eachMission(function(mission){
-        value += mission.group.Length();
+        value += mission.group.length();
       });
       this.value = value;
     }
@@ -325,7 +325,7 @@ app.service("GBHEngine", ["$rootScope", "GBHDisplay", "GBHLogger", "GBHOrders", 
   Stats.createStat({
     id: "idle",
     label: "Survivants inactif",
-    update: function(){ this.value = mainGroup.Length(); }
+    update: function(){ this.value = mainGroup.length(); }
   });
   Stats.createStat({
     id: "food",

@@ -11,17 +11,13 @@
     </div>
     <div class="row" ng-controller="GBHOrders">
       <div class="col-lg-6">
+        @views.html.partials.actions()
+
         @views.html.partials.orders()
       </div>
       <div class="col-lg-6">
         @views.html.partials.messages()
-      </div>
-    </div>
-    <div class="row" ng-controller="GBHOrders">
-      <div class="col-lg-6">
-        @views.html.partials.actions()
-      </div>
-      <div class="col-lg-6">
+
         @views.html.partials.stats()
       </div>
     </div>

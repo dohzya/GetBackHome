@@ -18,7 +18,7 @@ app.service("GBHActions", ["$rootScope", "GBHLogger", "GBHModels", function ($ro
     this.id = args.id;
     this.name = args.name;
     if (typeof(args.order) === "string") {
-      this.order = Models.order(args.order);
+      //this.order = Models.order(args.order);
     }
     else {
       this.order = args.order;
@@ -28,7 +28,7 @@ app.service("GBHActions", ["$rootScope", "GBHLogger", "GBHModels", function ($ro
   function createAction(args) {
     var action = new Action(args);
     actions[action.id] = action;
-    $rootScope.buttons.push(action);
+    //$rootScope.buttons.push(action);
     return action;
   }
 

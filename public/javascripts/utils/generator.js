@@ -77,10 +77,10 @@ app.service("UTGenerator", ["UTPerlinSimplex", "Rc4Random", "GBHModels", functio
           types = ["mountainous", t2];
         }
         var zone = {
-          fighting: Models.createFighting({
+          fighting: {
             attack: 0,  // TODO generate
             defense: 0.7  // TODO generate
-          }),
+          },
           food: 100,  // TODO generate
           height: height,
           horde: Models.createHorde(infection),  // TODO generate
