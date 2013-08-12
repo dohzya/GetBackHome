@@ -26,7 +26,7 @@ app.controller("GUICtrl", ["$scope", "GUIMap", "GUISprites", "GUIZone", function
 
   function start(){
     redraw();
-  };
+  }
 
   $scope.onZoomChange = function() {
     var centerX = (drawer.x + drawer.width/2) / Zone.getWidth();
@@ -42,27 +42,27 @@ app.controller("GUICtrl", ["$scope", "GUIMap", "GUISprites", "GUIZone", function
 
   function globalToRelativeX(x){
     return x - drawer.bounding.left + drawer.x;
-  };
+  }
 
   function globalToRelativeY(y){
     return y - drawer.bounding.top + drawer.y;
-  };
+  }
 
   function redraw(){
     drawBackground();
     eachDrawables(function(d){
       d.draw(drawer.ctx, drawer.x, drawer.y);
     });
-  };
+  }
 
   function drawBackground(){
     drawer.ctx.fillStyle = "rgb(0, 0, 0)";
     drawer.ctx.fillRect(0, 0, drawer.width, drawer.height);
-  };
+  }
 
   function getDrawable(x, y){
     return Map.interpolateZone(x, y);
-  };
+  }
   // TODO merge these 2 functions
   function eachDrawables(f){
     _.each(Map.getZones(), function (zone) {
@@ -70,7 +70,7 @@ app.controller("GUICtrl", ["$scope", "GUIMap", "GUISprites", "GUIZone", function
         f(zone);
       }
     });
-  };
+  }
 
   function handlePointerEvent(e) {
     e.globalX = getGlobalX(e);
@@ -113,7 +113,7 @@ app.controller("GUICtrl", ["$scope", "GUIMap", "GUISprites", "GUIZone", function
       drawer.y = d.y - dy;
       redraw();
     }
-  };
+  }
 
   function onMouseDown(e){
     handlePointerEvent(e);
@@ -135,12 +135,12 @@ app.controller("GUICtrl", ["$scope", "GUIMap", "GUISprites", "GUIZone", function
     else {
       drawer.underMouse = underMouse;
     }
-  };
+  }
 
   function onMouseUp(e){
     handlePointerEvent(e);
     drawer.whenSelected = null;
-  };
+  }
 
   function onClick(e){
     handlePointerEvent(e);
@@ -155,13 +155,13 @@ app.controller("GUICtrl", ["$scope", "GUIMap", "GUISprites", "GUIZone", function
     redraw();
     drawer.movedWhenSelected = false;
     return res;
-  };
+  }
 
   function eachSelected(func){
     for (var i in drawer.selected) {
       func(drawer.selected[i]);
     }
-  };
+  }
 
   function select(arr){
     eachSelected(function(s){
@@ -174,7 +174,7 @@ app.controller("GUICtrl", ["$scope", "GUIMap", "GUISprites", "GUIZone", function
     $scope.$apply( function() {
       $scope.gui.selectedZone = arr;
     });
-  };
+  }
 
   init(Map.getCanvas(), Map.getOpts());
 
