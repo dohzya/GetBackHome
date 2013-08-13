@@ -168,7 +168,8 @@
 
 - On a quelques blocs qu'on peut garder tels quels, réduire ou agrandir
 
-
+- On a pas forcément toutes les stats
+	- simule le niveau du personnage joué (sait-il évaluer les gens ? la situation ?)
 
 # V2
 
@@ -177,3 +178,6 @@
 - arbre de batiments
 	- atelier
 	- hopital
+- Les terrains influent sur la vitesse de déplacement
+	- le pathfinding en tient compte
+	- mais on peut forcer le passage
