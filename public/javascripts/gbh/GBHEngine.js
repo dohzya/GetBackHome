@@ -1,4 +1,4 @@
-app.service("GBHEngine", ["$rootScope", "GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "GBHActions", "GBHStats", function ($rootScope, Display, Logger, Orders, Models, Actions, Stats) {
+app.service("GBHEngine", ["$rootScope", "GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "GBHActions", "GBHStats", "Map", function ($rootScope, Display, Logger, Orders, Models, Actions, Stats, Map) {
   "use strict";
 
   var self = this;
@@ -86,11 +86,16 @@ app.service("GBHEngine", ["$rootScope", "GBHDisplay", "GBHLogger", "GBHOrders", 
     });
   }
 
+  function pathToSelectedPlace() {
+    return Map.findPath(mainPlace, selectedPlace());
+  }
+
   function sendOrder() {
     Models.createMission({
       order: selectedOrder,
       group: sendSelected(selectedSurvivors),
-      place: selectedPlace()
+      place: selectedPlace(),
+      path: pathToSelectedPlace()
     });
     changed();
   }
