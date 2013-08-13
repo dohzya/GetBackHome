@@ -5,7 +5,6 @@ app.factory("Place", ["Map", function (Map) {
     this.food = args.food;
     this.height = args.height;
     this.horde = args.horde;
-    this.infection = args.infection;
     this.pos = args.pos;
     this.ts = args.ts;
     this.types = args.types;
@@ -31,6 +30,11 @@ app.factory("Place", ["Map", function (Map) {
 
   Place.prototype.type2 = function() {  // FUUUUUUUUU
     return this.types[1];
+  };
+
+  Place.prototype.infection = function () {
+    var l = this.horde.length();
+    return parseInt(Math.min(999.99, l) / 10, 10);
   };
 
   function create(args) {

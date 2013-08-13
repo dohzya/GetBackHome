@@ -7,8 +7,6 @@ app.factory("GUIZone", ["$log", "GUISprites", function ($log, Sprites) {
   function Zone(place){
     this.place = place;
     this.points = this.buildPoints(0, 0);
-    this.alphaInfection = 1-(this.infection() / 100.0);
-    this.alphaYouth = 1-(this.youth() / 100.0);
 
     var type1 = this.types()[0],
         type2 = this.types()[1];
@@ -45,12 +43,19 @@ app.factory("GUIZone", ["$log", "GUISprites", function ($log, Sprites) {
     return this.place.pos[1];
   };
 
+  Zone.prototype.alphaInfection = function () {
+    return 1 - (this.infection() / 200.0);
+  };
+  Zone.prototype.alphaYouth = function () {
+    return 1 - (this.youth() / 100.0);
+  };
+
   Zone.prototype.types = function(){
     return this.place.types;
   };
 
-  Zone.prototype.infection = function(){
-    return this.place.infection;
+  Zone.prototype.infection = function () {
+    return this.place.infection();
   };
 
   Zone.prototype.youth = function(){
