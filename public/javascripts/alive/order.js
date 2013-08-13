@@ -1,6 +1,4 @@
-app.factory("Order", ["Util", function (Util) {
-
-  var orders = {};
+app.factory("Order", ["$rootScope", "Util", "Time", function ($rootScope, Util, Time) {
 
   function Order(args) {
     this.id = args.id;
@@ -9,21 +7,22 @@ app.factory("Order", ["Util", function (Util) {
     this.onWalk = args.onWalk || Util.noop;
     this.onTurn = args.onTurn || Util.noop;
     this.onRun = args.onRun || Util.noop;
+    this.isAvailable = args.isAvailable || function() {return true;};
     this.run = args.run;
   }
 
   function create(args) {
-    var order = new Order(args);
-    orders[order.id] = order;
-    return order;
+    return new Order(args);
   }
 
-  function order(id) {
-    return orders[id];
+  function get(id) {
+    return $rootScope.orders[id];
   }
 
   return {
-    create: create
+    create: create,
+    get: get,
+    all: function() { return $rootScope.orders; }
   };
 
 }]);
