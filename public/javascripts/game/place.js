@@ -12,6 +12,18 @@ window.app.factory("Place", ["Map", function (Map) {
     this.youth = args.youth;
   }
 
+  Place.prototype.x = function () {
+    return this.pos[0];
+  };
+
+  Place.prototype.y = function () {
+    return this.pos[1];
+  };
+
+  Place.prototype.z = function () {
+    return -(this.x() + this.y());
+  }
+
   Place.prototype.defense = function (value) {
     if (value) { this.fighting.defense = value; }
     return this.fighting.defense;
