@@ -61,11 +61,11 @@ app.factory("GUIZone", ["$log", "GUISprites", function ($log, Sprites) {
 
 
   Zone.prototype.cx = function () {
-    return this.x() * (3/4 * this.width());
+    return this.x() * this.width() - this.y() * this.width() / 2;
   };
 
   Zone.prototype.cy = function () {
-    return this.y() * this.height() - this.x() * this.height() / 2;
+    return this.y() * (3 / 4 * this.height());
   };
 
   Zone.prototype.width = function () {
@@ -76,16 +76,16 @@ app.factory("GUIZone", ["$log", "GUISprites", function ($log, Sprites) {
   };
 
   Zone.prototype.buildPoints = function (x, y) {
-    var cx = this.cx() - x,
-      cy = this.cy() - y;
+    var cx = this.cx() - x;
+    var cy = this.cy() - y;
     return [
-      {x: cx + width / 4,   y: cy},
-      {x: cx + 3 * width / 4, y: cy},
-      {x: cx + width,     y: cy + height / 2},
-      {x: cx + 3 * width / 4, y: cy + height},
-      {x: cx + width / 4,   y: cy + height},
-      {x: cx,         y: cy + height / 2},
-      {x: cx + width / 4,   y: cy}
+      {x: cx,             y: cy + height / 4},
+      {x: cx,             y: cy + 3 * height / 4},
+      {x: cx + width / 2, y: cy + height},
+      {x: cx + width,     y: cy + 3 * height / 4},
+      {x: cx + width,     y: cy + height / 4},
+      {x: cx + width / 2, y: cy},
+      {x: cx,             y: cy + height / 4}
     ];
   };
 
