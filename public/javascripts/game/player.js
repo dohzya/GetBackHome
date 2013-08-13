@@ -1,14 +1,15 @@
 app.factory("Player", [function () {
+  "use strict";
 
-  function Player(args) {
+  function Player() {
     this.logs = [];
     this.stats = [];
     this.buttons = [];
     this.missions = [];
   }
 
-  function create(args) {
-    return new Player(args);
+  function create() {
+    return new Player();
   }
 
   return {

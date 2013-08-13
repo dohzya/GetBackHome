@@ -7,15 +7,16 @@ app.service("Rc4Random", [function () {
     var keyScheduleJ = 0;
 
     function init(seed) {
-      for (var i = 0; i < 256; i++) {
+      var i;
+      for (i = 0; i < 256; i++) {
         keySchedule[i] = i;
       }
 
-      var j = 0;
+      var j = 0, t;
       for (i = 0; i < 256; i++) {
         j = (j + keySchedule[i] + seed.charCodeAt(i % seed.length)) % 256;
 
-        var t = keySchedule[i];
+        t = keySchedule[i];
         keySchedule[i] = keySchedule[j];
         keySchedule[j] = t;
       }
@@ -34,10 +35,11 @@ app.service("Rc4Random", [function () {
     }
 
     return {
-      getRandomNumber: function() {
+      getRandomNumber: function () {
         var number = 0;
         var multiplier = 1;
-        for (var i = 0; i < 8; i++) {
+        var i;
+        for (i = 0; i < 8; i++) {
           number += getRandomByte() * multiplier;
           multiplier *= 256;
         }

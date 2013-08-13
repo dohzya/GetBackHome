@@ -4,42 +4,39 @@ app.factory("GUIZone", ["$log", "GUISprites", function ($log, Sprites) {
   var width = 48;
   var height = 48;
 
-  function Zone(place){
+  function Zone(place) {
+    var type1, type2;
+
     this.place = place;
     this.points = this.buildPoints(0, 0);
 
-    var type1 = this.types()[0],
-        type2 = this.types()[1];
-    if (type1 === "water"){
+    type1 = this.types()[0];
+    type2 = this.types()[1];
+    if (type1 === "water") {
       this.color = "127, 169, 181";
-    }
-    else if (type1 === "swamp"){
+    } else if (type1 === "swamp") {
       this.color = "105, 74, 68";
-    }
-    else if (type1 === "plain"){
+    } else if (type1 === "plain") {
       this.color = "127, 168, 79";
-    }
-    else if (type1 === "mountainous"){
+    } else if (type1 === "mountainous") {
       this.color = "127, 127, 127";
-    }
-    else {
+    } else {
       this.color = "0, 0, 0";
     }
 
     if (type2) {
       this.image = Sprites.get(type2);
-    }
-    else {
+    } else {
       this.image = Sprites.get(type1);
     }
     if (!this.image) { this.image = Sprites.get("grass"); }
   }
 
-  Zone.prototype.x = function(){
+  Zone.prototype.x = function () {
     return this.place.pos[0];
   };
 
-  Zone.prototype.y = function(){
+  Zone.prototype.y = function () {
     return this.place.pos[1];
   };
 
@@ -50,7 +47,7 @@ app.factory("GUIZone", ["$log", "GUISprites", function ($log, Sprites) {
     return 1 - (this.youth() / 100.0);
   };
 
-  Zone.prototype.types = function(){
+  Zone.prototype.types = function () {
     return this.place.types;
   };
 
@@ -58,51 +55,50 @@ app.factory("GUIZone", ["$log", "GUISprites", function ($log, Sprites) {
     return this.place.infection();
   };
 
-  Zone.prototype.youth = function(){
+  Zone.prototype.youth = function () {
     return this.place.youth;
   };
 
 
-  Zone.prototype.cx = function(){
+  Zone.prototype.cx = function () {
     return this.x() * (3/4 * this.width());
   };
 
-  Zone.prototype.cy = function(){
+  Zone.prototype.cy = function () {
     return this.y() * this.height() - this.x() * this.height() / 2;
   };
 
-  Zone.prototype.width = function(){
+  Zone.prototype.width = function () {
     return width;
   };
-  Zone.prototype.height = function(){
+  Zone.prototype.height = function () {
     return height;
   };
 
-  Zone.prototype.buildPoints = function(x, y){
+  Zone.prototype.buildPoints = function (x, y) {
     var cx = this.cx() - x,
-      cy = this.cy() - y,
-      width = this.width(),
-      height = this.height();
+      cy = this.cy() - y;
     return [
-      {x: cx + width/4,   y: cy},
-      {x: cx + 3*width/4, y: cy},
-      {x: cx + width,     y: cy + height/2},
-      {x: cx + 3*width/4, y: cy + height},
-      {x: cx + width/4,   y: cy + height},
-      {x: cx,         y: cy + height/2},
-      {x: cx + width/4,   y: cy}
+      {x: cx + width / 4,   y: cy},
+      {x: cx + 3 * width / 4, y: cy},
+      {x: cx + width,     y: cy + height / 2},
+      {x: cx + 3 * width / 4, y: cy + height},
+      {x: cx + width / 4,   y: cy + height},
+      {x: cx,         y: cy + height / 2},
+      {x: cx + width / 4,   y: cy}
     ];
   };
 
-  Zone.prototype.drawBackground = function(ctx, x, y){
+  Zone.prototype.drawBackground = function (ctx, x, y) {
     var points = this.buildPoints(x, y);
     var color = this.selected ? "255, 250, 71" : this.color;
-    ctx.fillStyle = "rgba("+color+", "+this.alphaInfection+")";
-    ctx.strokeStyle = "rgba("+color+", "+this.alphaInfection+")";
+    ctx.fillStyle = "rgba(" + color + ", " + this.alphaInfection() + ")";
+    ctx.strokeStyle = "rgba(" + color + ", " + this.alphaInfection() + ")";
     ctx.beginPath();
     var point = points[0];
     ctx.moveTo(point[0], point[1]);
-    for (var i=1; i<points.length; i++){
+    var i;
+    for (i = 1; i < points.length; i++) {
       point = points[i];
       ctx.lineTo(point.x, point.y);
     }
@@ -111,72 +107,73 @@ app.factory("GUIZone", ["$log", "GUISprites", function ($log, Sprites) {
     ctx.fill();
   };
 
-  Zone.prototype.drawImage = function(ctx, x, y){
-      if (this.image) {
-          var cx = this.cx() - this.width()/10 - x;
-          var cy = this.cy() - this.height()/10 - y;
-          var oldGlobalAlpha = ctx.globalAlpha;
-          ctx.globalAlpha = this.alphaYouth;
-          this.image.draw(ctx, cx, cy, 11/10*this.width(), 11/10*this.height());
-          ctx.globalAlpha = oldGlobalAlpha;
-          var point = this.buildPoints(x, y)[0];
-          ctx.fillStyle = "#000000";
-          ctx.fillText(this.x() + "x" + this.y(), point.x, point.y + 15);
-      } else {
-        $log.error("No img for Zone (" + x + " x " + y + ")");
-      }
+  Zone.prototype.drawImage = function (ctx, x, y) {
+    if (this.image) {
+      var cx = this.cx() - this.width() / 10 - x;
+      var cy = this.cy() - this.height() / 10 - y;
+      var oldGlobalAlpha = ctx.globalAlpha;
+      ctx.globalAlpha = this.alphaYouth();
+      this.image.draw(ctx, cx, cy, 11 / 10 * this.width(), 11 / 10 * this.height());
+      ctx.globalAlpha = oldGlobalAlpha;
+      var point = this.buildPoints(x, y)[0];
+      ctx.fillStyle = "#000000";
+      ctx.fillText(this.x() + "x" + this.y(), point.x, point.y + 15);
+    } else {
+      $log.error("No img for Zone (" + x + " x " + y + ")");
+    }
   };
 
-  Zone.prototype.contains = function(x, y){
+  Zone.prototype.contains = function (x, y) {
     // Stolen from http://local.wasp.uwa.edu.au/~pbourke/geometry/insidepoly/
-    for (var i=1; i<this.points.length; i++){
-      var p0 = this.points[i];
-      var p1 = this.points[ (i+1) % this.points.length ];
-      var pos = (y - p0.y)*(p1.x - p0.x) - (x - p0.x)*(p1.y - p0.y);
+    var i, p0, p1, pos;
+    for (i = 1; i < this.points.length; i++) {
+      p0 = this.points[i];
+      p1 = this.points[(i + 1) % this.points.length];
+      pos = (y - p0.y) * (p1.x - p0.x) - (x - p0.x) * (p1.y - p0.y);
       if (pos < 0) { return false; }
     }
     return true;
   };
 
-  Zone.prototype.isContained = function(x, y, dx, dy){
+  Zone.prototype.isContained = function (x, y, dx, dy) {
     return x < this.cx() + this.width() &&
-         x+dx > this.cx() - this.width() &&
+         x + dx > this.cx() - this.width() &&
          y < this.cy() + this.height() &&
-         y+dy > this.cy() - this.height();
+         y + dy > this.cy() - this.height();
   };
 
-  Zone.prototype.around = function(){
+  Zone.prototype.around = function () {
     return [
-      Map.interpolateZone(this.cx() + this.width()/2, this.cy() - this.height()/2),
+      Map.interpolateZone(this.cx() + this.width() / 2, this.cy() - this.height() / 2),
       Map.interpolateZone(this.cx() + this.width(),   this.cy()),
-      Map.interpolateZone(this.cx() + this.width()/2, this.cy() + this.height()/2),
-      Map.interpolateZone(this.cx() - this.width()/2, this.cy() + this.height()/2),
+      Map.interpolateZone(this.cx() + this.width() / 2, this.cy() + this.height() / 2),
+      Map.interpolateZone(this.cx() - this.width() / 2, this.cy() + this.height() / 2),
       Map.interpolateZone(this.cx() - this.width(),   this.cy()),
-      Map.interpolateZone(this.cx() - this.width()/2, this.cy() - this.height()/2)
+      Map.interpolateZone(this.cx() - this.width() / 2, this.cy() - this.height() / 2)
     ];
   };
 
-  Zone.prototype.draw = function(ctx, x, y){
+  Zone.prototype.draw = function (ctx, x, y) {
     this.drawBackground(ctx, x, y);
     this.drawImage(ctx, x, y);
   };
 
-  Zone.prototype.onClick = function(){
+  Zone.prototype.onClick = function () {
   };
 
-  Zone.prototype.onSelected = function(){
+  Zone.prototype.onSelected = function () {
     this.selected = true;
   };
 
-  Zone.prototype.display = function(dst){
+  Zone.prototype.display = function (dst) {
     dst.displayZone(this);
   };
 
-  Zone.prototype.onUnSelected = function(){
+  Zone.prototype.onUnSelected = function () {
     this.selected = false;
   };
 
-  function create(zn, opts){
+  function create(zn, opts) {
     return new Zone(zn, opts);
   }
 

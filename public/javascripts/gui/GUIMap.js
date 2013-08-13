@@ -21,8 +21,8 @@ app.factory("GUIMap", ["GBHModels", "GUISprites", "GUIZone", "UTGenerator", func
   };
 
   var zones = [];
-  Sprites.isLoaded().then( function() {
-    zones = Generator.generate("001", 0, 80, 0, 80, function(json){
+  Sprites.isLoaded().then(function () {
+    zones = Generator.generate("001", 0, 80, 0, 80, function (json) {
       var place = Models.createPlace(json);
       return Zone.create(place);
     });
@@ -53,4 +53,4 @@ app.factory("GUIMap", ["GBHModels", "GUISprites", "GUIZone", "UTGenerator", func
     isReady: isReady
   };
 
-}])
+}]);

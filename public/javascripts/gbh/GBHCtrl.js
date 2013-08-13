@@ -4,7 +4,7 @@ app.controller("GBHCtrl", ["$rootScope", "$scope", "GBHEngine", function ($rootS
   var inAction = false;
 
   $scope.doAction = function (func) {
-    return function() {
+    return function () {
       if (!inAction) {
         inAction = true;
         func.apply(this, arguments);
@@ -13,6 +13,6 @@ app.controller("GBHCtrl", ["$rootScope", "$scope", "GBHEngine", function ($rootS
     };
   }
 
-  $scope.nextTurn = $scope.doAction(function(){ Engine.turn(); });
+  $scope.nextTurn = $scope.doAction(function () { Engine.turn(); });
 
 }]);

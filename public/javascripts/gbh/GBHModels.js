@@ -1,5 +1,4 @@
-app.factory("GBHModels", ["Group", "Mission", "Order", "Survivor", "Horde", "Zombie", "Env", "Place", "Player", "Time",
-  function (Group, Mission, Order, Survivor, Horde, Zombie, Env, Place, Player, Time) {
+app.factory("GBHModels", ["Group", "Mission", "Order", "Survivor", "Horde", "Zombie", "Env", "Place", "Player", "Time", function (Group, Mission, Order, Survivor, Horde, Zombie, Env, Place, Player, Time) {
   "use strict";
 
   return {

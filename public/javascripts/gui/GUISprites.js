@@ -1,7 +1,9 @@
 app.factory("GUISprites", ["$q", function ($q) {
+  "use strict";
+
   var png = {
     src: "/assets/images/sprites.png",
-    tiles:{
+    tiles: {
       cursor: [0, 0, 20, 20],
       cursorSelected: [20, 0, 20, 20],
 
@@ -24,39 +26,39 @@ app.factory("GUISprites", ["$q", function ($q) {
   var tiles = {};
 
   function Sprite(img, x, y, width, height) {
-      this.img = img;
-      this.x = x;
-      this.y = y;
-      this.width = width;
-      this.height = height;
+    this.img = img;
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
   }
 
-  Sprite.prototype.draw = function(ctx, x, y, width, height) {
-      var dx = width || this.width;
-      var dy = height || this.height;
-      ctx.drawImage(this.img, this.x, this.y, this.height, this.width, x, y, dx, dy);
+  Sprite.prototype.draw = function (ctx, x, y, width, height) {
+    var dx = width || this.width;
+    var dy = height || this.height;
+    ctx.drawImage(this.img, this.x, this.y, this.height, this.width, x, y, dx, dy);
   };
 
-  function create (img, x, y, width, height) {
-      return new Sprite(img, x, y, width, height);
-  };
-  
+  function create(img, x, y, width, height) {
+    return new Sprite(img, x, y, width, height);
+  }
+
   function loadPNG() {
     var deferred = Q.defer();
-
     var img = new Image();
-    img.onload = function(){
-      for (var k in png.tiles) {
-          var v = png.tiles[k];
-          var x = v[0], y = v[1], width = v[2], height = v[3];
-          tiles[k] = create(img, x, y, width, height);
+    var k, v, x, y, width, height;
+    img.onload = function () {
+      for (k in png.tiles) {
+        v = png.tiles[k];
+        x = v[0];
+        y = v[1];
+        width = v[2];
+        height = v[3];
+        tiles[k] = create(img, x, y, width, height);
       }
-img
       deferred.resolve();
     };
-
     img.src = png.src;
-
     return deferred.promise;
   }
 
@@ -65,7 +67,7 @@ img
 
     _.each(svg, function (s, index) {
       s.img = new Image();
-      s.img.onload = function() {
+      s.img.onload = function () {
         tiles[s.name] = create(s.img, 0, 0, s.width, s.height);
 
         if (index == svg.length - 1) {
@@ -94,5 +96,5 @@ img
     isLoaded: function () { return promisedTiles; },
     get: get,
     getTiles: getTiles
-  }
+  };
 }]);

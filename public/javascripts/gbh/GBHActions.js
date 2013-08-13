@@ -17,10 +17,9 @@ app.service("GBHActions", ["$rootScope", "GBHLogger", "GBHModels", function ($ro
   function Action(args) {
     this.id = args.id;
     this.name = args.name;
-    if (typeof(args.order) === "string") {
+    if (typeof args.order === "string") {
       //this.order = Models.order(args.order);
-    }
-    else {
+    } else {
       this.order = args.order;
     }
     this.stats = args.stats;

@@ -1,4 +1,5 @@
-app.factory("Place", ["Map", function (Map) {
+window.app.factory("Place", ["Map", function (Map) {
+  "use strict";
 
   function Place(args) {
     this.fighting = args.fighting;
@@ -11,24 +12,24 @@ app.factory("Place", ["Map", function (Map) {
     this.youth = args.youth;
   }
 
-  Place.prototype.defense = function(value) {
+  Place.prototype.defense = function (value) {
     if (value) { this.fighting.defense = value; }
     return this.fighting.defense;
   };
 
-  Place.prototype.AddDefense = function(value) {
+  Place.prototype.AddDefense = function (value) {
     return this.defense(this.defense() + value);
   };
 
-  Place.prototype.attack = function() {
+  Place.prototype.attack = function () {
     return this.fighting.attack;
   };
 
-  Place.prototype.biome = function() {
+  Place.prototype.biome = function () {
     return this.types[0];
   };
 
-  Place.prototype.type2 = function() {  // FUUUUUUUUU
+  Place.prototype.type2 = function () {  // FUUUUUUUUU
     return this.types[1];
   };
 

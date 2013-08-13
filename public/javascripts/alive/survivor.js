@@ -1,4 +1,5 @@
 app.factory("Survivor", [function () {
+  "use strict";
 
   function Survivor(args) {
     this.food = args.food;
@@ -12,15 +13,15 @@ app.factory("Survivor", [function () {
     this.currentMental = args.currentMental;
   }
 
-  Survivor.prototype.defense = function() {
+  Survivor.prototype.defense = function () {
     return this.fighting.defense;
   };
 
-  Survivor.prototype.attack = function() {
+  Survivor.prototype.attack = function () {
     return this.fighting.attack;
   };
 
-  Survivor.prototype.addXp = function(xp) {
+  Survivor.prototype.addXp = function (xp) {
     this.xp += xp;
     if (this.xp > Math.pow(2, this.level)) {
       this.level++;
@@ -34,8 +35,8 @@ app.factory("Survivor", [function () {
   }
 
   function createSeveral(nb) {
-    var survivors = [];
-    for (var i=0; i<nb; i++) {
+    var survivors = [], i;
+    for (i = 0; i < nb; i++) {
       survivors.push(create({
         food: 30,
         fighting: {

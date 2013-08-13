@@ -1,4 +1,5 @@
 app.factory("Zombie", [function () {
+  "use strict";
 
   function Zombie(args) {
     this.fighting = args.fighting;
@@ -7,11 +8,11 @@ app.factory("Zombie", [function () {
     this.state = args.state;
   }
 
-  Zombie.prototype.defense = function() {
+  Zombie.prototype.defense = function () {
     return this.fighting.defense;
   };
 
-  Zombie.prototype.attack = function() {
+  Zombie.prototype.attack = function () {
     return this.fighting.attack;
   };
 
@@ -20,8 +21,8 @@ app.factory("Zombie", [function () {
   }
 
   function createSeveral(nb) {
-    var zombies = [];
-    for (var i=0; i<nb; i++) {
+    var zombies = [], i;
+    for (i = 0; i < nb; i++) {
       zombies.push(create({
         fighting: {
           attack: 5,

@@ -17,8 +17,9 @@ app.service("GBHStats", ["$rootScope", "GBHLogger", function ($rootScope, Logger
     return stat;
   }
   function updateStats() {
-    for (var i in $rootScope.stats) {
-      var stat = $rootScope.stats[i];
+    var i, stat;
+    for (i in $rootScope.stats) {
+      stat = $rootScope.stats[i];
       stat.update();
     }
   }

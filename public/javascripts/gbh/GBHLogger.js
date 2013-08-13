@@ -14,11 +14,11 @@ app.service("GBHLogger", [function () {
     info: INFO,
     warn: WARN,
     error: ERROR
-  }
+  };
 
   var LEVEL = DEBUG;//TRACE;
   function setLevel(value) {
-    if (typeof(value) == "number") { LEVEL = value; }
+    if (typeof value == "number") { LEVEL = value; }
     else { LEVEL = LEVEL[value]; }
   }
 
@@ -42,7 +42,7 @@ app.service("GBHLogger", [function () {
   // Helpers
 
   function formatMessage(msg, args, base) {
-    return msg.replace(/\{(\d+)\}/g, function(_, n){
+    return msg.replace(/\{(\d+)\}/g, function (_, n) {
       var arg = args[parseInt(n, 10) + base];
       if (typeof(arg) == "object") { arg = JSON.stringify(arg); }
       return ""+arg;

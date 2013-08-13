@@ -9,14 +9,13 @@ app.service("GBHEngine", ["$rootScope", "GBHDisplay", "GBHLogger", "GBHOrders", 
       if (arguments.length === 1) {
         min = 0;
         max = arg1;
-      }
-      else {
+      } else {
         min = arg1;
         max = arg2;
       }
-      return Math.floor((Math.random() * (max-min)) + min);
+      return Math.floor((Math.random() * (max - min)) + min);
     }
-    else { return Math.random(); }
+    return Math.random();
   }
 
   function positive(nb) {
@@ -47,7 +46,7 @@ app.service("GBHEngine", ["$rootScope", "GBHDisplay", "GBHLogger", "GBHOrders", 
   });
   var mainEnv = Models.createEnv({
     group: mainGroup,
-    place: mainPlace,
+    place: mainPlace
   });
 
   function selectedPlace() {
@@ -56,7 +55,7 @@ app.service("GBHEngine", ["$rootScope", "GBHDisplay", "GBHLogger", "GBHOrders", 
   function selectedEnv() {
     return Models.createEnv({
       group: mainGroup,
-      place: selectedPlace(),
+      place: selectedPlace()
     });
   }
 
@@ -78,8 +77,8 @@ app.service("GBHEngine", ["$rootScope", "GBHDisplay", "GBHLogger", "GBHOrders", 
   }
 
   function splitGroup(group, nb) {
-    var removed = [];
-    for (var i=0; i<nb; i++) {
+    var removed = [], i;
+    for (i = 0; i < nb; i++) {
       removed.push(group.survivors.shift());
     }
     return Models.createGroup({
@@ -99,15 +98,16 @@ app.service("GBHEngine", ["$rootScope", "GBHDisplay", "GBHLogger", "GBHOrders", 
     // Si on veut la mettre dans Models, il faut automatiser le concept
     // d'une mission qui arrive ou fini dans un env, et merger avec cet
     // env en question
-    for (var i in mission.group.survivors) {
-      var survivor = mission.group.survivors[i];
+    var i, survivor;
+    for (i in mission.group.survivors) {
+      survivor = mission.group.survivors[i];
       mainGroup.survivors.push(survivor);
     }
     changed();
   }
 
   function turn() {
-    Models.eachMission(function(mission){
+    Models.eachMission(function (mission) {
       mission.turn();
     });
     turnNb++;
@@ -124,12 +124,11 @@ app.service("GBHEngine", ["$rootScope", "GBHDisplay", "GBHLogger", "GBHOrders", 
 
   function consumeFood(env) {
     var nb = env.group.length();
-    var consumedFood = random(nb*0.8, nb*1.2);
+    var consumedFood = random(nb * 0.8, nb * 1.2);
     if (consumedFood < env.place.food) {
       env.place.food -= consumedFood;
       Display.addMessage("{0} de nourritures ont été consommés.", consumedFood);
-    }
-    else {
+    } else {
       var diff = consumedFood - env.place.food;
       env.place.food = 0;
       Display.addMessage("Il n'y a plus de nourriture (il aurait fallu {0} de plus).", diff);
@@ -155,12 +154,12 @@ app.service("GBHEngine", ["$rootScope", "GBHDisplay", "GBHLogger", "GBHOrders", 
     var killZombies = 0;
     var killSurvivors = 0;
     var damage = 0;
-    killZombies = positiveFloor(env.Horde().length() * random(ratio*50, ratio*100)/100);
-    killSurvivors = positiveFloor(env.Group().length() * random((1-ratio)*50, (1-ratio)*100)/100);
-    damage = positiveFloor(env.Place().Defense()*100 * random((1-ratio)*50, (1-ratio)*100)/100);
+    killZombies = positiveFloor(env.Horde().length() * random(ratio * 50, ratio * 100)/100);
+    killSurvivors = positiveFloor(env.Group().length()  *  random((1 - ratio) * 50, (1-ratio) * 100)/100);
+    damage = positiveFloor(env.Place().Defense() * 100  *  random((1 - ratio) * 50, (1-ratio) * 100)/100);
     env.Horde().removeZombies(killZombies);
     env.Group().removeSurvivors(killSurvivors);
-    env.Place().AddDefense(- damage/100);
+    env.Place().AddDefense(-damage / 100);
     Display.addMessage("La zone a été attaquée ! ({0} zombies éliminés, {1} survivants tués, {2}% de dégats)", killZombies, killSurvivors, damage);
     changed();
   }
@@ -176,12 +175,12 @@ app.service("GBHEngine", ["$rootScope", "GBHDisplay", "GBHLogger", "GBHOrders", 
       min: 1,
       standard: 3
     }),
-    run: function(env){
+    run: function (env) {
       var ratio = env.Ratio();
       var killZombies = 0;
       var killSurvivors = 0;
-      killZombies = positiveFloor(env.Horde().length() * random(ratio*50, ratio*100)/100);
-      killSurvivors = positiveFloor(env.Group().length() * random((1-ratio)*50, (1-ratio)*100)/100);
+      killZombies = positiveFloor(env.Horde().length() * random(ratio * 50, ratio * 100) / 100);
+      killSurvivors = positiveFloor(env.Group().length() * random((1 - ratio) * 50, (1 - ratio) * 100) / 100);
       env.Horde().KillZombies(killZombies);
       env.Group().KillSurvivors(killSurvivors);
       Display.addMessage("La zone a été purifée ({0} survivants impliqués dont {2} tués, {1} zombies éliminés)", env.Group().length(), killZombies, killSurvivors);
@@ -214,12 +213,16 @@ app.service("GBHEngine", ["$rootScope", "GBHDisplay", "GBHLogger", "GBHOrders", 
       min: 1,
       standard: 2
     }),
-    run: function(env){
+    run: function (env) {
       var tooling = env.Group().Tooling() / 10;
-      var max = Math.min(tooling, 1-env.Place().Defense()) * 100;
-      var fortifying = random(max/2, max) / 100;
+      var max = Math.min(tooling, 1 - env.Place().Defense()) * 100;
+      var fortifying = random(max / 2, max) / 100;
       env.Place().AddDefense(fortifying);
-      Display.addMessage("La zone a été fortifiée (de {0}%) par {1} survivants", Math.round(fortifying*100), env.Group().length());
+      Display.addMessage(
+        "La zone a été fortifiée (de {0}%) par {1} survivants",
+        Math.round(fortifying * 100),
+        env.Group().length()
+      );
       finishMission(this);
       return true;
     }
@@ -232,7 +235,7 @@ app.service("GBHEngine", ["$rootScope", "GBHDisplay", "GBHLogger", "GBHOrders", 
         id: "build",
         label: "Avancement",
         value: 100,
-        update: function(env) {
+        update: function (env) {
           console.log("env:", env);
           // var middle = max - max/4;
         }
@@ -258,7 +261,7 @@ app.service("GBHEngine", ["$rootScope", "GBHDisplay", "GBHLogger", "GBHOrders", 
       min: 1,
       standard: 2
     }),
-    run: function(env){
+    run: function (env) {
       var scavangedFood = random(2, 10);
       env.Place().food += scavangedFood;
       Display.addMessage("Du materiel a été récupéré ({0} nourritures)", scavangedFood);
@@ -292,31 +295,31 @@ app.service("GBHEngine", ["$rootScope", "GBHDisplay", "GBHLogger", "GBHOrders", 
   Stats.createStat({
     id: "turn",
     label: "Tour",
-    update: function(){ this.value = turnNb; }
+    update: function () { this.value = turnNb; }
   });
   Stats.createStat({
     id: "ratio",
     label: "Sécurité",
     suffix: " %",
-    update: function(){ this.value = to2digits(selectedEnv().Ratio() * 100); }
+    update: function () { this.value = to2digits(selectedEnv().Ratio() * 100); }
   });
   Stats.createStat({
     id: "defense",
     label: "Étant du fort",
     suffix: " %",
-    update: function(){ this.value = to2digits(selectedPlace().Defense() * 100); }
+    update: function () { this.value = to2digits(selectedPlace().Defense() * 100); }
   });
   Stats.createStat({
     id: "zombies",
     label: "Zombies aux alentour",
-    update: function(){ this.value = selectedEnv().Horde().length(); }
+    update: function () { this.value = selectedEnv().Horde().length(); }
   });
   Stats.createStat({
     id: "survivors",
     label: "Survivants",
-    update: function(){
+    update: function () {
       var value = mainGroup.length();
-      Models.eachMission(function(mission){
+      Models.eachMission(function (mission) {
         value += mission.group.length();
       });
       this.value = value;
@@ -325,12 +328,12 @@ app.service("GBHEngine", ["$rootScope", "GBHDisplay", "GBHLogger", "GBHOrders", 
   Stats.createStat({
     id: "idle",
     label: "Survivants inactif",
-    update: function(){ this.value = mainGroup.length(); }
+    update: function () { this.value = mainGroup.length(); }
   });
   Stats.createStat({
     id: "food",
     label: "Nourriture restante",
-    update: function(){ this.value = selectedPlace().food; }
+    update: function () { this.value = selectedPlace().food; }
   });
 
   Stats.updateStats();

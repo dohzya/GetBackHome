@@ -16,11 +16,11 @@ app.factory("Mission", [function () {
     this.elapsedTime = 0;
   }
 
-  Mission.prototype.estimatedTime = function() {
+  Mission.prototype.estimatedTime = function () {
     return this.order.time.standard + this.path.length;
   };
 
-  Mission.prototype.CurrentEnv = function() {
+  Mission.prototype.CurrentEnv = function () {
     return createEnv({
       group: this.group,
       place: this.place,
@@ -28,11 +28,11 @@ app.factory("Mission", [function () {
     });
   };
 
-  Mission.prototype.EstimatedTimeToComplete = function() {
+  Mission.prototype.EstimatedTimeToComplete = function () {
     return this.estimatedTime() - this.elapsedTime;
   };
 
-  Mission.prototype.turn = function() {
+  Mission.prototype.turn = function () {
     if (this.remainingPath.length === 0) {
       this.status = "running";
       if (this.remainingTime === 0) {
@@ -60,15 +60,16 @@ app.factory("Mission", [function () {
   }
 
   function eachMission(func) {
-    for (var i in $rootScope.missions) {
+    var i;
+    for (i in $rootScope.missions) {
       func($rootScope.missions[i]);
     }
   }
 
   function removeMission(missionToRemove) {
-    var newMissions = [];
-    for (var i in $rootScope.missions) {
-      var mission = $rootScope.missions[i];
+    var newMissions = [], i, mission;
+    for (i in $rootScope.missions) {
+      mission = $rootScope.missions[i];
       if (mission.id !== missionToRemove.id) {
         newMissions.push(mission);
       }

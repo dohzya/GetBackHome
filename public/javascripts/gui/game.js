@@ -1,14 +1,14 @@
-GetBackHome.game = (function(GetBackHome){
-    "use strict";
+GetBackHome.game = (function (GetBackHome) {
+  "use strict";
 
-    var game = {};
+  var game = {};
 
-    game.init = function(drawer, opts){
-    };
+  game.init = function (drawer, opts) {
+  };
 
-    game.start = function(){
-        GetBackHome.drawer.start();
-    };
+  game.start = function () {
+    GetBackHome.drawer.start();
+  };
 
-    return game;
+  return game;
 })(GetBackHome);

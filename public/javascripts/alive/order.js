@@ -1,4 +1,5 @@
 app.factory("Order", ["$rootScope", "Util", "Time", function ($rootScope, Util, Time) {
+  "use strict";
 
   function Order(args) {
     this.id = args.id;
@@ -7,7 +8,7 @@ app.factory("Order", ["$rootScope", "Util", "Time", function ($rootScope, Util, 
     this.onWalk = args.onWalk || Util.noop;
     this.onTurn = args.onTurn || Util.noop;
     this.onRun = args.onRun || Util.noop;
-    this.isAvailable = args.isAvailable || function() {return true;};
+    this.isAvailable = args.isAvailable || function () { return true; };
     this.run = args.run;
   }
 
@@ -22,7 +23,7 @@ app.factory("Order", ["$rootScope", "Util", "Time", function ($rootScope, Util, 
   return {
     create: create,
     get: get,
-    all: function() { return $rootScope.orders; }
+    all: function () { return $rootScope.orders; }
   };
 
 }]);
