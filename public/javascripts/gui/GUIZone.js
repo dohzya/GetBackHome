@@ -61,31 +61,24 @@ app.factory("GUIZone", ["$log", "GUISprites", function ($log, Sprites) {
 
 
   Zone.prototype.cx = function () {
-    return this.x() * this.width() - this.y() * this.width() / 2;
+    return (this.x() * width) - (this.y() * width / 2) + (width / 2);
   };
 
   Zone.prototype.cy = function () {
-    return this.y() * (3 / 4 * this.height());
-  };
-
-  Zone.prototype.width = function () {
-    return width;
-  };
-  Zone.prototype.height = function () {
-    return height;
+    return (this.y() * 3 / 4 * height) + (height / 2);
   };
 
   Zone.prototype.buildPoints = function (x, y) {
     var cx = this.cx() - x;
     var cy = this.cy() - y;
     return [
-      {x: cx,             y: cy + height / 4},
-      {x: cx,             y: cy + 3 * height / 4},
-      {x: cx + width / 2, y: cy + height},
-      {x: cx + width,     y: cy + 3 * height / 4},
-      {x: cx + width,     y: cy + height / 4},
-      {x: cx + width / 2, y: cy},
-      {x: cx,             y: cy + height / 4}
+      {x: cx - width / 2,     y: cy - height / 4},
+      {x: cx - width / 2,     y: cy + height / 4},
+      {x: cx,                 y: cy + height / 2},
+      {x: cx + width / 2,     y: cy + height / 4},
+      {x: cx + width / 2,     y: cy - height / 4},
+      {x: cx,                 y: cy - height / 2},
+      {x: cx - width / 2,     y: cy - height / 4}
     ];
   };
 
@@ -109,11 +102,11 @@ app.factory("GUIZone", ["$log", "GUISprites", function ($log, Sprites) {
 
   Zone.prototype.drawImage = function (ctx, x, y) {
     if (this.image) {
-      var cx = this.cx() - this.width() / 10 - x;
-      var cy = this.cy() - this.height() / 10 - y;
+      var cx = this.cx() - width / 2 - width / 10 - x;
+      var cy = this.cy() - height / 2 - height / 10 - y;
       var oldGlobalAlpha = ctx.globalAlpha;
       ctx.globalAlpha = this.alphaYouth();
-      this.image.draw(ctx, cx, cy, 11 / 10 * this.width(), 11 / 10 * this.height());
+      this.image.draw(ctx, cx, cy, 11 / 10 * width, 11 / 10 * height);
       ctx.globalAlpha = oldGlobalAlpha;
       var point = this.buildPoints(x, y)[0];
       ctx.fillStyle = "#000000";
@@ -136,20 +129,20 @@ app.factory("GUIZone", ["$log", "GUISprites", function ($log, Sprites) {
   };
 
   Zone.prototype.isContained = function (x, y, dx, dy) {
-    return x < this.cx() + this.width() &&
-         x + dx > this.cx() - this.width() &&
-         y < this.cy() + this.height() &&
-         y + dy > this.cy() - this.height();
+    return x < this.cx() + width / 2 &&
+         x + dx > this.cx() - width / 2 &&
+         y < this.cy() + height / 2 &&
+         y + dy > this.cy() - height / 2;
   };
 
   Zone.prototype.around = function () {
     return [
-      Map.interpolateZone(this.cx() + this.width() / 2, this.cy() - this.height() / 2),
-      Map.interpolateZone(this.cx() + this.width(),   this.cy()),
-      Map.interpolateZone(this.cx() + this.width() / 2, this.cy() + this.height() / 2),
-      Map.interpolateZone(this.cx() - this.width() / 2, this.cy() + this.height() / 2),
-      Map.interpolateZone(this.cx() - this.width(),   this.cy()),
-      Map.interpolateZone(this.cx() - this.width() / 2, this.cy() - this.height() / 2)
+      Map.interpolateZone(this.cx() + width / 2, this.cy() - height / 2),
+      Map.interpolateZone(this.cx() + width,   this.cy()),
+      Map.interpolateZone(this.cx() + width / 2, this.cy() + height / 2),
+      Map.interpolateZone(this.cx() - width / 2, this.cy() + height / 2),
+      Map.interpolateZone(this.cx() - width,   this.cy()),
+      Map.interpolateZone(this.cx() - width / 2, this.cy() - height / 2)
     ];
   };
 
