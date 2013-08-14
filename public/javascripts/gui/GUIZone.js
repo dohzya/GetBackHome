@@ -91,13 +91,15 @@ app.factory("GUIZone", ["$log", "GUISprites", function ($log, Sprites) {
 
   Zone.prototype.drawBackground = function (ctx, x, y) {
     var points = this.buildPoints(x, y);
-    var color = this.selected ? "255, 250, 71" : this.color;
+    var color = this.color;
+    var point, i;
+    if (this.isSelected()) { color = "255, 250, 71"; }
+    if (this.isHighlighted()) { color = "0, 0, 255"; }
     ctx.fillStyle = "rgba(" + color + ", " + this.alphaInfection() + ")";
     ctx.strokeStyle = "rgba(" + color + ", " + this.alphaInfection() + ")";
     ctx.beginPath();
-    var point = points[0];
+    point = points[0];
     ctx.moveTo(point[0], point[1]);
-    var i;
     for (i = 1; i < points.length; i++) {
       point = points[i];
       ctx.lineTo(point.x, point.y);
@@ -159,6 +161,14 @@ app.factory("GUIZone", ["$log", "GUISprites", function ($log, Sprites) {
   };
 
   Zone.prototype.onClick = function () {
+  };
+
+  Zone.prototype.isSelected = function () {
+    return this.place.selected || this.selected;
+  };
+
+  Zone.prototype.isHighlighted = function () {
+    return this.place.highlighted || this.highlighted;
   };
 
   Zone.prototype.onSelected = function () {
