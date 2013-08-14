@@ -86,12 +86,18 @@ app.service("GBHEngine", ["$rootScope", "GBHDisplay", "$log", "GBHOrders", "GBHM
     return Map.findPath(mainPlace, selectedPlace());
   }
 
-  function sendOrder() {
-    Models.createMission({
-      order: selectedOrder,
+  function sendOrder(order) {
+    var path = pathToSelectedPlace();
+    var i;
+    for (i = 0; i < path.length; i++) {
+      path[i].selected = false;
+    }
+    var mission = Models.createMission({
+      order: order,
       group: sendSelected(selectedSurvivors),
       place: selectedPlace(),
-      path: pathToSelectedPlace()
+      currentPlace: mainPlace,
+      path: path
     });
     changed();
   }
@@ -185,6 +191,8 @@ app.service("GBHEngine", ["$rootScope", "GBHDisplay", "$log", "GBHOrders", "GBHM
       env.horde().killZombies(killZombies);
       env.group.killSurvivors(killSurvivors);
       Display.addMessage("La zone a été purifée ({0} survivants impliqués dont {2} tués, {1} zombies éliminés)", env.group.length(), killZombies, killSurvivors);
+    },
+    finish: function (env) {
       finishMission(this);
       return true;
     }
@@ -224,6 +232,8 @@ app.service("GBHEngine", ["$rootScope", "GBHDisplay", "$log", "GBHOrders", "GBHM
         Math.round(fortifying * 100),
         env.group.length()
       );
+    },
+    finish: function (env) {
       finishMission(this);
       return true;
     }

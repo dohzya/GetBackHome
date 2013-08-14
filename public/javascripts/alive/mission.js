@@ -3,6 +3,9 @@ app.factory("Mission", ["$rootScope", "$log", "Horde", "Env", function ($rootSco
 
   var missionId = 0;
 
+  $rootScope.missions = [];
+
+
   function Mission(args) {
     this.id = missionId++;
     this.status = "walking";
@@ -10,9 +13,17 @@ app.factory("Mission", ["$rootScope", "$log", "Horde", "Env", function ($rootSco
     this.group = args.group;
     this.place = args.place;
     this.path = args.path || [];
+    this.currentPlace = args.currentPlace;
     this.remainingPath = this.path;
+    this.remainingReturnPath = [];
+    var i;
+    for (i = 0; i < this.path.length; i++) {
+      this.remainingReturnPath.unshift(this.path[i]);
+    }
     this.elapsedPath = [];
-    this.time = this.order.time.rand();
+    this.runningTime = this.order.time.rand();
+    this.remainingRunningTime = this.runningTime;
+    this.time = this.runningTime + this.path.length * 2;
     this.remainingTime = this.time;
     this.elapsedTime = 0;
   }
@@ -33,25 +44,63 @@ app.factory("Mission", ["$rootScope", "$log", "Horde", "Env", function ($rootSco
     return this.estimatedTime() - this.elapsedTime;
   };
 
-  Mission.prototype.turn = function () {
+  Mission.prototype.turnWalking = function () {
     if (this.remainingPath.length === 0) {
       this.status = "running";
-      if (this.remainingTime === 0) {
-        this.status = "finished";
-        var remove = this.order.run.call(this, this.CurrentEnv());
-        if (remove) { removeMission(this); }
-      }
-      else {
-        this.remainingTime--;
-        this.elapsedTime++;
-        this.order.onRun.apply(this);
-      }
-    }
-    else {
-      Logger.warn("Mission is walking but this is not implemented ({0})", this);
+      this.turnRunning();
+    } else {
+      this.onWalking();
+      this.currentPlace.highlighted = false;
+      this.elapsedPath.push(this.currentPlace);
+      this.currentPlace = this.remainingPath.shift();
+      this.currentPlace.highlighted = true;
+      console.log("Select ", this.currentPlace);
+      this.remainingTime--;
+      this.elapsedTime++;
       this.order.onWalk.apply(this);
     }
-    Logger.trace("Mission#turn: {0}", this);
+  };
+
+  Mission.prototype.turnRunning = function () {
+    if (this.remainingRunningTime > 0) {
+      this.order.onRun.apply(this);
+      this.remainingTime--;
+      this.remainingRunningTime--;
+      this.elapsedTime++;
+    } else {
+      this.order.run.call(this, this.currentEnv());
+      this.status = "returning";
+    }
+  };
+
+  Mission.prototype.turnReturning = function () {
+    if (this.remainingReturnPath.length === 0) {
+      this.status = "finished";
+      this.currentPlace.highlighted = false;
+      this.toRemove = this.order.finish.call(this, this.currentEnv());
+      if (this.toRemove) { remove(this); }
+      console.log("Mission finished", this);
+    } else {
+      this.order.onReturn.apply(this);
+      this.currentPlace.highlighted = false;
+      this.elapsedPath.push(this.currentPlace);
+      this.currentPlace = this.remainingReturnPath.shift();
+      this.currentPlace.highlighted = true;
+      console.log("Select ", this.currentPlace);
+      this.remainingTime--;
+      this.elapsedTime++;
+    }
+  };
+
+  Mission.prototype.turn = function () {
+    $log.debug("Mission#turn: {0}", this);
+    if (this.status == "running") {
+      this.turnRunning();
+    } else if (this.status == "walking") {
+      this.turnWalking();
+    } else if (this.status == "returning") {
+      this.turnReturning();
+    }
   };
 
   function create(args) {
