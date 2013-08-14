@@ -30,7 +30,8 @@ app.service("GBHEngine", ["$rootScope", "GBHDisplay", "$log", "GBHOrders", "GBHM
   }
 
   // Global
-  var turnNb = 0;
+  $rootScope.engine = {};
+  $rootScope.engine.turnNb = 0;
   var selectedSurvivors = 0;
   var selectedOrder = null;
 
@@ -115,11 +116,20 @@ app.service("GBHEngine", ["$rootScope", "GBHDisplay", "$log", "GBHOrders", "GBHM
 
   function turn() {
     Models.eachMission(function (mission) {
-      mission.turn();
+      mission.turn($rootScope.engine.turnNb);
     });
-    turnNb++;
+    $rootScope.engine.turnNb++;
     turnForEnv(mainEnv);
+    turnForPlaces();
     changed();
+  }
+
+  function turnForPlaces() {
+    Map.forEach(turnForPlace);
+  }
+
+  function turnForPlace(place) {
+    place.endTurn($rootScope.engine.turnNb);
   }
 
   function turnForEnv(env) {
@@ -316,7 +326,7 @@ app.service("GBHEngine", ["$rootScope", "GBHDisplay", "$log", "GBHOrders", "GBHM
   Stats.createStat({
     id: "turn",
     label: "Tour",
-    update: function () { this.value = turnNb; }
+    update: function () { this.value = $rootScope.engine.turnNb; }
   });
   Stats.createStat({
     id: "ratio",

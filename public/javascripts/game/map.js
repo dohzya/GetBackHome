@@ -15,6 +15,11 @@ app.factory("Map", [function () {
     });
   }
 
+
+  function forEach(func) {
+    _.forEach(func);
+  }
+
   function hex_round(pos) {
     var x = Math.ceil(pos[0]);
     var y = Math.ceil(pos[1]);
@@ -105,6 +110,7 @@ app.factory("Map", [function () {
   return {
     addPlace: addPlace,
     getPlace: getPlace,
+    forEach: forEach,
     findPath: findPath
   };
 

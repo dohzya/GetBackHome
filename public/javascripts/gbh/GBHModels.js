@@ -1,4 +1,4 @@
-app.factory("GBHModels", ["Group", "Mission", "Order", "Survivor", "Horde", "Zombie", "Env", "Place", "Player", "Time", function (Group, Mission, Order, Survivor, Horde, Zombie, Env, Place, Player, Time) {
+window.app.factory("GBHModels", ["Group", "Mission", "Order", "Survivor", "Horde", "Zombie", "Env", "Place", "Player", "Time", "Memory", function (Group,   Mission,   Order,   Survivor,   Horde,   Zombie,   Env,   Place,   Player,   Time,   Memory) {
   "use strict";
 
   return {
@@ -13,7 +13,8 @@ app.factory("GBHModels", ["Group", "Mission", "Order", "Survivor", "Horde", "Zom
     createEnv: Env.create,
     createPlace: Place.create,
     createPlayer: Player.create,
-    createTime: Time.create
+    createTime: Time.create,
+    createMemory: Memory.create
   };
 
 }]);

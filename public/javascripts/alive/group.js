@@ -1,8 +1,13 @@
-app.factory("Group", ["Survivor", function (Survivor) {
+app.factory("Group", ["Survivor", "Memory", function (Survivor, Memory) {
   "use strict";
 
   function Group(args) {
     this.survivors = args.survivors;
+    this.memory = Memory.create();
+  }
+
+  Group.prototype.visitPlace = function (ts, place) {
+    this.memory.addItem(ts, place);
   }
 
   Group.prototype.killSurvivors = function (nb) {
