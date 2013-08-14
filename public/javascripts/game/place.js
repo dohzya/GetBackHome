@@ -29,7 +29,7 @@ window.app.factory("Place", ["Map", function (Map) {
     return this.fighting.defense;
   };
 
-  Place.prototype.AddDefense = function (value) {
+  Place.prototype.addDefense = function (value) {
     return this.defense(this.defense() + value);
   };
 

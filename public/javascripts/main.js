@@ -27,10 +27,10 @@ var app = angular
         name: "Fortifier",
         time: Models.createTime({min: 1, standard: 3}),
         run: function (env) {
-          var tooling = env.group().tooling() / 10;
-          var max = Math.min(tooling, 1 - env.place().defense()) * 100;
+          var tooling = env.group.tooling() / 10;
+          var max = Math.min(tooling, 1 - env.place.defense()) * 100;
           var fortifying = Util.random(max / 2, max) / 100;
-          env.place().addDefense(fortifying);
+          env.place.addDefense(fortifying);
           return true;
         }
       },
@@ -39,10 +39,10 @@ var app = angular
         name: "Purifier",
         time: Models.createTime({min: 1, standard: 3}),
         run: function (env) {
-          var tooling = env.group().tooling() / 10;
-          var max = Math.min(tooling, 1 - env.place().defense()) * 100;
+          var tooling = env.group.tooling() / 10;
+          var max = Math.min(tooling, 1 - env.place.defense()) * 100;
           var fortifying = Util.random(max / 2, max) / 100;
-          env.place().addDefense(fortifying);
+          env.place.addDefense(fortifying);
           return true;
         }
       }

@@ -1,4 +1,5 @@
-app.factory("Mission", [function () {
+app.factory("Mission", ["$rootScope", "$log", "Horde", "Env", function ($rootScope, $log, Horde, Env) {
+  "use strict";
 
   var missionId = 0;
 
@@ -20,15 +21,15 @@ app.factory("Mission", [function () {
     return this.order.time.standard + this.path.length;
   };
 
-  Mission.prototype.CurrentEnv = function () {
-    return createEnv({
+  Mission.prototype.currentEnv = function () {
+    return Env.create({
       group: this.group,
-      place: this.place,
-      horde: createHorde(10)  // CHANGEME
+      place: this.currentPlace,
+      horde: Horde.create(10)  // CHANGEME
     });
   };
 
-  Mission.prototype.EstimatedTimeToComplete = function () {
+  Mission.prototype.estimatedTimeToComplete = function () {
     return this.estimatedTime() - this.elapsedTime;
   };
 
@@ -59,14 +60,14 @@ app.factory("Mission", [function () {
     return mission;
   }
 
-  function eachMission(func) {
+  function each(func) {
     var i;
     for (i in $rootScope.missions) {
       func($rootScope.missions[i]);
     }
   }
 
-  function removeMission(missionToRemove) {
+  function remove(missionToRemove) {
     var newMissions = [], i, mission;
     for (i in $rootScope.missions) {
       mission = $rootScope.missions[i];
@@ -78,7 +79,9 @@ app.factory("Mission", [function () {
   }
 
   return {
-    create: create
+    create: create,
+    each: each,
+    remove: remove
   };
 
 }]);

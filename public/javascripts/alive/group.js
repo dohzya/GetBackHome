@@ -17,7 +17,7 @@ app.factory("Group", ["Survivor", function (Survivor) {
     var defense = 0, i, survivor;
     for (i in this.survivors) {
       survivor = this.survivors[i];
-      defense += survivor.Defense();
+      defense += survivor.defense();
     }
     return defense;
   };
@@ -26,7 +26,7 @@ app.factory("Group", ["Survivor", function (Survivor) {
     var attack = 0, i, survivor;
     for (i in this.survivors) {
       survivor = this.survivors[i];
-      attack += survivor.Attack();
+      attack += survivor.attack();
     }
     return attack;
   };

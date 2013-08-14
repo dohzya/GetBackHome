@@ -1,4 +1,4 @@
-app.service("GBHStats", ["$rootScope", "GBHLogger", function ($rootScope, Logger) {
+app.service("GBHStats", ["$rootScope", "$log", function ($rootScope, $log) {
   "use strict";
 
   var self = this;
@@ -12,7 +12,7 @@ app.service("GBHStats", ["$rootScope", "GBHLogger", function ($rootScope, Logger
   }
   function createStat(args) {
     var stat = new Stat(args);
-    Logger.trace("Add stat: {0}", stat);
+    // $log.debug("Add stat: {0}", stat);
     $rootScope.currentPlayer.stats.push(stat);
     return stat;
   }

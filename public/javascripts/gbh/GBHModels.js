@@ -4,6 +4,8 @@ app.factory("GBHModels", ["Group", "Mission", "Order", "Survivor", "Horde", "Zom
   return {
     createGroup: Group.create,
     createMission: Mission.create,
+    eachMission: Mission.each,
+    removeMission: Mission.remove,
     createOrder: Order.create,
     createSurvivor: Survivor.create,
     createHorde: Horde.create,

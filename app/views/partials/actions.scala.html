@@ -8,7 +8,7 @@
     <div ng-show="gui.selectedZone">
       <ul>
         <li ng-repeat="order in orders">
-          <div ng-show="order.isAvailable(gui.selectedZone)">
+          <div ng-show="order.isAvailable(gui.selectedZone)" ng-click="sendOrder(order)">
             {{order.name}}
           </div>
         </li>

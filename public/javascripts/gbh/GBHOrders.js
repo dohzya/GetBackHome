@@ -1,4 +1,4 @@
-app.service("GBHOrders", ["GBHDisplay", "GBHLogger", function (Display, Logger) {
+app.service("GBHOrders", ["GBHDisplay", "$log", function (Display, $log) {
   "use strict";
 
   var self = this;
