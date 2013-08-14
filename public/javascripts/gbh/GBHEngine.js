@@ -175,7 +175,12 @@ app.service("GBHEngine", ["$rootScope", "GBHDisplay", "$log", "GBHOrders", "GBHM
     Stats.updateStats();
   }
 
-  Models.createOrder({
+  $rootScope.orders = {};
+  function defineOrder(args) {
+    $rootScope.orders[args.id] = Models.createOrder(args);
+  }
+
+  defineOrder({
     id: "purify",
     name: "Purification",
     time: Models.createTime({
@@ -190,9 +195,14 @@ app.service("GBHEngine", ["$rootScope", "GBHDisplay", "$log", "GBHOrders", "GBHM
       killSurvivors = positiveFloor(env.group.length() * random((1 - ratio) * 50, (1 - ratio) * 100) / 100);
       env.horde().killZombies(killZombies);
       env.group.killSurvivors(killSurvivors);
-      Display.addMessage("La zone a été purifée ({0} survivants impliqués dont {2} tués, {1} zombies éliminés)", env.group.length(), killZombies, killSurvivors);
+      Display.addMessage(
+        "La zone a été purifée ({0} survivants impliqués dont {2} tués, {1} zombies éliminés)",
+        env.group.length(),
+        killZombies,
+        killSurvivors
+      );
     },
-    finish: function (env) {
+    finish: function () {
       finishMission(this);
       return true;
     }
@@ -215,7 +225,7 @@ app.service("GBHEngine", ["$rootScope", "GBHDisplay", "$log", "GBHOrders", "GBHM
     order: "purify"
   });
 
-  Models.createOrder({
+  defineOrder({
     id: "fortify",
     name: "Fortification",
     time: Models.createTime({
@@ -233,7 +243,7 @@ app.service("GBHEngine", ["$rootScope", "GBHDisplay", "$log", "GBHOrders", "GBHM
         env.group.length()
       );
     },
-    finish: function (env) {
+    finish: function () {
       finishMission(this);
       return true;
     }

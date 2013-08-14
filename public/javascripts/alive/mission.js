@@ -49,7 +49,7 @@ app.factory("Mission", ["$rootScope", "$log", "Horde", "Env", function ($rootSco
       this.status = "running";
       this.turnRunning();
     } else {
-      this.onWalking();
+      this.order.onWalk.apply(this);
       this.currentPlace.highlighted = false;
       this.elapsedPath.push(this.currentPlace);
       this.currentPlace = this.remainingPath.shift();

@@ -19,36 +19,4 @@ var app = angular
     $rootScope.game = {};
     $rootScope.gui = {};
     $rootScope.currentPlayer = Models.createPlayer();
-
-    $rootScope.orders = {};
-    var orders = [
-      {
-        id: "fortify",
-        name: "Fortifier",
-        time: Models.createTime({min: 1, standard: 3}),
-        run: function (env) {
-          var tooling = env.group.tooling() / 10;
-          var max = Math.min(tooling, 1 - env.place.defense()) * 100;
-          var fortifying = Util.random(max / 2, max) / 100;
-          env.place.addDefense(fortifying);
-          return true;
-        }
-      },
-      {
-        id: "purify",
-        name: "Purifier",
-        time: Models.createTime({min: 1, standard: 3}),
-        run: function (env) {
-          var tooling = env.group.tooling() / 10;
-          var max = Math.min(tooling, 1 - env.place.defense()) * 100;
-          var fortifying = Util.random(max / 2, max) / 100;
-          env.place.addDefense(fortifying);
-          return true;
-        }
-      }
-    ];
-
-    _.each(orders, function (order) {
-      $rootScope.orders[order.id] = Models.createOrder(order);
-    });
   }]);

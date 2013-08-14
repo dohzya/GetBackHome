@@ -94,7 +94,7 @@ app.factory("Map", [function () {
     for (i = 0; i < N; i++) {
       p = hex_round(addPos(multPos(from, (i / N)), multPos(to, (1 - i / N))));
       if (p != from && p != prev) {
-        selection.push(p);
+        selection.unshift(p);
         prev = p;
       }
     }
