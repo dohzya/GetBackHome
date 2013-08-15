@@ -162,6 +162,7 @@ app.controller("GUICtrl", ["$scope", "GUIMap", "GUISprites", "GUIZone", "Map", f
     }
   }
 
+  var selectedPlaces = [];
   function select(arr) {
     eachSelected(function (s) {
       s.onUnSelected();
@@ -171,6 +172,13 @@ app.controller("GUICtrl", ["$scope", "GUIMap", "GUISprites", "GUIZone", "Map", f
       s.onSelected();
     });
     $scope.$apply(function () {
+      _.each(selectedPlaces, function (place) {
+        place.selected = false;
+      });
+      selectedPlaces = EngineMap.findPath(EngineMap.getPlace(10, 10), arr.place);
+      _.each(selectedPlaces, function (place) {
+        place.selected = true;
+      });
       $scope.gui.selectedZone = arr;
     });
   }
