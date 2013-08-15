@@ -33,7 +33,6 @@ app.service("GBHEngine", ["$rootScope", "GBHDisplay", "$log", "GBHOrders", "GBHM
   $rootScope.engine = {};
   $rootScope.engine.turnNb = 0;
   var selectedSurvivors = 0;
-  var selectedOrder = null;
 
   // Main
   var mainGroup = Models.createGroup(10);
