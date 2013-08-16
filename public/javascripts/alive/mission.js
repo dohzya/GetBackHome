@@ -54,7 +54,6 @@ app.factory("Mission", ["$rootScope", "$log", "Horde", "Env", function ($rootSco
     this.elapsedPath.push(this.currentPlace);
     this.currentPlace = this.remainingPath.shift();
     this.currentPlace.highlighted = true;
-    console.log("Select ", this.currentPlace);
     this.remainingTime--;
     this.elapsedTime++;
     this.order.onWalk.apply(this);
@@ -94,7 +93,6 @@ app.factory("Mission", ["$rootScope", "$log", "Horde", "Env", function ($rootSco
   };
 
   Mission.prototype.turn = function (ts) {
-    $log.debug("Mission#turn: {0}", this);
     var visit;
     if (this.status == "running") {
       visit = this.turnRunning(ts);
@@ -106,7 +104,6 @@ app.factory("Mission", ["$rootScope", "$log", "Horde", "Env", function ($rootSco
     if (visit) {
       this.group.visitPlace(ts, this.currentPlace);
     }
-    console.log(this.group.memory);
   };
 
   function create(args) {
