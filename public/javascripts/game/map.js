@@ -1,4 +1,4 @@
-app.factory("Map", [function () {
+app.service("Map", [function () {
   "use strict";
 
   var map = {
