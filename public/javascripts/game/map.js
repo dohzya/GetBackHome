@@ -11,7 +11,7 @@ app.service("Map", [function () {
 
   function getPlace(x, y) {
     return _.find(map.places, function (place) {
-      return (place.pos[x] === x && place.pos[y] === y);
+      return place.pos && (place.x() === x && place.y() === y);
     });
   }
 
@@ -27,7 +27,10 @@ app.service("Map", [function () {
 
 
   function forEach(func) {
-    _.forEach(func);
+    var i;
+    for (i = 0; i < map.places.length; i++) {
+      func(map.places[i]);
+    }
   }
 
   function hex_round(pos) {
