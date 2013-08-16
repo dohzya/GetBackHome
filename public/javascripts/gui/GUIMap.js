@@ -30,14 +30,13 @@ app.factory("GUIMap", ["GBHModels", "GUISprites", "GUIZone", "UTGenerator", func
 
   function getZone(x, y) {
     return _.find(zones, function (zone) {
-      return zone.x == x && zone.y == y;
+      return zone.x() == x && zone.y() == y;
     });
   }
 
-  function interpolateZone(x, y) {
-    return _.find(zones, function (zone) {
-      return zone.contains(x, y);
-    });
+  function interpolateZone(px, py) {
+    var coords = pixelToCubeHex(px, py);
+    return getZone(coords.x, coords.y, coords.z);
   }
 
   function isReady() {

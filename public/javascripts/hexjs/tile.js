@@ -1,4 +1,10 @@
-var size = 24;
+var size = 30;
+
+var Hexjs = {
+  size: 30,
+  height: 2 * 30,
+  width: Math.sqrt(3) * 30
+};
 
 function Tile (coordsX, coordsY, coordsZ) {
   // Cube coordinates
@@ -9,6 +15,7 @@ function Tile (coordsX, coordsY, coordsZ) {
   // Axial coordinates
   this.q = this.x;
   this.r = this.z;
+  this.setSize(30);
 }
 
 Tile.prototype.distanceTo = function (tile) {
@@ -18,17 +25,23 @@ Tile.prototype.distanceTo = function (tile) {
 Tile.prototype.setSize = function (size) {
   this.centerX = size * Math.sqrt(3) * (this.q + this.r / 2);
   this.centerY = size * 3/2 * this.r;
-  this.updatePoints();
+  this.updatePoints(size);
 }
 
 Tile.prototype.updatePoints = function (size) {
-  this.points = [];
+  this.points = buildPoints(this.centerX, this.centerY, size);
+}
+
+function buildPoints (px, py, size) {
+  var points = [];
   var angle;
 
   for (var i = 0; i < 6; ++i) {
     angle = 2 * Math.PI / 6 * (i + 0.5);
-    points.push({x: this.centerX + size * Math.cos(angle), y: this.centerY + size * Math.sin(angle)});
+    points.push({x: px + size * Math.cos(angle), y: py + size * Math.sin(angle)});
   }
+
+  return points;
 }
 
 Tile.prototype.neighbors = function () {
@@ -51,6 +64,13 @@ Tile.prototype.axialNeighbors = function () {
     {q: this.q - 1, r: this.r + 1},
     {q: this.q, r: this.r + 1}
   ];
+}
+
+Tile.prototype.isContained = function (x, y, dx, dy) {
+  return x < (this.centerX + Hexjs.width) &&
+    x + dx > (this.centerX - Hexjs.width) &&
+    y < (this.centerY + Hexjs.height) &&
+    y + dy > (this.centerY - Hexjs.height);
 }
 
 function distance (tile1, tile2) {

@@ -1,14 +1,12 @@
 app.factory("GUIZone", ["$log", "GUISprites", function ($log, Sprites) {
   "use strict";
 
-  var width = 48;
-  var height = 48;
-
   function Zone(place) {
     var type1, type2;
 
     this.place = place;
-    this.points = this.buildPoints(0, 0);
+    this.tile = new Tile(this.place.pos[0], this.place.pos[1]);
+    this.points = buildPoints(0, 0);
 
     type1 = this.types()[0];
     type2 = this.types()[1];
@@ -33,11 +31,11 @@ app.factory("GUIZone", ["$log", "GUISprites", function ($log, Sprites) {
   }
 
   Zone.prototype.x = function () {
-    return this.place.pos[0];
+    return this.tile.x;
   };
 
   Zone.prototype.y = function () {
-    return this.place.pos[1];
+    return this.tile.y;
   };
 
   Zone.prototype.alphaInfection = function () {
@@ -59,31 +57,8 @@ app.factory("GUIZone", ["$log", "GUISprites", function ($log, Sprites) {
     return this.place.youth;
   };
 
-
-  Zone.prototype.cx = function () {
-    return (this.x() * width) - (this.y() * width / 2) + (width / 2);
-  };
-
-  Zone.prototype.cy = function () {
-    return (this.y() * 3 / 4 * height) + (height / 2);
-  };
-
-  Zone.prototype.buildPoints = function (x, y) {
-    var cx = this.cx() - x;
-    var cy = this.cy() - y;
-    return [
-      {x: cx - width / 2,     y: cy - height / 4},
-      {x: cx - width / 2,     y: cy + height / 4},
-      {x: cx,                 y: cy + height / 2},
-      {x: cx + width / 2,     y: cy + height / 4},
-      {x: cx + width / 2,     y: cy - height / 4},
-      {x: cx,                 y: cy - height / 2},
-      {x: cx - width / 2,     y: cy - height / 4}
-    ];
-  };
-
   Zone.prototype.drawBackground = function (ctx, x, y) {
-    var points = this.buildPoints(x, y);
+    var points = buildPoints(this.tile.centerX - x, this.tile.centerY - y, size);
     var color = this.selected ? "255, 250, 71" : this.color;
     ctx.fillStyle = "rgba(" + color + ", " + this.alphaInfection() + ")";
     ctx.strokeStyle = "rgba(" + color + ", " + this.alphaInfection() + ")";
@@ -95,6 +70,7 @@ app.factory("GUIZone", ["$log", "GUISprites", function ($log, Sprites) {
       point = points[i];
       ctx.lineTo(point.x, point.y);
     }
+    ctx.lineTo(points[0].x, points[0].y);
     ctx.closePath();
     ctx.stroke();
     ctx.fill();
@@ -102,53 +78,41 @@ app.factory("GUIZone", ["$log", "GUISprites", function ($log, Sprites) {
 
   Zone.prototype.drawImage = function (ctx, x, y) {
     if (this.image) {
-      var cx = this.cx() - width / 2 - width / 10 - x;
-      var cy = this.cy() - height / 2 - height / 10 - y;
+      var cx = this.tile.centerX - x - Hexjs.width / 2;
+      var cy = this.tile.centerY - y - Hexjs.height / 2;
       var oldGlobalAlpha = ctx.globalAlpha;
       ctx.globalAlpha = this.alphaYouth();
-      this.image.draw(ctx, cx, cy, 11 / 10 * width, 11 / 10 * height);
+      this.image.draw(ctx, cx, cy, Hexjs.width, Hexjs.height);
       ctx.globalAlpha = oldGlobalAlpha;
-      var point = this.buildPoints(x, y)[0];
       ctx.fillStyle = "#000000";
-      ctx.fillText(this.x() + "x" + this.y(), point.x, point.y + 15);
+      ctx.fillText(this.tile.x, cx + Hexjs.width - 15, cy + Hexjs.height / 4 + 10);
+      ctx.fillText(this.tile.y, cx + 10, cy + Hexjs.height / 4 + 10);
+      ctx.fillText(this.tile.z, cx + Hexjs.width / 2 - 5, cy + Hexjs.height - 10);
     } else {
       $log.error("No img for Zone (" + x + " x " + y + ")");
     }
   };
 
-  Zone.prototype.contains = function (x, y) {
-    // Stolen from http://local.wasp.uwa.edu.au/~pbourke/geometry/insidepoly/
-    var i, p0, p1, pos;
-    for (i = 1; i < this.points.length; i++) {
-      p0 = this.points[i];
-      p1 = this.points[(i + 1) % this.points.length];
-      pos = (y - p0.y) * (p1.x - p0.x) - (x - p0.x) * (p1.y - p0.y);
-      if (pos < 0) { return false; }
+  Zone.prototype.drawBorder = function (ctx, x, y) {
+    var points = buildPoints(this.tile.centerX - x, this.tile.centerY - y, size);
+    ctx.strokeStyle = "#000000";
+    ctx.beginPath();
+    var point = points[0];
+    ctx.moveTo(point[0], point[1]);
+    var i;
+    for (i = 1; i < points.length; i++) {
+      point = points[i];
+      ctx.lineTo(point.x, point.y);
     }
-    return true;
-  };
-
-  Zone.prototype.isContained = function (x, y, dx, dy) {
-    return x < this.cx() + width / 2 &&
-         x + dx > this.cx() - width / 2 &&
-         y < this.cy() + height / 2 &&
-         y + dy > this.cy() - height / 2;
-  };
-
-  Zone.prototype.around = function () {
-    return [
-      Map.interpolateZone(this.cx() + width / 2, this.cy() - height / 2),
-      Map.interpolateZone(this.cx() + width,   this.cy()),
-      Map.interpolateZone(this.cx() + width / 2, this.cy() + height / 2),
-      Map.interpolateZone(this.cx() - width / 2, this.cy() + height / 2),
-      Map.interpolateZone(this.cx() - width,   this.cy()),
-      Map.interpolateZone(this.cx() - width / 2, this.cy() - height / 2)
-    ];
+    ctx.lineTo(points[0].x, points[0].y);
+    ctx.closePath();
+    ctx.stroke();
   };
 
   Zone.prototype.draw = function (ctx, x, y) {
     this.drawBackground(ctx, x, y);
     this.drawImage(ctx, x, y);
+    this.drawBorder(ctx, x, y);
   };
 
   Zone.prototype.onClick = function () {
@@ -170,32 +134,8 @@ app.factory("GUIZone", ["$log", "GUISprites", function ($log, Sprites) {
     return new Zone(zn, opts);
   }
 
-  function getSize() {
-    return {
-      width: width,
-      height: height
-    };
-  }
-
-  function getWidth() {
-    return width;
-  }
-
-  function getHeight() {
-    return height;
-  }
-
-  function setSize(w, h) {
-    width = w;
-    height = h;
-  }
-
   return {
-    create: create,
-    getSize: getSize,
-    setSize: setSize,
-    getWidth: getWidth,
-    getHeight: getHeight
+    create: create
   };
 
 }]);
