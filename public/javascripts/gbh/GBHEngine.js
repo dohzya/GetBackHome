@@ -118,7 +118,9 @@ app.service("GBHEngine", ["$rootScope", "GBHDisplay", "$log", "GBHOrders", "GBHM
 
   function turn() {
     Models.eachMission(function (mission) {
-      mission.turn($rootScope.engine.turnNb);
+      if (mission) {  // TODO fix this creepy line
+        mission.turn($rootScope.engine.turnNb);
+      }
     });
     $rootScope.engine.turnNb++;
     turnForEnv(mainEnv);
