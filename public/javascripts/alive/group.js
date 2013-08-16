@@ -1,4 +1,4 @@
-app.factory("Group", ["Survivor", "Memory", function (Survivor, Memory) {
+app.factory("Group", ["Survivor", "Memory", "Map", function (Survivor, Memory, Map) {
   "use strict";
 
   function Group(args) {
@@ -7,7 +7,10 @@ app.factory("Group", ["Survivor", "Memory", function (Survivor, Memory) {
   }
 
   Group.prototype.visitPlace = function (ts, place) {
-    this.memory.addItem(ts, place);
+    var self = this;
+    Map.forEachPlacesAround(place.x(), place.y(), function (p) {
+      self.memory.addItem(ts, p);
+    });
   }
 
   Group.prototype.killSurvivors = function (nb) {

@@ -15,6 +15,15 @@ app.factory("Map", [function () {
     });
   }
 
+  function forEachPlacesAround(x, y, func) {
+    var xx, yy;
+    for (xx = -1; xx <= 1; xx++) {
+      for (yy = -1; yy <= 1; yy++) {
+        func(getPlace(x + xx, y + yy));
+      }
+    }
+  }
+
 
   function forEach(func) {
     _.forEach(func);
@@ -111,6 +120,7 @@ app.factory("Map", [function () {
     addPlace: addPlace,
     getPlace: getPlace,
     forEach: forEach,
+    forEachPlacesAround: forEachPlacesAround,
     findPath: findPath
   };
 
