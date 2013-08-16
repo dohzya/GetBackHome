@@ -12,7 +12,7 @@ window.app.factory("Memory", ["Map", function (Map) {
 
   function memoryItem(key, ts) {
     var place = keyToPlace(key);
-    return ts ? place.memoryItem(ts) : null;
+    return ts != null ? place.memoryItem(ts) : null;
   }
 
   function Memory() {
@@ -27,16 +27,21 @@ window.app.factory("Memory", ["Map", function (Map) {
   Memory.prototype.item = function (key) {
     var ts = this.items[key];
     return memoryItem(key, ts);
-  }
+  };
 
-  Memory.prototype.merge = function (memory) {
-    var key, newItem, existingItem;
+  Memory.prototype.itemForPlace = function (place) {
+    return this.item(placeToKey(place));
+  };
+
+  Memory.prototype.merge = function (memory, func) {
+    var key, newTs, existingTs;
     for (key in memory.items) {
       if (memory.items.hasOwnProperty(key)) {
-        newItem = memory.items.key;
-        existingItem = this.items[key];
-        if (!existingItem || existingItem.ts < newItem) {
-          this.items[key] = newItem;
+        newTs = memory.items[key];
+        existingTs = this.items[key];
+        if (!existingTs || existingTs < newTs) {
+          this.items[key] = newTs;
+          if (func) { func(memoryItem(key, newTs)); }
         }
       }
     }

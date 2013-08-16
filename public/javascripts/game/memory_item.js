@@ -20,7 +20,7 @@ window.app.factory("MemoryItem", [function () {
   function getInfosForHorde(horde) {
     return {
       zombies: _.map(horde.zombies, function (zombie) {
-        getInfosForZombie();
+        getInfosForZombie(zombie);
       })
     };
   }
@@ -36,8 +36,14 @@ window.app.factory("MemoryItem", [function () {
 
   function MemoryItem(ts, place) {
     this.ts = ts;
-    this.place = getInfosForPlace(place);
+    this.place = place;
+    this.infos = getInfosForPlace(place);
   }
+
+  MemoryItem.prototype.infection = function () {
+    var l = this.infos.horde.zombies.length;
+    return parseInt(Math.min(999.99, l) / 10, 10);
+  };
 
   function create(ts, place) {
     return new MemoryItem(ts, place);
