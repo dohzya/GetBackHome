@@ -35,7 +35,7 @@ app.factory("GUIMap", ["GBHModels", "GUISprites", "GUIZone", "UTGenerator", func
   }
 
   function interpolateZone(px, py) {
-    var coords = pixelToCubeHex(px, py);
+    var coords = Hexjs.pixelToCubeHex(px, py);
     return getZone(coords.x, coords.y, coords.z);
   }
 
