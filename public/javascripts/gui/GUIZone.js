@@ -98,7 +98,7 @@ app.factory("GUIZone", ["$log", "$rootScope", "GUISprites", function ($log, $roo
     var style;
     var point, i;
     if (memory) {
-      style = "rgba(" + this.color + ", " + this.alphaInfection(memory) + ")";
+      style = "rgba(" + this.color + ", " + this.alphaYouth(memory) + ")";
     } else {
       style = "rgb(0, 0, 0)";
     }
@@ -125,7 +125,7 @@ app.factory("GUIZone", ["$log", "$rootScope", "GUISprites", function ($log, $roo
       var cx = this.cx() - this.width() / 10 - x;
       var cy = this.cy() - this.height() / 10 - y;
       var oldGlobalAlpha = ctx.globalAlpha;
-      ctx.globalAlpha = this.alphaYouth(memory);
+      ctx.globalAlpha = this.alphaInfection(memory);
       this.image.draw(ctx, cx, cy, 11 / 10 * this.width(), 11 / 10 * this.height());
       ctx.globalAlpha = oldGlobalAlpha;
       var point = this.buildPoints(x, y)[0];
