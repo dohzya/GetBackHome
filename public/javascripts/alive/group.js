@@ -8,7 +8,7 @@ app.factory("Group", ["Survivor", "Memory", "Map", function (Survivor, Memory, M
 
   Group.prototype.visitPlace = function (ts, place) {
     var self = this;
-    Map.forEachPlacesAround(place.x(), place.y(), function (p) {
+    Map.forEachPlacesAround(place, function (p) {
       self.memory.addItem(ts, p);
     });
   }

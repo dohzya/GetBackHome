@@ -15,12 +15,13 @@ app.service("Map", [function () {
     });
   }
 
-  function forEachPlacesAround(x, y, func) {
-    var xx, yy;
-    for (xx = -1; xx <= 1; xx++) {
-      for (yy = -1; yy <= 1; yy++) {
-        func(getPlace(x + xx, y + yy));
-      }
+  function forEachPlacesAround(place, func) {
+    var neighbors = neighborhood(place);
+    var i, pos;
+    func(place);
+    for (i = 0; i < neighbors.length; i++) {
+      pos = neighbors[i];
+      func(getPlace(pos[0], pos[1]));
     }
   }
 
