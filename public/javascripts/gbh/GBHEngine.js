@@ -78,6 +78,7 @@ app.service("GBHEngine", ["$rootScope", "GBHDisplay", "$log", "GBHOrders", "GBHM
       removed.push(group.survivors.shift());
     }
     return Models.createGroup({
+      memory: group.memory.clone(),
       survivors: removed
     });
   }

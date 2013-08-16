@@ -58,6 +58,17 @@ window.app.factory("Memory", ["Map", function (Map) {
     }
   }
 
+  Memory.prototype.clone = function () {
+    var memory = create();
+    var key, item;
+    for (key in this.items) {
+      if (this.items.hasOwnProperty(key)) {
+        memory[key] = this.items[key];
+      }
+    }
+    return memory;
+  };
+
   function create() {
     return new Memory();
   }
