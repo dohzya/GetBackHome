@@ -111,6 +111,7 @@ app.service("GBHEngine", ["$rootScope", "GBHDisplay", "$log", "GBHOrders", "GBHM
       survivor = mission.group.survivors[i];
       mainGroup.survivors.push(survivor);
     }
+    mainGroup.memory.merge(mission.group.memory);
     changed();
   }
 
