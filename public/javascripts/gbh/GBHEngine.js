@@ -30,34 +30,33 @@ app.service("GBHEngine", ["$rootScope", "GBHDisplay", "$log", "GBHOrders", "GBHM
   }
 
   // Global
-  $rootScope.engine = {};
   $rootScope.engine.turnNb = 0;
+  $rootScope.engine.mainGroup = Models.createGroup(10);
   var selectedSurvivors = 0;
 
   // Main
-  var mainGroup = Models.createGroup(10);
-  var mainPlace;
   var mainEnv;
   setTimeout(function () {
-    mainPlace = Map.getPlace(10, 10);
+    $rootScope.engine.mainPlace = Models.getPlace(10, 10);
     mainEnv = Models.createEnv({
-      group: mainGroup,
-      place: mainPlace
+      group: $rootScope.engine.mainGroup,
+      place: $rootScope.engine.mainPlace
     });
+    turnForPlaces();
   }, 2000);
 
   function selectedPlace() {
-    return $rootScope.gui.selectedZone ? $rootScope.gui.selectedZone.place : mainPlace;
+    return $rootScope.gui.selectedZone ? $rootScope.gui.selectedZone.place : $rootScope.engine.mainPlace;
   }
   function selectedEnv() {
     return Models.createEnv({
-      group: mainGroup,
+      group: $rootScope.engine.mainGroup,
       place: selectedPlace()
     });
   }
 
   function selectSurvivors(s) {
-    selectedSurvivors = Math.min(s, mainGroup.length());
+    selectedSurvivors = Math.min(s, $rootScope.engine.mainGroup.length());
     return selectedSurvivors;
   }
 
@@ -67,7 +66,7 @@ app.service("GBHEngine", ["$rootScope", "GBHDisplay", "$log", "GBHOrders", "GBHM
   }
 
   function sendSelected(nb) {
-    var group = splitGroup(mainGroup, nb);
+    var group = splitGroup($rootScope.engine.mainGroup, nb);
     selectedSurvivors = 0;
     return group;
   }
@@ -84,7 +83,7 @@ app.service("GBHEngine", ["$rootScope", "GBHDisplay", "$log", "GBHOrders", "GBHM
   }
 
   function pathToSelectedPlace() {
-    return Map.findPath(mainPlace, selectedPlace());
+    return Map.findPath($rootScope.engine.mainPlace, selectedPlace());
   }
 
   function sendOrder(order) {
@@ -97,7 +96,7 @@ app.service("GBHEngine", ["$rootScope", "GBHDisplay", "$log", "GBHOrders", "GBHM
       order: order,
       group: sendSelected(selectedSurvivors),
       place: selectedPlace(),
-      currentPlace: mainPlace,
+      currentPlace: $rootScope.engine.mainPlace,
       path: path
     });
     changed();
@@ -109,9 +108,11 @@ app.service("GBHEngine", ["$rootScope", "GBHDisplay", "$log", "GBHOrders", "GBHM
     var i, survivor;
     for (i in mission.group.survivors) {
       survivor = mission.group.survivors[i];
-      mainGroup.survivors.push(survivor);
+      $rootScope.engine.mainGroup.survivors.push(survivor);
     }
-    mainGroup.memory.merge(mission.group.memory);
+    var memory, memories, done = false;
+    $rootScope.engine.mainGroup.memory.merge(mission.group.memory);
+    console.log("main memory: ", $rootScope.engine.mainGroup.memory);
     changed();
   }
 
@@ -127,6 +128,7 @@ app.service("GBHEngine", ["$rootScope", "GBHDisplay", "$log", "GBHOrders", "GBHM
 
   function turnForPlaces() {
     Map.forEach(turnForPlace);
+    $rootScope.engine.mainGroup.visitPlace($rootScope.engine.turnNb, $rootScope.engine.mainPlace);
   }
 
   function turnForPlace(place) {
@@ -350,7 +352,7 @@ app.service("GBHEngine", ["$rootScope", "GBHDisplay", "$log", "GBHOrders", "GBHM
     id: "survivors",
     label: "Survivants",
     update: function () {
-      var value = mainGroup.length();
+      var value = $rootScope.engine.mainGroup.length();
       Models.eachMission(function (mission) {
         value += mission.group.length();
       });
@@ -360,7 +362,7 @@ app.service("GBHEngine", ["$rootScope", "GBHDisplay", "$log", "GBHOrders", "GBHM
   Stats.createStat({
     id: "idle",
     label: "Survivants inactif",
-    update: function () { this.value = mainGroup.length(); }
+    update: function () { this.value = $rootScope.engine.mainGroup.length(); }
   });
   Stats.createStat({
     id: "food",

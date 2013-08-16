@@ -16,6 +16,7 @@ var app = angular
     $locationProvider.html5Mode(true).hashPrefix("!");
   }])
   .run(["$rootScope", "GBHModels", "Util", function ($rootScope, Models, Util) {
+    $rootScope.engine = {};
     $rootScope.game = {};
     $rootScope.gui = {};
     $rootScope.currentPlayer = Models.createPlayer();

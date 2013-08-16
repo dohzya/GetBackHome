@@ -1,4 +1,4 @@
-app.factory("GUIZone", ["$log", "GUISprites", function ($log, Sprites) {
+app.factory("GUIZone", ["$log", "$rootScope", "GUISprites", function ($log, $rootScope, Sprites) {
   "use strict";
 
   var width = 48;
@@ -40,28 +40,32 @@ app.factory("GUIZone", ["$log", "GUISprites", function ($log, Sprites) {
     return this.place.pos[1];
   };
 
-  Zone.prototype.alphaInfection = function () {
-    return 1 - (this.infection() / 200.0);
+  Zone.prototype.memory = function () {
+    return $rootScope.engine.mainGroup.memory.itemForPlace(this.place);
   };
-  Zone.prototype.alphaYouth = function () {
-    return 1 - (this.youth() / 100.0);
+
+  Zone.prototype.alphaInfection = function (memory) {
+    return 1 - (this.infection(memory) / 200.0);
+  };
+  Zone.prototype.alphaYouth = function (memory) {
+    return 1 - (this.youth(memory) / 100.0);
   };
 
   Zone.prototype.types = function () {
     return this.place.types;
   };
 
-  Zone.prototype.infection = function () {
-    return this.place.infection();
+  Zone.prototype.infection = function (memory) {
+    return memory.infection();
   };
 
-  Zone.prototype.youth = function () {
-    return this.place.youth;
+  Zone.prototype.youth = function (memory) {
+    return $rootScope.engine.turnNb - memory.ts;
   };
 
 
   Zone.prototype.cx = function () {
-    return this.x() * (3/4 * this.width());
+    return this.x() * (3 / 4 * this.width());
   };
 
   Zone.prototype.cy = function () {
@@ -89,14 +93,19 @@ app.factory("GUIZone", ["$log", "GUISprites", function ($log, Sprites) {
     ];
   };
 
-  Zone.prototype.drawBackground = function (ctx, x, y) {
+  Zone.prototype.drawBackground = function (ctx, x, y, memory) {
     var points = this.buildPoints(x, y);
-    var color = this.color;
+    var style;
     var point, i;
-    if (this.isSelected()) { color = "255, 250, 71"; }
-    if (this.isHighlighted()) { color = "0, 0, 255"; }
-    ctx.fillStyle = "rgba(" + color + ", " + this.alphaInfection() + ")";
-    ctx.strokeStyle = "rgba(" + color + ", " + this.alphaInfection() + ")";
+    if (memory) {
+      style = "rgba(" + this.color + ", " + this.alphaInfection(memory) + ")";
+    } else {
+      style = "rgb(0, 0, 0)";
+    }
+    if (this.isSelected()) { style = "rgb(255, 250, 71)"; }
+    if (this.isHighlighted()) { style = "rgb(0, 0, 255)"; }
+    ctx.fillStyle = style;
+    ctx.strokeStyle = style;
     ctx.beginPath();
     point = points[0];
     ctx.moveTo(point[0], point[1]);
@@ -109,12 +118,14 @@ app.factory("GUIZone", ["$log", "GUISprites", function ($log, Sprites) {
     ctx.fill();
   };
 
-  Zone.prototype.drawImage = function (ctx, x, y) {
-    if (this.image) {
+  Zone.prototype.drawImage = function (ctx, x, y, memory) {
+    if (!memory) {
+      // do not display any image
+    } else if (this.image) {
       var cx = this.cx() - this.width() / 10 - x;
       var cy = this.cy() - this.height() / 10 - y;
       var oldGlobalAlpha = ctx.globalAlpha;
-      ctx.globalAlpha = this.alphaYouth();
+      ctx.globalAlpha = this.alphaYouth(memory);
       this.image.draw(ctx, cx, cy, 11 / 10 * this.width(), 11 / 10 * this.height());
       ctx.globalAlpha = oldGlobalAlpha;
       var point = this.buildPoints(x, y)[0];
@@ -156,8 +167,9 @@ app.factory("GUIZone", ["$log", "GUISprites", function ($log, Sprites) {
   };
 
   Zone.prototype.draw = function (ctx, x, y) {
-    this.drawBackground(ctx, x, y);
-    this.drawImage(ctx, x, y);
+    var memory = this.memory();
+    this.drawBackground(ctx, x, y, memory);
+    this.drawImage(ctx, x, y, memory);
   };
 
   Zone.prototype.onClick = function () {

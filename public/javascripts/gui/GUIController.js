@@ -186,6 +186,6 @@ app.controller("GUICtrl", ["$scope", "GUIMap", "GUISprites", "GUIZone", "Map", f
   init(Map.getCanvas(), Map.getOpts());
 
   Q.when(Map.isReady(), function () {
-    start();
+    setTimeout(start, 3000);
   });
 }]);
