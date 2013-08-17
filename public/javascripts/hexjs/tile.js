@@ -14,13 +14,58 @@
           return elem;
         }
       });
+    },
+    map: function (array, callback) {
+      var result = [];
+      array.forEach(function (elem) {
+        result.push(callback(elem));
+      });
+      return result;
     }
   };
 
   // Generic functions
+  function axialToCube (q, r) {
+    return {
+      x: r,
+      y: q,
+      z: -(r + q)
+    };
+  }
+
+  function cubeToAxial (x, y, z) {
+    return {
+      q: y,
+      r: x
+    };
+  }
+
+
   function distance (tile1, tile2) {
     return Math.max(Math.abs(tile1.x - tile2.x), Math.abs(tile1.y - tile2.y), Math.abs(tile1.z - tile2.z));
   }
+
+  function neighbors (x, y, z) {
+    return [
+      {x: x + 1, y: y - 1, z: z},
+      {x: x + 1, y: y, z: z - 1},
+      {x: x, y: y + 1, z: z - 1},
+      {x: x - 1, y: y + 1, z: z},
+      {x: x - 1, y: y, z: z + 1},
+      {x: x, y: y - 1, z: z + 1}
+    ];
+  };
+
+  function axialNeighbors (q, r) {
+    return [
+      {q: q + 1, r: r},
+      {q: q + 1, r: r - 1},
+      {q: q, r: r - 1},
+      {q: q - 1, r: r},
+      {q: q - 1, r: r + 1},
+      {q: q, r: r + 1}
+    ];
+  };
 
   function roundCubeHex (x, y, z) {
     var rx = Math.round(x);
@@ -64,7 +109,8 @@
 
   function pixelToCubeHex (px, py) {
     var axial = pixelToAxialHex(px, py);
-    return roundCubeHex(axial.q, -(axial.q + axial.r), axial.r);
+    var cube = axialToCube(axial.q, axial.r);
+    return roundCubeHex(cube.x, cube.y, cube.z);
   }
 
   function buildPoints (px, py) {
@@ -87,9 +133,21 @@
     });
   }
 
+  function findNeighbors (tiles, x, y, accessor) {
+    return _.map(neighbors(x, y), function (neighbor) {
+      return find(tiles, neighbor.x, neighbor.y, accessor);
+    });
+  }
+
   function interpolate (tiles, px, py, accessor) {
     var coords = pixelToCubeHex(px, py);
     return this.find(tiles, coords.x, coords.y, accessor);
+  }
+
+  function interpolateNeighbors (tiles, px, py, accessor) {
+    return _.map(neighbors(px, py), function (neighbor) {
+      return interpolate(tiles, neighbor.x, neighbor.y, accessor);
+    });
   }
 
   // Definition of an hexagonal tile
@@ -100,8 +158,8 @@
     this.z = coordsZ ? coordsZ : -(coordsX + coordsY);
 
     // Axial coordinates
-    this.q = this.x;
-    this.r = this.z;
+    this.q = this.y;
+    this.r = this.x;
     this.checkSize();
   }
 
@@ -130,25 +188,15 @@
   };
 
   Tile.prototype.neighbors = function () {
-    return [
-      {x: this.x + 1, y: this.y - 1, z: this.z},
-      {x: this.x + 1, y: this.y, z: this.z - 1},
-      {x: this.x, y: this.y + 1, z: this.z - 1},
-      {x: this.x - 1, y: this.y + 1, z: this.z},
-      {x: this.x - 1, y: this.y, z: this.z + 1},
-      {x: this.x, y: this.y - 1, z: this.z + 1}
-    ];
+    return neighbors(this.x, this.y, this.z);
+  };
+
+  Tile.prototype.findNeighbors = function (tiles, accessor) {
+    return findNeighbors(tiles, this.x, this.y, this.z, accessor);
   };
 
   Tile.prototype.axialNeighbors = function () {
-    return [
-      {q: this.q + 1, r: this.r},
-      {q: this.q + 1, r: this.r - 1},
-      {q: this.q, r: this.r - 1},
-      {q: this.q - 1, r: this.r},
-      {q: this.q - 1, r: this.r + 1},
-      {q: this.q, r: this.r + 1}
-    ];
+    return axialNeighbors(this.q, this.r);
   };
 
   Tile.prototype.isContained = function (x, y, dx, dy) {
@@ -172,12 +220,16 @@
     },
     buildPoints: buildPoints,
     distance: distance,
+    neighbors: neighbors,
+    axialNeighbors: axialNeighbors,
     roundCubeHex: roundCubeHex,
     tileToPixel: tileToPixel,
     pixelToAxialHex: pixelToAxialHex,
     pixelToCubeHex: pixelToCubeHex,
     find: find,
+    findNeighbors: findNeighbors,
     interpolate: interpolate,
+    interpolateNeighbors: interpolateNeighbors,
     tile: function (x, y, z) {
       return new Tile(x, y , z);
     }
