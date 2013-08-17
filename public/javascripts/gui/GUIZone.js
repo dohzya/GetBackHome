@@ -5,7 +5,7 @@ app.factory("GUIZone", ["$log", "GUISprites", function ($log, Sprites) {
     var type1, type2;
 
     this.place = place;
-    this.tile = Hexjs.createTile(this.place.pos[0], this.place.pos[1]);
+    this.tile = Hexjs.tile(this.place.pos[0], this.place.pos[1]);
     this.points = Hexjs.buildPoints(0, 0);
 
     type1 = this.types()[0];
@@ -58,7 +58,7 @@ app.factory("GUIZone", ["$log", "GUISprites", function ($log, Sprites) {
   };
 
   Zone.prototype.drawBackground = function (ctx, x, y) {
-    var points = Hexjs.buildPoints(this.tile.centerX() - x, this.tile.centerY() - y, Hexjs.size);
+    var points = Hexjs.buildPoints(this.tile.center.x - x, this.tile.center.y - y, Hexjs.size);
     var color = this.selected ? "255, 250, 71" : this.color;
     ctx.fillStyle = "rgba(" + color + ", " + this.alphaInfection() + ")";
     ctx.strokeStyle = "rgba(" + color + ", " + this.alphaInfection() + ")";
@@ -78,23 +78,19 @@ app.factory("GUIZone", ["$log", "GUISprites", function ($log, Sprites) {
 
   Zone.prototype.drawImage = function (ctx, x, y) {
     if (this.image) {
-      var cx = this.tile.centerX() - x - Hexjs.width / 2;
-      var cy = this.tile.centerY() - y - Hexjs.height / 2;
+      var cx = this.tile.center.x - x - Hexjs.width / 2;
+      var cy = this.tile.center.y - y - Hexjs.height / 2;
       var oldGlobalAlpha = ctx.globalAlpha;
       ctx.globalAlpha = this.alphaYouth();
       this.image.draw(ctx, cx, cy, Hexjs.width, Hexjs.height);
       ctx.globalAlpha = oldGlobalAlpha;
-      ctx.fillStyle = "#000000";
-      ctx.fillText(this.tile.x, cx + Hexjs.width - 15, cy + Hexjs.height / 4 + 10);
-      ctx.fillText(this.tile.y, cx + 10, cy + Hexjs.height / 4 + 10);
-      ctx.fillText(this.tile.z, cx + Hexjs.width / 2 - 5, cy + Hexjs.height - 10);
     } else {
       $log.error("No img for Zone (" + x + " x " + y + ")");
     }
   };
 
   Zone.prototype.drawBorder = function (ctx, x, y) {
-    var points = Hexjs.buildPoints(this.tile.centerX() - x, this.tile.centerY() - y, Hexjs.size);
+    var points = Hexjs.buildPoints(this.tile.center.x - x, this.tile.center.y - y, Hexjs.size);
     ctx.strokeStyle = "#000000";
     ctx.beginPath();
     var point = points[0];
@@ -109,10 +105,20 @@ app.factory("GUIZone", ["$log", "GUISprites", function ($log, Sprites) {
     ctx.stroke();
   };
 
+  Zone.prototype.drawCoordinates = function (ctx, x, y) {
+    var cx = this.tile.center.x - x - Hexjs.width / 2;
+    var cy = this.tile.center.y - y - Hexjs.height / 2;
+    ctx.fillStyle = "#000000";
+    ctx.fillText(this.tile.x, cx + Hexjs.width - 15, cy + Hexjs.height / 4 + 10);
+    ctx.fillText(this.tile.y, cx + 10, cy + Hexjs.height / 4 + 10);
+    ctx.fillText(this.tile.z, cx + Hexjs.width / 2 - 5, cy + Hexjs.height - 10);
+  };
+
   Zone.prototype.draw = function (ctx, x, y) {
     this.drawBackground(ctx, x, y);
     this.drawImage(ctx, x, y);
     this.drawBorder(ctx, x, y);
+    this.drawCoordinates(ctx, x, y);
   };
 
   Zone.prototype.onClick = function () {

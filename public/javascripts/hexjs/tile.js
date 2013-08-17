@@ -1,23 +1,20 @@
 ;(function(window) {
-  // Hexjs defintion
-  var Hexjs = {
-    size: 30,
-    height: 2 * 30,
-    width: Math.sqrt(3) * 30,
-    setSize: function (size) {
-      this.size = size;
-      this.height = 2 * size;
-      this.width = Math.sqrt(3) * size;
+  // Rely on a library like Lo-Dash or Underscore
+  // but here is a small fallback if missing
+  var _ = window._ || {
+    isFunction: function (value) {
+      return typeof value == 'function';
     },
-    createTile: function (x, y, z) {
-      return new Tile(x, y , z);
+    identity: function (value) {
+      return value;
     },
-    buildPoints: buildPoints,
-    distance: distance,
-    roundCubeHex: roundCubeHex,
-    tileToPixel: tileToPixel,
-    pixelToAxialHex: pixelToAxialHex,
-    pixelToCubeHex: pixelToCubeHex
+    find: function (array, callback) {
+      array.forEach(function (elem) {
+        if (callback(elem)) {
+          return elem;
+        }
+      });
+    }
   };
 
   // Generic functions
@@ -53,8 +50,8 @@
 
   function tileToPixel (tile) {
     return {
-      px: Math.sqrt(3) * (tile.q + tile.r / 2) * Hexjs.size,
-      py: 3/2 * tile.r * Hexjs.size
+      x: Math.sqrt(3) * (tile.q + tile.r / 2) * Hexjs.size,
+      y: 3/2 * tile.r * Hexjs.size
     };
   }
 
@@ -82,6 +79,19 @@
     return points;
   }
 
+  function find (tiles, x, y, accessor) {
+    accessor = accessor || _.identity;
+    return _.find(tiles, function (tile) {
+      tile = accessor(tile);
+      return (tile.x == x && tile.y == y);
+    });
+  }
+
+  function interpolate (tiles, px, py, accessor) {
+    var coords = pixelToCubeHex(px, py);
+    return this.find(tiles, coords.x, coords.y, accessor);
+  }
+
   // Definition of an hexagonal tile
   function Tile (coordsX, coordsY, coordsZ) {
     // Cube coordinates
@@ -92,25 +102,31 @@
     // Axial coordinates
     this.q = this.x;
     this.r = this.z;
+    this.checkSize();
   }
+
+  Tile.prototype.checkSize = function () {
+    if (this.size != Hexjs.size) {
+      this.updateSize();
+    }
+  };
+
+  Tile.prototype.updateSize = function () {
+    this.size = Hexjs.size;
+    this.center = this.toPixel();
+  };
 
   Tile.prototype.distanceTo = function (tile) {
     return distance(this, tile);
   };
 
-  Tile.prototype.centerX = function () {
-    return Hexjs.size * Math.sqrt(3) * (this.q + this.r / 2);
-  };
-
-  Tile.prototype.centerY = function () {
-    return Hexjs.size * 3/2 * this.r;
+  Tile.prototype.toPixel = function () {
+    return tileToPixel(this);
   };
 
   Tile.prototype.center = function () {
-    return {
-      x: this.centerX(),
-      y: this.centerY()
-    };
+    this.checkSize();
+    return this.center;
   };
 
   Tile.prototype.neighbors = function () {
@@ -136,12 +152,37 @@
   };
 
   Tile.prototype.isContained = function (x, y, dx, dy) {
-    var center = this.center();
-    return x < (center.x + Hexjs.width) &&
-      x + dx > (center.x - Hexjs.width) &&
-      y < (center.y + Hexjs.height) &&
-      y + dy > (center.y - Hexjs.height);
+    this.checkSize();
+    return x < (this.center.x + Hexjs.width) &&
+      x + dx > (this.center.x - Hexjs.width) &&
+      y < (this.center.y + Hexjs.height) &&
+      y + dy > (this.center.y - Hexjs.height);
   };
 
+  // Hexjs defintion
+  var Hexjs = {
+    size: function (size) {
+      if (size) {
+        this.size = size;
+        this.height = 2 * size;
+        this.width = Math.sqrt(3) * size;
+      } else {
+        return this.size;
+      }
+    },
+    buildPoints: buildPoints,
+    distance: distance,
+    roundCubeHex: roundCubeHex,
+    tileToPixel: tileToPixel,
+    pixelToAxialHex: pixelToAxialHex,
+    pixelToCubeHex: pixelToCubeHex,
+    find: find,
+    interpolate: interpolate,
+    tile: function (x, y, z) {
+      return new Tile(x, y , z);
+    }
+  };
+
+  Hexjs.size(30);
   window.Hexjs = Hexjs;
 }(this));
