@@ -21,7 +21,7 @@
     <select ng-model="game.selectedOrder" ng-change="selectOrder(game.selectedOrder)">
       <option data-ng-repeat="button in buttons" value="{{button.id}}">{{button.name}}</option>
     </select>
-    <button class="btn" ng-click="sendOrder('{{selectedOrder}}')">Envoyer l'ordre</button>
+    <!-- <button class="btn" ng-click="sendOrder('{{selectedOrder}}')">Envoyer l'ordre</button> -->
     <div class="gbh-contents">
       <!-- <div data-ng-repeat="stat in currentOrder.stats">
         <span>{{stat.name}}</span> : <span>{{stat.value}}{{stat.suffix}}</span>
