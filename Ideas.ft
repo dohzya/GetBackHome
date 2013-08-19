@@ -172,6 +172,9 @@
 - On a pas forcément toutes les stats
 	- simule le niveau du personnage joué (sait-il évaluer les gens ? la situation ?)
 
+- Ne pas dessiner les bordures d'hexagones mais les ajouter comme texture au dessus
+	- permet d'avoir des bordures qui sont justent « plus blanches »
+
 # V2
 
 - arbre de matériaux
