@@ -8,10 +8,11 @@ app.factory("Group", ["Survivor", "Memory", "Map", function (Survivor, Memory, M
 
   Group.prototype.visitPlace = function (ts, place) {
     var self = this;
-    Map.forEachPlacesAround(place, function (p) {
+    self.memory.addItem(ts, place);
+    Map.findNeighbors(place).map(function (p) {
       self.memory.addItem(ts, p);
     });
-  }
+  };
 
   Group.prototype.killSurvivors = function (nb) {
     var survivors = [], i;

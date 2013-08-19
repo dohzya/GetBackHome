@@ -1,12 +1,14 @@
 window.app.factory("Place", ["Map", "MemoryItem", function (Map, MemoryItem) {
   "use strict";
 
+  var Hexjs = window.Hexjs;
+
   function Place(args) {
     this.fighting = args.fighting;
     this.food = args.food;
     this.height = args.height;
     this.horde = args.horde;
-    this.pos = args.pos;
+    this.tile = Hexjs.tile(args.pos[0], args.pos[1]);
     this.types = args.types;
     this.memory = {};
   }
@@ -21,15 +23,15 @@ window.app.factory("Place", ["Map", "MemoryItem", function (Map, MemoryItem) {
   };
 
   Place.prototype.x = function () {
-    return this.pos[0];
+    return this.tile.x;
   };
 
   Place.prototype.y = function () {
-    return this.pos[1];
+    return this.tile.y;
   };
 
   Place.prototype.z = function () {
-    return -(this.x() + this.y());
+    return this.tile.z;
   };
 
   Place.prototype.defense = function (value) {

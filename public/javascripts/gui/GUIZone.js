@@ -7,7 +7,6 @@ window.app.factory("GUIZone", ["$log", "$rootScope", "Util", "GUISprites", funct
     var type1, type2;
 
     this.place = place;
-    this.tile = Hexjs.tile(this.place.pos[0], this.place.pos[1]);
     this.points = Hexjs.buildPoints(0, 0);
 
     type1 = this.types()[0];
@@ -33,11 +32,15 @@ window.app.factory("GUIZone", ["$log", "$rootScope", "Util", "GUISprites", funct
   }
 
   Zone.prototype.x = function () {
-    return this.tile.x;
+    return this.place.x();
   };
 
   Zone.prototype.y = function () {
-    return this.tile.y;
+    return this.place.y();
+  };
+
+  Zone.prototype.z = function () {
+    return this.place.z();
   };
 
   Zone.prototype.memory = function () {
@@ -64,7 +67,7 @@ window.app.factory("GUIZone", ["$log", "$rootScope", "Util", "GUISprites", funct
   };
 
   Zone.prototype.drawBackground = function (ctx, x, y, memory) {
-    var points = Hexjs.buildPoints(this.tile.center.x - x, this.tile.center.y - y, Hexjs.size);
+    var points = Hexjs.buildPoints(this.place.tile.center.x - x, this.place.tile.center.y - y, Hexjs.size);
     var style;
     var point, i;
     if (memory) {
@@ -93,11 +96,11 @@ window.app.factory("GUIZone", ["$log", "$rootScope", "Util", "GUISprites", funct
     if (!memory) {
       // do not display any image
     } else if (this.image) {
-      var cx = this.cx() - this.width() / 10 - x;
-      var cy = this.cy() - this.height() / 10 - y;
+      var cx = this.place.tile.center.x - x - Hexjs.width / 2;
+      var cy = this.place.tile.center.y - y - Hexjs.height / 2;
       var oldGlobalAlpha = ctx.globalAlpha;
       ctx.globalAlpha = this.alphaInfection(memory);
-      this.image.draw(ctx, cx, cy, 11 / 10 * this.width(), 11 / 10 * this.height());
+      this.image.draw(ctx, cx, cy, Hexjs.width, Hexjs.height);
       ctx.globalAlpha = oldGlobalAlpha;
     } else {
       $log.error("No img for Zone (" + x + " x " + y + ")");
@@ -105,7 +108,7 @@ window.app.factory("GUIZone", ["$log", "$rootScope", "Util", "GUISprites", funct
   };
 
   Zone.prototype.drawBorder = function (ctx, x, y) {
-    var points = Hexjs.buildPoints(this.tile.center.x - x, this.tile.center.y - y, Hexjs.size);
+    var points = Hexjs.buildPoints(this.place.tile.center.x - x, this.place.tile.center.y - y, Hexjs.size);
     ctx.strokeStyle = "#000000";
     ctx.beginPath();
     var point = points[0];
@@ -121,12 +124,12 @@ window.app.factory("GUIZone", ["$log", "$rootScope", "Util", "GUISprites", funct
   };
 
   Zone.prototype.drawCoordinates = function (ctx, x, y) {
-    var cx = this.tile.center.x - x - Hexjs.width / 2;
-    var cy = this.tile.center.y - y - Hexjs.height / 2;
+    var cx = this.place.tile.center.x - x - Hexjs.width / 2;
+    var cy = this.place.tile.center.y - y - Hexjs.height / 2;
     ctx.fillStyle = "#000000";
-    ctx.fillText(this.tile.x, cx + Hexjs.width - 15, cy + Hexjs.height / 4 + 10);
-    ctx.fillText(this.tile.y, cx + 10, cy + Hexjs.height / 4 + 10);
-    ctx.fillText(this.tile.z, cx + Hexjs.width / 2 - 5, cy + Hexjs.height - 10);
+    ctx.fillText(this.place.tile.x, cx + Hexjs.width - 15, cy + Hexjs.height / 4 + 10);
+    ctx.fillText(this.place.tile.y, cx + 10, cy + Hexjs.height / 4 + 10);
+    ctx.fillText(this.place.tile.z, cx + Hexjs.width / 2 - 5, cy + Hexjs.height - 10);
   };
 
   Zone.prototype.draw = function (ctx, x, y) {

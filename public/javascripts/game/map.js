@@ -1,30 +1,31 @@
 app.service("Map", [function () {
   "use strict";
 
+  var Hexjs = window.Hexjs;
+
   var map = {
     places: []
   };
+
+  function tileAccessor (place) {
+    return place.tile;
+  }
 
   function addPlace(place) {
     map.places.push(place);
   }
 
   function getPlace(x, y) {
-    return _.find(map.places, function (place) {
-      return place.pos && (place.x() === x && place.y() === y);
-    });
+    return Hexjs.find(map.places, x, y, tileAccessor);
   }
 
-  function forEachPlacesAround(place, func) {
-    var neighbors = neighborhood(place);
-    var i, pos;
-    func(place);
-    for (i = 0; i < neighbors.length; i++) {
-      pos = neighbors[i];
-      func(getPlace(pos[0], pos[1]));
-    }
+  function getCenterPlace() {
+    return getPlace(7, 4);
   }
 
+  function findNeighbors(place) {
+    return Hexjs.findNeighbors(map.places, place.x(), place.y(), tileAccessor);
+  }
 
   function forEach(func) {
     var i;
@@ -39,26 +40,18 @@ app.service("Map", [function () {
     return getPlace(x, y);
   }
 
-  function neighborhood(place) {
-    var pos = place.pos;
-    return [
-      [pos[0] - 1, pos[1] - 1],
-      [pos[0],     pos[1] - 1],
-      [pos[0] + 1, pos[1]],
-      [pos[0] + 1, pos[1] + 1],
-      [pos[0],     pos[1] + 1],
-      [pos[0] - 1, pos[1]]
-    ];
+  function tileEqual(tile1, tile2) {
+    return tile1.x == tile2.x && tile1.y == tile2.y;
   }
 
-  function posEqual(pos1, pos2) {
-    return pos1[0] == pos2[0] && pos1[1] == pos2[1];
+  function neighbors(place) {
+    return Hexjs.neighbors(place.x(), place.y(), place.z());
   }
 
   function inNeighborhood(place, place2) {
-    var neighbors = neighborhood(place), i;
-    for (i = 0; i < neighbors.length; i++) {
-      if (posEqual(neighbors[i], place2.pos)) {
+    var _neighbors = neighbors(place), i;
+    for (i = 0; i < _neighbors.length; i++) {
+      if (tileEqual(_neighbors[i], place2.tile)) {
         return true;
       }
     }
@@ -75,6 +68,7 @@ app.service("Map", [function () {
       n0 = path[i];
       if (n2) {
         cleaned.push(n2);
+        console.log("inNeighborhood(", n0.tile, ", ", n2.tile, ") = ", inNeighborhood(n0, n2));
         if (inNeighborhood(n0, n2)) {
           n1 = null;
         }
@@ -123,8 +117,9 @@ app.service("Map", [function () {
   return {
     addPlace: addPlace,
     getPlace: getPlace,
+    getCenterPlace: getCenterPlace,
     forEach: forEach,
-    forEachPlacesAround: forEachPlacesAround,
+    findNeighbors: findNeighbors,
     findPath: findPath
   };
 

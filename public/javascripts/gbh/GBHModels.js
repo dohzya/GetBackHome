@@ -14,6 +14,7 @@ window.app.factory("GBHModels", ["Group", "Mission", "Order", "Survivor", "Horde
     createPlace: Place.create,
     createPlayer: Player.create,
     getPlace: Map.getPlace,
+    getCenterPlace: Map.getCenterPlace,
     createTime: Time.create,
     createMemory: Memory.create
   };

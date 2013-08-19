@@ -37,7 +37,7 @@ app.service("GBHEngine", ["$rootScope", "GBHDisplay", "$log", "GBHOrders", "GBHM
   // Main
   var mainEnv;
   setTimeout(function () {
-    $rootScope.engine.mainPlace = Models.getPlace(10, 10);
+    $rootScope.engine.mainPlace = Models.getCenterPlace();
     mainEnv = Models.createEnv({
       group: $rootScope.engine.mainGroup,
       place: $rootScope.engine.mainPlace

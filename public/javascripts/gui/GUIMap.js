@@ -22,14 +22,14 @@ app.factory("GUIMap", ["GBHModels", "GUISprites", "GUIZone", "UTGenerator", func
 
   var zones = [];
   Sprites.isLoaded().then(function () {
-    zones = Generator.generate("001", 0, 80, 0, 80, function (json) {
+    zones = Generator.generate("001", 0, 20, 0, 20, function (json) {
       var place = Models.createPlace(json);
       return Zone.create(place);
     });
   });
 
   function tileAccessor (zone) {
-    return zone.tile;
+    return zone.place.tile;
   }
 
   function getZone(x, y) {

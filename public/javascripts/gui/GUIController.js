@@ -66,7 +66,7 @@ app.controller("GUICtrl", ["$scope", "GUIMap", "GUISprites", "GUIZone", "Map", f
   // TODO merge these 2 functions
   function eachDrawables(f) {
     _.each(Map.getZones(), function (zone) {
-      if (zone.tile.isContained(drawer.x, drawer.y, drawer.width, drawer.height)) {
+      if (zone.place.tile.isContained(drawer.x, drawer.y, drawer.width, drawer.height)) {
         f(zone);
       }
     });
@@ -175,7 +175,7 @@ app.controller("GUICtrl", ["$scope", "GUIMap", "GUISprites", "GUIZone", "Map", f
       _.each(selectedPlaces, function (place) {
         place.selected = false;
       });
-      selectedPlaces = EngineMap.findPath(EngineMap.getPlace(10, 10), arr.place);
+      selectedPlaces = EngineMap.findPath(EngineMap.getCenterPlace(), arr.place);
       _.each(selectedPlaces, function (place) {
         place.selected = true;
       });

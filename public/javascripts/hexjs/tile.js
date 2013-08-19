@@ -40,7 +40,6 @@
     };
   }
 
-
   function distance (tile1, tile2) {
     return Math.max(Math.abs(tile1.x - tile2.x), Math.abs(tile1.y - tile2.y), Math.abs(tile1.z - tile2.z));
   }

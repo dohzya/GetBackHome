@@ -2,11 +2,11 @@ window.app.factory("Memory", ["Map", function (Map) {
   "use strict";
 
   function placeToKey(place) {
-    return place.pos[0] + "x" + place.pos[1];
+    return place.x() + "x" + place.y();
   }
 
   function keyToPlace(key) {
-    var pos = _.map(key.split("x"), function (n) { return parseInt(n); });
+    var pos = _.map(key.split("x"), function (n) { return parseInt(n, 10); });
     return Map.getPlace(pos[0], pos[1]);
   }
 
