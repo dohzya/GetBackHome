@@ -29,8 +29,8 @@ app.controller("GUICtrl", ["$scope", "GUIMap", "GUISprites", "GUIZone", function
   }
 
   $scope.onZoomChange = function () {
-    var centerX = (drawer.x + drawer.width / 2) / Zone.getWidth();
-    var centerY = (drawer.y + drawer.height / 2) / Zone.getHeight();
+    var centerX = (drawer.x + drawer.width / 2) / size;
+    var centerY = (drawer.y + drawer.height / 2) / size;
 
     Zone.setSize($scope.gui.zoom, $scope.gui.zoom);
 
@@ -66,7 +66,7 @@ app.controller("GUICtrl", ["$scope", "GUIMap", "GUISprites", "GUIZone", function
   // TODO merge these 2 functions
   function eachDrawables(f) {
     _.each(Map.getZones(), function (zone) {
-      if (zone.isContained(drawer.x, drawer.y, drawer.width, drawer.height)) {
+      if (zone.tile.isContained(drawer.x, drawer.y, drawer.width, drawer.height)) {
         f(zone);
       }
     });

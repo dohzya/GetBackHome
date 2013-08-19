@@ -28,16 +28,16 @@ app.factory("GUIMap", ["GBHModels", "GUISprites", "GUIZone", "UTGenerator", func
     });
   });
 
-  function getZone(x, y) {
-    return _.find(zones, function (zone) {
-      return zone.x == x && zone.y == y;
-    });
+  function tileAccessor (zone) {
+    return zone.tile;
   }
 
-  function interpolateZone(x, y) {
-    return _.find(zones, function (zone) {
-      return zone.contains(x, y);
-    });
+  function getZone(x, y) {
+    return Hexjs.find(zones, x, y, tileAccessor);
+  }
+
+  function interpolateZone(px, py) {
+    return Hexjs.interpolate(zones, px, py, tileAccessor);
   }
 
   function isReady() {
