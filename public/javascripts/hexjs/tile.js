@@ -1,9 +1,11 @@
-;(function(window) {
+(function (window) {
+  "use strict";
+
   // Rely on a library like Lo-Dash or Underscore
   // but here is a small fallback if missing
   var _ = window._ || {
     isFunction: function (value) {
-      return typeof value == 'function';
+      return typeof value === "function";
     },
     identity: function (value) {
       return value;
@@ -25,6 +27,13 @@
   };
 
   // Generic functions
+  function checkZ (x, y, z) {
+    if (z === null || z === undefined) {
+      z = -(x + y);
+    }
+    return z;
+  }
+
   function axialToCube (q, r) {
     return {
       x: r,
@@ -33,7 +42,7 @@
     };
   }
 
-  function cubeToAxial (x, y, z) {
+  function cubeToAxial (x, y) {
     return {
       q: y,
       r: x
@@ -45,40 +54,44 @@
   }
 
   function neighbors (x, y, z) {
+    z = checkZ(x, y, z);
+
     return [
-      {x: x + 1, y: y - 1, z: z},
-      {x: x + 1, y: y, z: z - 1},
-      {x: x, y: y + 1, z: z - 1},
-      {x: x - 1, y: y + 1, z: z},
-      {x: x - 1, y: y, z: z + 1},
-      {x: x, y: y - 1, z: z + 1}
+      {x: x + 1, y: y - 1, z: z    },
+      {x: x + 1, y: y,     z: z - 1},
+      {x: x,     y: y + 1, z: z - 1},
+      {x: x - 1, y: y + 1, z: z    },
+      {x: x - 1, y: y,     z: z + 1},
+      {x: x,     y: y - 1, z: z + 1}
     ];
-  };
+  }
 
   function axialNeighbors (q, r) {
     return [
-      {q: q + 1, r: r},
+      {q: q + 1, r: r    },
       {q: q + 1, r: r - 1},
-      {q: q, r: r - 1},
-      {q: q - 1, r: r},
+      {q: q,     r: r - 1},
+      {q: q - 1, r: r    },
       {q: q - 1, r: r + 1},
-      {q: q, r: r + 1}
+      {q: q,     r: r + 1}
     ];
-  };
+  }
 
-  function roundCubeHex (x, y, z) {
+  function roundCube (x, y, z) {
+    z = checkZ(x, y, z);
+
     var rx = Math.round(x);
     var ry = Math.round(y);
     var rz = Math.round(z);
 
-    var x_err = Math.abs(rx - x);
-    var y_err = Math.abs(ry - y);
-    var z_err = Math.abs(rz - z);
+    var xErr = Math.abs(rx - x);
+    var yErr = Math.abs(ry - y);
+    var zErr = Math.abs(rz - z);
 
-    if (x_err > y_err && x_err > z_err) {
+    if (xErr > yErr && xErr > zErr) {
       rx = -ry-rz;
     }
-    else if (y_err > z_err) {
+    else if (yErr > zErr) {
       ry = -rx-rz;
     }
     else {
@@ -99,17 +112,17 @@
     };
   }
 
-  function pixelToAxialHex (px, py) {
+  function pixelToAxial (px, py) {
     return {
       q: (1/3 * Math.sqrt(3) * px - 1/3 * py) / Hexjs.size,
       r: 2/3 * py / Hexjs.size
     };
   }
 
-  function pixelToCubeHex (px, py) {
-    var axial = pixelToAxialHex(px, py);
-    var cube = axialToCube(axial.q, axial.r);
-    return roundCubeHex(cube.x, cube.y, cube.z);
+  function pixelToCube (px, py) {
+    var axial = Hexjs.pixelToAxial(px, py);
+    var cube = Hexjs.axialToCube(axial.q, axial.r);
+    return Hexjs.roundCube(cube.x, cube.y, cube.z);
   }
 
   function buildPoints (px, py) {
@@ -128,42 +141,44 @@
     accessor = accessor || _.identity;
     return _.find(tiles, function (tile) {
       tile = accessor(tile);
-      return (tile.x == x && tile.y == y);
+      return (tile.x === x && tile.y === y);
     });
   }
 
   function findNeighbors (tiles, x, y, accessor) {
     return _.map(neighbors(x, y), function (neighbor) {
-      return find(tiles, neighbor.x, neighbor.y, accessor);
+      return Hexjs.find(tiles, neighbor.x, neighbor.y, accessor);
     });
   }
 
   function interpolate (tiles, px, py, accessor) {
-    var coords = pixelToCubeHex(px, py);
-    return this.find(tiles, coords.x, coords.y, accessor);
+    var coords = pixelToCube(px, py);
+    return Hexjs.find(tiles, coords.x, coords.y, accessor);
   }
 
   function interpolateNeighbors (tiles, px, py, accessor) {
     return _.map(neighbors(px, py), function (neighbor) {
-      return interpolate(tiles, neighbor.x, neighbor.y, accessor);
+      return Hexjs.interpolate(tiles, neighbor.x, neighbor.y, accessor);
     });
   }
 
   // Definition of an hexagonal tile
   function Tile (coordsX, coordsY, coordsZ) {
     // Cube coordinates
+    coordsZ = checkZ(coordsX, coordsY, coordsZ);
     this.x = coordsX;
     this.y = coordsY;
-    this.z = coordsZ ? coordsZ : -(coordsX + coordsY);
+    this.z = coordsZ;
 
     // Axial coordinates
-    this.q = this.y;
-    this.r = this.x;
+    var a = cubeToAxial(this.x, this.y, this.z);
+    this.q = a.q;
+    this.r = a.r;
     this.checkSize();
   }
 
   Tile.prototype.checkSize = function () {
-    if (this.size != Hexjs.size) {
+    if (this.size !== Hexjs.size) {
       this.updateSize();
     }
   };
@@ -174,11 +189,11 @@
   };
 
   Tile.prototype.distanceTo = function (tile) {
-    return distance(this, tile);
+    return Hexjs.distance(this, tile);
   };
 
   Tile.prototype.toPixel = function () {
-    return tileToPixel(this);
+    return Hexjs.tileToPixel(this);
   };
 
   Tile.prototype.center = function () {
@@ -187,15 +202,15 @@
   };
 
   Tile.prototype.neighbors = function () {
-    return neighbors(this.x, this.y, this.z);
+    return Hexjs.neighbors(this.x, this.y, this.z);
   };
 
   Tile.prototype.findNeighbors = function (tiles, accessor) {
-    return findNeighbors(tiles, this.x, this.y, this.z, accessor);
+    return Hexjs.findNeighbors(tiles, this.x, this.y, this.z, accessor);
   };
 
   Tile.prototype.axialNeighbors = function () {
-    return axialNeighbors(this.q, this.r);
+    return Hexjs.axialNeighbors(this.q, this.r);
   };
 
   Tile.prototype.isContained = function (x, y, dx, dy) {
@@ -217,14 +232,16 @@
         return this.size;
       }
     },
+    axialToCube: axialToCube,
+    cubeToAxial: cubeToAxial,
     buildPoints: buildPoints,
     distance: distance,
     neighbors: neighbors,
     axialNeighbors: axialNeighbors,
-    roundCubeHex: roundCubeHex,
+    roundCube: roundCube,
     tileToPixel: tileToPixel,
-    pixelToAxialHex: pixelToAxialHex,
-    pixelToCubeHex: pixelToCubeHex,
+    pixelToAxial: pixelToAxial,
+    pixelToCube: pixelToCube,
     find: find,
     findNeighbors: findNeighbors,
     interpolate: interpolate,

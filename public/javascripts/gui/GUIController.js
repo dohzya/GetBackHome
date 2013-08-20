@@ -1,9 +1,13 @@
-app.controller("GUICtrl", ["$scope", "GUIMap", "GUISprites", "GUIZone", "Map", function ($scope, Map, Sprites, Zone, EngineMap) {
+app.controller("GUICtrl", ["$scope", "$rootScope", "Events", "GUIMap", "GUISprites", "GUIZone", "Map", function ($scope, $rootScope, Events, Map, Sprites, Zone, EngineMap) {
   "use strict";
   var Q = window.Q;
 
   $scope.gui.zoom = 48;
   $scope.gui.selectedZone = null;
+
+  $scope.$on(Events.gui.draw, function () {
+    redraw();
+  });
 
   var drawer = {};
 
@@ -180,6 +184,7 @@ app.controller("GUICtrl", ["$scope", "GUIMap", "GUISprites", "GUIZone", "Map", f
         place.selected = true;
       });
       $scope.gui.selectedZone = arr;
+      $rootScope.$broadcast(Events.gui.zones.selected);
     });
   }
 

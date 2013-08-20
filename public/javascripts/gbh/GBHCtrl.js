@@ -1,4 +1,4 @@
-app.controller("GBHCtrl", ["$rootScope", "$scope", "GBHEngine", function ($rootScope, $scope, Engine) {
+app.controller("GBHCtrl", ["$rootScope", "$scope", "Events", "GBHEngine", function ($rootScope, $scope, Events, Engine) {
   "use strict";
 
   var inAction = false;

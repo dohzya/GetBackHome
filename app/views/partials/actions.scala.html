@@ -5,17 +5,40 @@
   <div class="gbh-visible-contents">
 
     <div ng-hide="gui.selectedZone">Pick a place, fucking bastard!</div>
+
+    {{newMission | json}}
+
     <div ng-show="gui.selectedZone">
       <ul>
-        <li ng-repeat="order in orders">
-          <div ng-show="order.isAvailable(gui.selectedZone)" ng-click="sendOrder(order)">
-            {{order.name}}
+        <li class="order" ng-repeat="order in orders | ordersAvailable:gui.selectedZone" ng-class="{selected: isOrderSelected(order)}">
+          <div class="media" ng-click="selectOrder(order)">
+            <div class="pull-left media-object">
+              <span ng-class="'icon-' + order.icon"></span>
+            </div>
+            <div class="media-body">
+              <h4 class="media-heading">{{order.name}}</h4>
+              <div>{{order.description}}</div>
+            </div>
           </div>
         </li>
       </ul>
     </div>
 
-    <hr/>
+    <div ng-show="newMission.order">
+      <hr/>
+
+      <form>
+        <div ng-repeat="input in newMission.order.inputs">
+          <gbh-input-order type="input.type" value="newMission.data[input.name]"></gbh-input-order>
+        </div>
+
+        <button type="button" class="btn btn-block btn-primary">Go go go!</button>
+      </form>
+    </div>    
+
+    
+
+    
 
     <div>Demander à <input type="number" id="selected" ng-model="game.selectedSurvivors" ng-change="selectSurvivors(game.selectedSurvivors)" min="0" required /> survivants de</div>
     <select ng-model="game.selectedOrder" ng-change="selectOrder(game.selectedOrder)">

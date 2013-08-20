@@ -1,5 +1,82 @@
-app.service("GBHOrders", ["GBHDisplay", "$log", function (Display, $log) {
+app.service("GBHOrders", ["GBHDisplay", "$log", "GBHModels", function (Display, $log, Models) {
   "use strict";
+
+  var inputTypes = {
+    survivors: {
+      id: "survivors",
+      default: 1,
+      min: 1,
+      template: '<input type="text" class="form-control" ng-model="value"/>'
+    }
+  };
+
+  var rawOrders = [
+    {
+      id: "purify",
+      name: "Purification",
+      icon: "fire",
+      description: "",
+      inputs: [
+        {
+          type: inputTypes.survivors,
+          name: "survivors"
+        }
+      ],
+      time: Models.createTime({
+        min: 1,
+        standard: 3
+      }),
+      run: function (env) {
+        var ratio = env.ratio();
+        var killZombies = 0;
+        var killSurvivors = 0;
+        killZombies = positiveFloor(env.horde().length() * random(ratio * 50, ratio * 100) / 100);
+        killSurvivors = positiveFloor(env.group.length() * random((1 - ratio) * 50, (1 - ratio) * 100) / 100);
+        env.horde().killZombies(killZombies);
+        env.group.killSurvivors(killSurvivors);
+        Display.addMessage(
+          "La zone a été purifée ({0} survivants impliqués dont {2} tués, {1} zombies éliminés)",
+          env.group.length(),
+          killZombies,
+          killSurvivors
+        );
+      },
+      finish: function () {
+        finishMission(this);
+        return true;
+      }
+    },
+    {
+      id: "fortify",
+      name: "Fortification",
+      icon: "building",
+      description: "",
+      time: Models.createTime({
+        min: 1,
+        standard: 2
+      }),
+      run: function (env) {
+        var tooling = env.group.tooling() / 10;
+        var max = Math.min(tooling, 1 - env.place.defense()) * 100;
+        var fortifying = random(max / 2, max) / 100;
+        env.place.addDefense(fortifying);
+        Display.addMessage(
+          "La zone a été fortifiée (de {0}%) par {1} survivants",
+          Math.round(fortifying * 100),
+          env.group.length()
+        );
+      },
+      finish: function () {
+        finishMission(this);
+        return true;
+      }
+    }
+  ];
+
+  var orders = {};
+  _.each(rawOrders, function (order) {
+    orders[order.id] = Models.createOrder(order);
+  });
 
   var self = this;
 
@@ -97,12 +174,14 @@ app.service("GBHOrders", ["GBHDisplay", "$log", function (Display, $log) {
   sentOrders = [];
 
   // Export
-  $.extend(self, {
+  return {
+    all: function () { return orders; },
+    get: function (idOrder) { return orders[idOrder] },
     ordersTurn: ordersTurn,
     refreshOrders: refreshOrders,
     defineOrder: defineOrder,
     sendOrder: sendOrder,
     updateActions: updateActions
-  });
+  };
 
 }]);

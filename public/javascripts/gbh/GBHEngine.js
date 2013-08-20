@@ -190,9 +190,8 @@ app.service("GBHEngine", ["$rootScope", "GBHDisplay", "$log", "GBHOrders", "GBHM
     Stats.updateStats();
   }
 
-  $rootScope.orders = {};
   function defineOrder(args) {
-    $rootScope.orders[args.id] = Models.createOrder(args);
+    //$rootScope.orders[args.id] = Models.createOrder(args);
   }
 
   defineOrder({
