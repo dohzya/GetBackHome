@@ -21,19 +21,17 @@ app.service("UTGenerator", ["UTPerlinSimplex", "Rc4Random", "GBHModels", functio
     var infectionGen = gen(0);
     var type1Gen = gen(1);
     var type2Gen = gen(2);
-    var youthGen = gen(3);
     var attackGen = gen(4);
     var defenseGen = gen(5);
     var foodGen = gen(6);
     var zones = [];
     var xx, yy;
-    var x, y, infection, youth, height, types, type2Int, attack, defense, food, t2, zone;
+    var x, y, infection, height, types, type2Int, attack, defense, food, t2, zone;
     for (xx = minX; xx < maxX; xx++) {
       for (yy = minY; yy < maxY; yy++) {
         x = xx - 10;
         y = yy - 10;
         infection = parseInt(Math.abs(infectionGen(x, y) * 100), 10);
-        youth = parseInt(Math.abs(youthGen(x, y) * 100), 10) * 10;
         height = parseInt((type1Gen(x, y) * 1000), 10) - 50;
         type2Int = parseInt((type2Gen(x, y) * 1000), 10);
         attack = attackGen(x, y);
@@ -84,8 +82,7 @@ app.service("UTGenerator", ["UTPerlinSimplex", "Rc4Random", "GBHModels", functio
           horde: Models.createHorde(infection),  // TODO generate
           pos: [x, y],
           ts: 0,
-          types: types,
-          youth: youth
+          types: types
         };
         zones.push(f ? f(zone) : zone);
       }

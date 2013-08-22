@@ -144,6 +144,7 @@
   - Les attaques ralentissent le trajet
 - Les news arrivent lorsqu'un survivant (au moins) revient
 - Le temps prend en compte le retour (ainsi que les attaques probables)
+- On peut dire à un groupe de rentrer en cas de gros pépin
 
 ## Gameplay
 
@@ -168,7 +169,11 @@
 
 - On a quelques blocs qu'on peut garder tels quels, réduire ou agrandir
 
+- On a pas forcément toutes les stats
+	- simule le niveau du personnage joué (sait-il évaluer les gens ? la situation ?)
 
+- Ne pas dessiner les bordures d'hexagones mais les ajouter comme texture au dessus
+	- permet d'avoir des bordures qui sont justent « plus blanches »
 
 # V2
 
@@ -177,3 +182,6 @@
 - arbre de batiments
 	- atelier
 	- hopital
+- Les terrains influent sur la vitesse de déplacement
+	- le pathfinding en tient compte
+	- mais on peut forcer le passage

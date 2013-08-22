@@ -1,4 +1,4 @@
-app.factory("Env", ["Util", function (Util) {
+window.app.factory("Env", ["Util", function (Util) {
   "use strict";
 
   function Env(args) {
@@ -6,21 +6,13 @@ app.factory("Env", ["Util", function (Util) {
     this.group = args.group;
   }
 
-  Env.prototype.place = function () {
-    return this.place;
-  };
-
-  Env.prototype.group = function () {
-    return this.group;
-  };
-
   Env.prototype.horde = function () {
     return this.place.horde;
   };
 
   Env.prototype.ratio = function () {
-    var r1 = Util.min0(this.group().attack() + this.place().attack() - this.horde().defense());
-    var r2 = Util.min0(this.horde().attack() - this.place().defense() - this.group().defense());
+    var r1 = Util.min0(this.group.attack() + this.place.attack() - this.horde().defense());
+    var r2 = Util.min0(this.horde().attack() - this.place.defense() - this.group.defense());
     return Util.minmax(r1 / r2);
   };
 

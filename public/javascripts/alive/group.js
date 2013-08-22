@@ -1,8 +1,16 @@
-app.factory("Group", ["Survivor", function (Survivor) {
+app.factory("Group", ["Survivor", "Memory", "Map", function (Survivor, Memory, Map) {
   "use strict";
 
   function Group(args) {
     this.survivors = args.survivors;
+    this.memory = Memory.create();
+  }
+
+  Group.prototype.visitPlace = function (ts, place) {
+    var self = this;
+    Map.forEachPlacesAround(place, function (p) {
+      self.memory.addItem(ts, p);
+    });
   }
 
   Group.prototype.killSurvivors = function (nb) {
@@ -17,7 +25,7 @@ app.factory("Group", ["Survivor", function (Survivor) {
     var defense = 0, i, survivor;
     for (i in this.survivors) {
       survivor = this.survivors[i];
-      defense += survivor.Defense();
+      defense += survivor.defense();
     }
     return defense;
   };
@@ -26,7 +34,7 @@ app.factory("Group", ["Survivor", function (Survivor) {
     var attack = 0, i, survivor;
     for (i in this.survivors) {
       survivor = this.survivors[i];
-      attack += survivor.Attack();
+      attack += survivor.attack();
     }
     return attack;
   };

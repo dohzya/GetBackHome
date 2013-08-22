@@ -1,6 +1,10 @@
-app.factory("Mission", [function () {
+app.factory("Mission", ["$rootScope", "$log", "Horde", "Env", function ($rootScope, $log, Horde, Env) {
+  "use strict";
 
   var missionId = 0;
+
+  $rootScope.missions = [];
+
 
   function Mission(args) {
     this.id = missionId++;
@@ -9,9 +13,17 @@ app.factory("Mission", [function () {
     this.group = args.group;
     this.place = args.place;
     this.path = args.path || [];
+    this.currentPlace = args.currentPlace;
     this.remainingPath = this.path;
+    this.remainingReturnPath = [];
+    var i;
+    for (i = 0; i < this.path.length; i++) {
+      this.remainingReturnPath.unshift(this.path[i]);
+    }
     this.elapsedPath = [];
-    this.time = this.order.time.rand();
+    this.runningTime = this.order.time.rand();
+    this.remainingRunningTime = this.runningTime;
+    this.time = this.runningTime + this.path.length * 2;
     this.remainingTime = this.time;
     this.elapsedTime = 0;
   }
@@ -20,37 +32,78 @@ app.factory("Mission", [function () {
     return this.order.time.standard + this.path.length;
   };
 
-  Mission.prototype.CurrentEnv = function () {
-    return createEnv({
+  Mission.prototype.currentEnv = function () {
+    return Env.create({
       group: this.group,
-      place: this.place,
-      horde: createHorde(10)  // CHANGEME
+      place: this.currentPlace,
+      horde: Horde.create(10)  // CHANGEME
     });
   };
 
-  Mission.prototype.EstimatedTimeToComplete = function () {
+  Mission.prototype.estimatedTimeToComplete = function () {
     return this.estimatedTime() - this.elapsedTime;
   };
 
-  Mission.prototype.turn = function () {
+  Mission.prototype.turnWalking = function (ts) {
     if (this.remainingPath.length === 0) {
       this.status = "running";
-      if (this.remainingTime === 0) {
-        this.status = "finished";
-        var remove = this.order.run.call(this, this.CurrentEnv());
-        if (remove) { removeMission(this); }
-      }
-      else {
-        this.remainingTime--;
-        this.elapsedTime++;
-        this.order.onRun.apply(this);
-      }
+      return this.turnRunning(ts);
     }
-    else {
-      Logger.warn("Mission is walking but this is not implemented ({0})", this);
-      this.order.onWalk.apply(this);
+    this.order.onWalk.apply(this);
+    this.currentPlace.highlighted = false;
+    this.elapsedPath.push(this.currentPlace);
+    this.currentPlace = this.remainingPath.shift();
+    this.currentPlace.highlighted = true;
+    this.remainingTime--;
+    this.elapsedTime++;
+    this.order.onWalk.apply(this);
+    return true;
+  };
+
+  Mission.prototype.turnRunning = function (ts) {
+    if (this.remainingRunningTime > 0) {
+      this.order.onRun.apply(this);
+      this.remainingTime--;
+      this.remainingRunningTime--;
+      this.elapsedTime++;
+    } else {
+      this.order.run.call(this, this.currentEnv());
+      this.status = "returning";
     }
-    Logger.trace("Mission#turn: {0}", this);
+    return true;
+  };
+
+  Mission.prototype.turnReturning = function (ts) {
+    if (this.remainingReturnPath.length === 0) {
+      this.status = "finished";
+      this.currentPlace.highlighted = false;
+      this.toRemove = this.order.finish.call(this, this.currentEnv());
+      if (this.toRemove) { remove(this); }
+      console.log("Mission finished", this);
+      return false;
+    }
+    this.order.onReturn.apply(this);
+    this.currentPlace.highlighted = false;
+    this.elapsedPath.push(this.currentPlace);
+    this.currentPlace = this.remainingReturnPath.shift();
+    this.currentPlace.highlighted = true;
+    this.remainingTime--;
+    this.elapsedTime++;
+    return true;
+  };
+
+  Mission.prototype.turn = function (ts) {
+    var visit;
+    if (this.status == "running") {
+      visit = this.turnRunning(ts);
+    } else if (this.status == "walking") {
+      visit = this.turnWalking(ts);
+    } else if (this.status == "returning") {
+      visit = this.turnReturning(ts);
+    }
+    if (visit) {
+      this.group.visitPlace(ts, this.currentPlace);
+    }
   };
 
   function create(args) {
@@ -59,14 +112,14 @@ app.factory("Mission", [function () {
     return mission;
   }
 
-  function eachMission(func) {
+  function each(func) {
     var i;
     for (i in $rootScope.missions) {
       func($rootScope.missions[i]);
     }
   }
 
-  function removeMission(missionToRemove) {
+  function remove(missionToRemove) {
     var newMissions = [], i, mission;
     for (i in $rootScope.missions) {
       mission = $rootScope.missions[i];
@@ -78,7 +131,9 @@ app.factory("Mission", [function () {
   }
 
   return {
-    create: create
+    create: create,
+    each: each,
+    remove: remove
   };
 
 }]);

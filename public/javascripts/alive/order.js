@@ -8,8 +8,10 @@ app.factory("Order", ["$rootScope", "Util", "Time", function ($rootScope, Util, 
     this.onWalk = args.onWalk || Util.noop;
     this.onTurn = args.onTurn || Util.noop;
     this.onRun = args.onRun || Util.noop;
+    this.onReturn = args.onReturn || Util.noop;
     this.isAvailable = args.isAvailable || function () { return true; };
     this.run = args.run;
+    this.finish = args.finish;
   }
 
   function create(args) {

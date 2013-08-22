@@ -1,5 +1,7 @@
-app.factory("GUIZone", ["$log", "GUISprites", function ($log, Sprites) {
+window.app.factory("GUIZone", ["$log", "$rootScope", "Util", "GUISprites", function ($log, $rootScope, Util, Sprites) {
   "use strict";
+
+  var Hexjs = window.Hexjs;
 
   function Zone(place) {
     var type1, type2;
@@ -38,34 +40,45 @@ app.factory("GUIZone", ["$log", "GUISprites", function ($log, Sprites) {
     return this.tile.y;
   };
 
-  Zone.prototype.alphaInfection = function () {
-    return 1 - (this.infection() / 200.0);
+  Zone.prototype.memory = function () {
+    return $rootScope.engine.mainGroup.memory.itemForPlace(this.place);
   };
-  Zone.prototype.alphaYouth = function () {
-    return 1 - (this.youth() / 100.0);
+
+  Zone.prototype.alphaInfection = function (memory) {
+    return 1 - (this.infection(memory) / 200.0);
+  };
+  Zone.prototype.alphaYouth = function (memory) {
+    return 1 - (this.youth(memory) / 100.0);
   };
 
   Zone.prototype.types = function () {
     return this.place.types;
   };
 
-  Zone.prototype.infection = function () {
-    return this.place.infection();
+  Zone.prototype.infection = function (memory) {
+    return memory.infection();
   };
 
-  Zone.prototype.youth = function () {
-    return this.place.youth;
+  Zone.prototype.youth = function (memory) {
+    return $rootScope.engine.turnNb - memory.ts;
   };
 
-  Zone.prototype.drawBackground = function (ctx, x, y) {
+  Zone.prototype.drawBackground = function (ctx, x, y, memory) {
     var points = Hexjs.buildPoints(this.tile.center.x - x, this.tile.center.y - y, Hexjs.size);
-    var color = this.selected ? "255, 250, 71" : this.color;
-    ctx.fillStyle = "rgba(" + color + ", " + this.alphaInfection() + ")";
-    ctx.strokeStyle = "rgba(" + color + ", " + this.alphaInfection() + ")";
+    var style;
+    var point, i;
+    if (memory) {
+      style = "rgba(" + this.color + ", " + this.alphaYouth(memory) + ")";
+    } else {
+      style = "rgb(238, 238, 207)";
+    }
+    if (this.isSelected()) { style = "rgb(255, 250, 71)"; }
+    if (this.isHighlighted()) { style = "rgb(0, 0, 255)"; }
+    ctx.fillStyle = style;
+    ctx.strokeStyle = style;
     ctx.beginPath();
-    var point = points[0];
+    point = points[0];
     ctx.moveTo(point[0], point[1]);
-    var i;
     for (i = 1; i < points.length; i++) {
       point = points[i];
       ctx.lineTo(point.x, point.y);
@@ -76,13 +89,15 @@ app.factory("GUIZone", ["$log", "GUISprites", function ($log, Sprites) {
     ctx.fill();
   };
 
-  Zone.prototype.drawImage = function (ctx, x, y) {
-    if (this.image) {
-      var cx = this.tile.center.x - x - Hexjs.width / 2;
-      var cy = this.tile.center.y - y - Hexjs.height / 2;
+  Zone.prototype.drawImage = function (ctx, x, y, memory) {
+    if (!memory) {
+      // do not display any image
+    } else if (this.image) {
+      var cx = this.cx() - this.width() / 10 - x;
+      var cy = this.cy() - this.height() / 10 - y;
       var oldGlobalAlpha = ctx.globalAlpha;
-      ctx.globalAlpha = this.alphaYouth();
-      this.image.draw(ctx, cx, cy, Hexjs.width, Hexjs.height);
+      ctx.globalAlpha = this.alphaInfection(memory);
+      this.image.draw(ctx, cx, cy, 11 / 10 * this.width(), 11 / 10 * this.height());
       ctx.globalAlpha = oldGlobalAlpha;
     } else {
       $log.error("No img for Zone (" + x + " x " + y + ")");
@@ -115,13 +130,29 @@ app.factory("GUIZone", ["$log", "GUISprites", function ($log, Sprites) {
   };
 
   Zone.prototype.draw = function (ctx, x, y) {
-    this.drawBackground(ctx, x, y);
-    this.drawImage(ctx, x, y);
-    this.drawBorder(ctx, x, y);
-    this.drawCoordinates(ctx, x, y);
+    var memory = this.memory();
+    this.drawBackground(ctx, x, y, memory);
+    this.drawImage(ctx, x, y, memory);
+    this.drawBorder(ctx, x, y, memory);
+    this.drawCoordinates(ctx, x, y, memory);
   };
 
-  Zone.prototype.onClick = function () {
+  Zone.prototype.onClick = Util.noop;
+
+  Zone.prototype.isSelected = function () {
+    return this.place.selected || this.selected;
+  };
+
+  Zone.prototype.isHighlighted = function () {
+    return this.place.highlighted || this.highlighted;
+  };
+
+  Zone.prototype.isSelected = function () {
+    return this.place.selected || this.selected;
+  };
+
+  Zone.prototype.isHighlighted = function () {
+    return this.place.highlighted || this.highlighted;
   };
 
   Zone.prototype.onSelected = function () {

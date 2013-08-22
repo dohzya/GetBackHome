@@ -1,4 +1,4 @@
-window.app.factory("Place", ["Map", function (Map) {
+window.app.factory("Place", ["Map", "MemoryItem", function (Map, MemoryItem) {
   "use strict";
 
   function Place(args) {
@@ -7,17 +7,37 @@ window.app.factory("Place", ["Map", function (Map) {
     this.height = args.height;
     this.horde = args.horde;
     this.pos = args.pos;
-    this.ts = args.ts;
     this.types = args.types;
-    this.youth = args.youth;
+    this.memory = {};
   }
+
+  Place.prototype.memoryItem = function (ts) {
+    return this.memory[ts];
+  };
+
+  Place.prototype.endTurn = function (ts) {
+    // TODO save new memory only if a group saved it
+    this.memory[ts] = MemoryItem.create(ts, this);
+  };
+
+  Place.prototype.x = function () {
+    return this.pos[0];
+  };
+
+  Place.prototype.y = function () {
+    return this.pos[1];
+  };
+
+  Place.prototype.z = function () {
+    return -(this.x() + this.y());
+  };
 
   Place.prototype.defense = function (value) {
     if (value) { this.fighting.defense = value; }
     return this.fighting.defense;
   };
 
-  Place.prototype.AddDefense = function (value) {
+  Place.prototype.addDefense = function (value) {
     return this.defense(this.defense() + value);
   };
 

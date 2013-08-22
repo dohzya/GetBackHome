@@ -1,4 +1,4 @@
-app.service("GBHEngine", ["$rootScope", "GBHDisplay", "GBHLogger", "GBHOrders", "GBHModels", "GBHActions", "GBHStats", function ($rootScope, Display, Logger, Orders, Models, Actions, Stats) {
+app.service("GBHEngine", ["$rootScope", "GBHDisplay", "$log", "GBHOrders", "GBHModels", "GBHActions", "GBHStats", "Map", function ($rootScope, Display, $log, Orders, Models, Actions, Stats, Map) {
   "use strict";
 
   var self = this;
@@ -30,48 +30,43 @@ app.service("GBHEngine", ["$rootScope", "GBHDisplay", "GBHLogger", "GBHOrders", 
   }
 
   // Global
-  var turnNb = 0;
+  $rootScope.engine.turnNb = 0;
+  $rootScope.engine.mainGroup = Models.createGroup(10);
   var selectedSurvivors = 0;
-  var selectedOrder = null;
 
   // Main
-  var mainGroup = Models.createGroup(10);
-  var mainPlace = Models.createPlace({
-    food: 100,
-    horde: Models.createHorde(100),
-    fighting: {
-      attack: 0,
-      defense: 0.7
-    }
-  });
-  var mainEnv = Models.createEnv({
-    group: mainGroup,
-    place: mainPlace
-  });
+  var mainEnv;
+  setTimeout(function () {
+    $rootScope.engine.mainPlace = Models.getPlace(10, 10);
+    mainEnv = Models.createEnv({
+      group: $rootScope.engine.mainGroup,
+      place: $rootScope.engine.mainPlace
+    });
+    turnForPlaces();
+  }, 2000);
 
   function selectedPlace() {
-    return $rootScope.gui.selectedZone ? $rootScope.gui.selectedZone.place : mainPlace;
+    return $rootScope.gui.selectedZone ? $rootScope.gui.selectedZone.place : $rootScope.engine.mainPlace;
   }
   function selectedEnv() {
     return Models.createEnv({
-      group: mainGroup,
+      group: $rootScope.engine.mainGroup,
       place: selectedPlace()
     });
   }
 
   function selectSurvivors(s) {
-    selectedSurvivors = Math.min(s, mainGroup.length());
+    selectedSurvivors = Math.min(s, $rootScope.engine.mainGroup.length());
     return selectedSurvivors;
   }
 
-  function selectOrder(id) {
-    var action = Actions.action(id);
-    selectedOrder = action.order;
-    return action;
+  function selectOrder(order) {
+    selectedOrder = order;
+    return order;
   }
 
   function sendSelected(nb) {
-    var group = splitGroup(mainGroup, nb);
+    var group = splitGroup($rootScope.engine.mainGroup, nb);
     selectedSurvivors = 0;
     return group;
   }
@@ -82,15 +77,27 @@ app.service("GBHEngine", ["$rootScope", "GBHDisplay", "GBHLogger", "GBHOrders", 
       removed.push(group.survivors.shift());
     }
     return Models.createGroup({
+      memory: group.memory.clone(),
       survivors: removed
     });
   }
 
-  function sendOrder() {
-    Models.createMission({
-      order: selectedOrder,
+  function pathToSelectedPlace() {
+    return Map.findPath($rootScope.engine.mainPlace, selectedPlace());
+  }
+
+  function sendOrder(order) {
+    var path = pathToSelectedPlace();
+    var i;
+    for (i = 0; i < path.length; i++) {
+      path[i].selected = false;
+    }
+    var mission = Models.createMission({
+      order: order,
       group: sendSelected(selectedSurvivors),
-      place: selectedPlace()
+      place: selectedPlace(),
+      currentPlace: $rootScope.engine.mainPlace,
+      path: path
     });
     changed();
   }
@@ -101,25 +108,40 @@ app.service("GBHEngine", ["$rootScope", "GBHDisplay", "GBHLogger", "GBHOrders", 
     var i, survivor;
     for (i in mission.group.survivors) {
       survivor = mission.group.survivors[i];
-      mainGroup.survivors.push(survivor);
+      $rootScope.engine.mainGroup.survivors.push(survivor);
     }
+    var memory, memories, done = false;
+    $rootScope.engine.mainGroup.memory.merge(mission.group.memory);
+    console.log("main memory: ", $rootScope.engine.mainGroup.memory);
     changed();
   }
 
   function turn() {
     Models.eachMission(function (mission) {
-      mission.turn();
+      if (mission) {  // TODO fix this creepy line
+        mission.turn($rootScope.engine.turnNb);
+      }
     });
-    turnNb++;
+    $rootScope.engine.turnNb++;
     turnForEnv(mainEnv);
+    turnForPlaces();
     changed();
+  }
+
+  function turnForPlaces() {
+    Map.forEach(turnForPlace);
+    $rootScope.engine.mainGroup.visitPlace($rootScope.engine.turnNb, $rootScope.engine.mainPlace);
+  }
+
+  function turnForPlace(place) {
+    place.endTurn($rootScope.engine.turnNb);
   }
 
   function turnForEnv(env) {
     consumeFood(env);
     addZombies(env);
     addSurvivors(env);
-    if (env.Horde().length() > 0 && random() > 0.7) { zombieAttack(env); }
+    if (env.horde().length() > 0 && random() > 0.7) { zombieAttack(env); }
   }
 
   function consumeFood(env) {
@@ -137,29 +159,29 @@ app.service("GBHEngine", ["$rootScope", "GBHDisplay", "GBHLogger", "GBHOrders", 
 
   function addZombies(env) {
     var newZombies = random(10, 100);
-    env.place.horde.AddZombies(newZombies);
+    env.place.horde.addZombies(newZombies);
     Display.addMessage("{0} zombies ont été aperçu.", newZombies);
   }
 
   function addSurvivors(env) {
     if (random() > 0.8) {
       var newSurvivors = Math.round(random(1, 6) / 2);
-      env.group.AddSurvivors += newSurvivors;
+      env.group.addSurvivors += newSurvivors;
       Display.addMessage("Vous avez été rejoint par {0} survivants", newSurvivors);
     }
   }
 
   function zombieAttack(env) {
-    var ratio = env.Ratio();
+    var ratio = env.ratio();
     var killZombies = 0;
     var killSurvivors = 0;
     var damage = 0;
-    killZombies = positiveFloor(env.Horde().length() * random(ratio * 50, ratio * 100)/100);
-    killSurvivors = positiveFloor(env.Group().length()  *  random((1 - ratio) * 50, (1-ratio) * 100)/100);
-    damage = positiveFloor(env.Place().Defense() * 100  *  random((1 - ratio) * 50, (1-ratio) * 100)/100);
-    env.Horde().removeZombies(killZombies);
-    env.Group().removeSurvivors(killSurvivors);
-    env.Place().AddDefense(-damage / 100);
+    killZombies = positiveFloor(env.horde().length() * random(ratio * 50, ratio * 100)/100);
+    killSurvivors = positiveFloor(env.group.length()  *  random((1 - ratio) * 50, (1-ratio) * 100)/100);
+    damage = positiveFloor(env.place.defense() * 100  *  random((1 - ratio) * 50, (1-ratio) * 100)/100);
+    env.horde().removeZombies(killZombies);
+    env.group.removeSurvivors(killSurvivors);
+    env.place.addDefense(-damage / 100);
     Display.addMessage("La zone a été attaquée ! ({0} zombies éliminés, {1} survivants tués, {2}% de dégats)", killZombies, killSurvivors, damage);
     changed();
   }
@@ -168,7 +190,12 @@ app.service("GBHEngine", ["$rootScope", "GBHDisplay", "GBHLogger", "GBHOrders", 
     Stats.updateStats();
   }
 
-  Models.createOrder({
+  $rootScope.orders = {};
+  function defineOrder(args) {
+    $rootScope.orders[args.id] = Models.createOrder(args);
+  }
+
+  defineOrder({
     id: "purify",
     name: "Purification",
     time: Models.createTime({
@@ -176,14 +203,21 @@ app.service("GBHEngine", ["$rootScope", "GBHDisplay", "GBHLogger", "GBHOrders", 
       standard: 3
     }),
     run: function (env) {
-      var ratio = env.Ratio();
+      var ratio = env.ratio();
       var killZombies = 0;
       var killSurvivors = 0;
-      killZombies = positiveFloor(env.Horde().length() * random(ratio * 50, ratio * 100) / 100);
-      killSurvivors = positiveFloor(env.Group().length() * random((1 - ratio) * 50, (1 - ratio) * 100) / 100);
-      env.Horde().KillZombies(killZombies);
-      env.Group().KillSurvivors(killSurvivors);
-      Display.addMessage("La zone a été purifée ({0} survivants impliqués dont {2} tués, {1} zombies éliminés)", env.Group().length(), killZombies, killSurvivors);
+      killZombies = positiveFloor(env.horde().length() * random(ratio * 50, ratio * 100) / 100);
+      killSurvivors = positiveFloor(env.group.length() * random((1 - ratio) * 50, (1 - ratio) * 100) / 100);
+      env.horde().killZombies(killZombies);
+      env.group.killSurvivors(killSurvivors);
+      Display.addMessage(
+        "La zone a été purifée ({0} survivants impliqués dont {2} tués, {1} zombies éliminés)",
+        env.group.length(),
+        killZombies,
+        killSurvivors
+      );
+    },
+    finish: function () {
       finishMission(this);
       return true;
     }
@@ -206,7 +240,7 @@ app.service("GBHEngine", ["$rootScope", "GBHDisplay", "GBHLogger", "GBHOrders", 
     order: "purify"
   });
 
-  Models.createOrder({
+  defineOrder({
     id: "fortify",
     name: "Fortification",
     time: Models.createTime({
@@ -214,15 +248,17 @@ app.service("GBHEngine", ["$rootScope", "GBHDisplay", "GBHLogger", "GBHOrders", 
       standard: 2
     }),
     run: function (env) {
-      var tooling = env.Group().Tooling() / 10;
-      var max = Math.min(tooling, 1 - env.Place().Defense()) * 100;
+      var tooling = env.group.tooling() / 10;
+      var max = Math.min(tooling, 1 - env.place.defense()) * 100;
       var fortifying = random(max / 2, max) / 100;
-      env.Place().AddDefense(fortifying);
+      env.place.addDefense(fortifying);
       Display.addMessage(
         "La zone a été fortifiée (de {0}%) par {1} survivants",
         Math.round(fortifying * 100),
-        env.Group().length()
+        env.group.length()
       );
+    },
+    finish: function () {
       finishMission(this);
       return true;
     }
@@ -263,7 +299,7 @@ app.service("GBHEngine", ["$rootScope", "GBHDisplay", "GBHLogger", "GBHOrders", 
     }),
     run: function (env) {
       var scavangedFood = random(2, 10);
-      env.Place().food += scavangedFood;
+      env.place.food += scavangedFood;
       Display.addMessage("Du materiel a été récupéré ({0} nourritures)", scavangedFood);
       finishMission(this);
       return true;
@@ -295,30 +331,30 @@ app.service("GBHEngine", ["$rootScope", "GBHDisplay", "GBHLogger", "GBHOrders", 
   Stats.createStat({
     id: "turn",
     label: "Tour",
-    update: function () { this.value = turnNb; }
+    update: function () { this.value = $rootScope.engine.turnNb; }
   });
   Stats.createStat({
     id: "ratio",
     label: "Sécurité",
     suffix: " %",
-    update: function () { this.value = to2digits(selectedEnv().Ratio() * 100); }
+    update: function () { this.value = to2digits(selectedEnv().ratio() * 100); }
   });
   Stats.createStat({
     id: "defense",
     label: "Étant du fort",
     suffix: " %",
-    update: function () { this.value = to2digits(selectedPlace().Defense() * 100); }
+    update: function () { this.value = to2digits(selectedPlace().defense() * 100); }
   });
   Stats.createStat({
     id: "zombies",
     label: "Zombies aux alentour",
-    update: function () { this.value = selectedEnv().Horde().length(); }
+    update: function () { this.value = selectedEnv().horde().length(); }
   });
   Stats.createStat({
     id: "survivors",
     label: "Survivants",
     update: function () {
-      var value = mainGroup.length();
+      var value = $rootScope.engine.mainGroup.length();
       Models.eachMission(function (mission) {
         value += mission.group.length();
       });
@@ -328,7 +364,7 @@ app.service("GBHEngine", ["$rootScope", "GBHDisplay", "GBHLogger", "GBHOrders", 
   Stats.createStat({
     id: "idle",
     label: "Survivants inactif",
-    update: function () { this.value = mainGroup.length(); }
+    update: function () { this.value = $rootScope.engine.mainGroup.length(); }
   });
   Stats.createStat({
     id: "food",

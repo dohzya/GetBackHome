@@ -1,4 +1,4 @@
-app.controller("GUICtrl", ["$scope", "GUIMap", "GUISprites", "GUIZone", function ($scope, Map, Sprites, Zone) {
+app.controller("GUICtrl", ["$scope", "GUIMap", "GUISprites", "GUIZone", "Map", function ($scope, Map, Sprites, Zone, EngineMap) {
   "use strict";
   var Q = window.Q;
 
@@ -162,6 +162,7 @@ app.controller("GUICtrl", ["$scope", "GUIMap", "GUISprites", "GUIZone", function
     }
   }
 
+  var selectedPlaces = [];
   function select(arr) {
     eachSelected(function (s) {
       s.onUnSelected();
@@ -171,6 +172,13 @@ app.controller("GUICtrl", ["$scope", "GUIMap", "GUISprites", "GUIZone", function
       s.onSelected();
     });
     $scope.$apply(function () {
+      _.each(selectedPlaces, function (place) {
+        place.selected = false;
+      });
+      selectedPlaces = EngineMap.findPath(EngineMap.getPlace(10, 10), arr.place);
+      _.each(selectedPlaces, function (place) {
+        place.selected = true;
+      });
       $scope.gui.selectedZone = arr;
     });
   }
@@ -178,6 +186,6 @@ app.controller("GUICtrl", ["$scope", "GUIMap", "GUISprites", "GUIZone", function
   init(Map.getCanvas(), Map.getOpts());
 
   Q.when(Map.isReady(), function () {
-    start();
+    setTimeout(start, 3000);
   });
 }]);
