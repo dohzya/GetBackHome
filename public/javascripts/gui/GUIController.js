@@ -184,6 +184,7 @@ app.controller("GUICtrl", ["$scope", "$rootScope", "Events", "GUIMap", "GUISprit
         place.selected = true;
       });
       $scope.gui.selectedZone = arr;
+      $scope.selection.zone = arr;
       $rootScope.$broadcast(Events.gui.zones.selected);
     });
   }

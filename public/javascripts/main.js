@@ -23,13 +23,16 @@ var app = angular
   .config(["$locationProvider", function ($locationProvider) {
     $locationProvider.html5Mode(true).hashPrefix("!");
   }])
-  .run(["$rootScope", "GBHModels", "Util", "GBHOrders", function ($rootScope, Models, Util, Orders) {
+  .run(["$rootScope", "$log", "GBHModels", "Util", "GBHOrders", function ($rootScope, $log, Models, Util, Orders) {
+    $rootScope.$log = $log;
+
     $rootScope.engine = {};
     $rootScope.game = {};
     $rootScope.gui = {};
     $rootScope.orders = Orders.all();
     $rootScope.currentPlayer = Models.createPlayer();
     $rootScope.newMission = {};
+    $rootScope.selection = {};
   }])
   .filter("ordersAvailable", function () {
     return function (orders, zone) {

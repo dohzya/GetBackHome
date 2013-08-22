@@ -6,7 +6,7 @@ app.factory("Order", ["Util", function (Util) {
     this.name = args.name;
     this.icon = args.icon;
     this.description = args.description;
-    this.inputs = args.inputs;
+    this.inputs = args.inputs || [];
     this.time = args.time;
     this.onWalk = args.onWalk || Util.noop;
     this.onTurn = args.onTurn || Util.noop;

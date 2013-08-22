@@ -2,15 +2,15 @@
 
 <div id="ghb-frame-actions" class="gbh-frame gbh-frame-actions">
   <div class="gbh-title">Actions</div>
+
   <div class="gbh-visible-contents">
+    <div ng-hide="selection.zone">Pick a place, fucking bastard!</div>
 
-    <div ng-hide="gui.selectedZone">Pick a place, fucking bastard!</div>
+    <p>{{$log.debug(selection)}}</p>
 
-    {{newMission | json}}
-
-    <div ng-show="gui.selectedZone">
+    <div ng-show="selection.zone">
       <ul>
-        <li class="order" ng-repeat="order in orders | ordersAvailable:gui.selectedZone" ng-class="{selected: isOrderSelected(order)}">
+        <li class="order" ng-repeat="order in orders | ordersAvailable:selection.zone" ng-class="{selected: isOrderSelected(order)}">
           <div class="media" ng-click="selectOrder(order)">
             <div class="pull-left media-object">
               <span ng-class="'icon-' + order.icon"></span>
@@ -24,35 +24,24 @@
       </ul>
     </div>
 
-    <div ng-show="newMission.order">
+    <div ng-show="selection.order">
       <hr/>
 
-      <form>
-        <div ng-repeat="input in newMission.order.inputs">
-          <gbh-input-order type="input.type" value="newMission.data[input.name]"></gbh-input-order>
+      <form ng-submit="createMission()">
+        <div ng-repeat="input in selection.order.value.inputs">
+          <gbh-input-order type="input.type" value="selection.order.data[input.name]"></gbh-input-order>
         </div>
 
-        <button type="button" class="btn btn-block btn-primary">Go go go!</button>
+        <div class="row">
+          <div class="col-sm-6">
+            <button type="button" class="btn btn-block btn-danger">Cancel</button>
+          </div>
+          <div class="col-sm-6">
+            <button type="input" class="btn btn-block btn-primary">Add order</button>
+          </div>
+        </div>
       </form>
-    </div>    
-
-    
-
-    
-
-    <div>Demander à <input type="number" id="selected" ng-model="game.selectedSurvivors" ng-change="selectSurvivors(game.selectedSurvivors)" min="0" required /> survivants de</div>
-    <select ng-model="game.selectedOrder" ng-change="selectOrder(game.selectedOrder)">
-      <option data-ng-repeat="button in buttons" value="{{button.id}}">{{button.name}}</option>
-    </select>
-    <!-- <button class="btn" ng-click="sendOrder('{{selectedOrder}}')">Envoyer l'ordre</button> -->
-    <div class="gbh-contents">
-      <!-- <div data-ng-repeat="stat in currentOrder.stats">
-        <span>{{stat.name}}</span> : <span>{{stat.value}}{{stat.suffix}}</span>
-      </div> -->
-      <div data-id="{{stat.id}}" class="gbh-content" data-ng-repeat="stat in currentOrder.stats">
-        <div class="gbh-content-label">{{stat.label}}</div>
-        <div class="gbh-content-value">{{stat.value}}{{stat.suffix}}</div>
-      </div>
     </div>
+
   </div>
 </div>

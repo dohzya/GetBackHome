@@ -2,11 +2,16 @@ app.service("GBHOrders", ["GBHDisplay", "$log", "GBHModels", function (Display, 
   "use strict";
 
   var inputTypes = {
+    home: {
+      id: "home",
+      "default": true,
+      template: '<input type="checkbox" ng-model="value"/>'
+    },
     survivors: {
       id: "survivors",
-      default: 1,
+      "default": 1,
       min: 1,
-      template: '<input type="text" class="form-control" ng-model="value"/>'
+      template: '<input type="number" class="form-control" ng-model="value"/>'
     }
   };
 

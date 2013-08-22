@@ -95,11 +95,12 @@ window.app.factory("GUIZone", ["$log", "$rootScope", "Util", "GUISprites", funct
   Zone.prototype.drawImage = function (ctx, x, y, memory) {
     if (!memory) {
       // do not display any image
+      Util.noop();
     } else if (this.image) {
       var cx = this.place.tile.center.x - x - Hexjs.width / 2;
       var cy = this.place.tile.center.y - y - Hexjs.height / 2;
       var oldGlobalAlpha = ctx.globalAlpha;
-      ctx.globalAlpha = this.alphaInfection(memory);
+      ctx.globalAlpha = this.alphaYouth(memory);
       this.image.draw(ctx, cx, cy, Hexjs.width, Hexjs.height);
       ctx.globalAlpha = oldGlobalAlpha;
     } else {
@@ -141,14 +142,6 @@ window.app.factory("GUIZone", ["$log", "$rootScope", "Util", "GUISprites", funct
   };
 
   Zone.prototype.onClick = Util.noop;
-
-  Zone.prototype.isSelected = function () {
-    return this.place.selected || this.selected;
-  };
-
-  Zone.prototype.isHighlighted = function () {
-    return this.place.highlighted || this.highlighted;
-  };
 
   Zone.prototype.isSelected = function () {
     return this.place.selected || this.selected;
