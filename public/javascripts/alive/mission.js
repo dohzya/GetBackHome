@@ -3,13 +3,10 @@ app.factory("Mission", ["$rootScope", "$log", "Horde", "Env", function ($rootSco
 
   var missionId = 0;
 
-  $rootScope.missions = [];
-
-
   function Mission(args) {
     this.id = missionId++;
     this.status = "walking";
-    this.order = args.order;
+    this.orders = args.orders || [];
     this.group = args.group;
     this.place = args.place;
     this.path = args.path || [];
@@ -21,7 +18,7 @@ app.factory("Mission", ["$rootScope", "$log", "Horde", "Env", function ($rootSco
       this.remainingReturnPath.unshift(this.path[i]);
     }
     this.elapsedPath = [];
-    this.runningTime = this.order.time.rand();
+    // this.runningTime = this.order.time.rand();
     this.remainingRunningTime = this.runningTime;
     this.time = this.runningTime + this.path.length * 2;
     this.remainingTime = this.time;
@@ -107,9 +104,7 @@ app.factory("Mission", ["$rootScope", "$log", "Horde", "Env", function ($rootSco
   };
 
   function create(args) {
-    var mission = new Mission(args);
-    $rootScope.missions.push(mission);
-    return mission;
+    return new Mission(args);
   }
 
   function each(func) {

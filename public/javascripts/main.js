@@ -31,7 +31,7 @@ var app = angular
     $rootScope.gui = {};
     $rootScope.orders = Orders.all();
     $rootScope.currentPlayer = Models.createPlayer();
-    $rootScope.newMission = {};
+    $rootScope.newMission = undefined;
     $rootScope.selection = {};
   }])
   .filter("ordersAvailable", function () {

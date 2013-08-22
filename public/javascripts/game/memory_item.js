@@ -36,7 +36,6 @@ window.app.factory("MemoryItem", [function () {
 
   function MemoryItem(ts, place) {
     this.ts = ts;
-    this.place = place;
     this.infos = getInfosForPlace(place);
   }
 

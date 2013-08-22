@@ -68,7 +68,6 @@ app.service("Map", [function () {
       n0 = path[i];
       if (n2) {
         cleaned.push(n2);
-        console.log("inNeighborhood(", n0.tile, ", ", n2.tile, ") = ", inNeighborhood(n0, n2));
         if (inNeighborhood(n0, n2)) {
           n1 = null;
         }

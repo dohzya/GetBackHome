@@ -29,6 +29,7 @@ app.controller("GBHOrders", ["$scope", "$rootScope", "Events", "GBHEngine", "GBH
   $scope.selectOrder = $scope.doAction(function (order) {
     order = {
       value: order,
+      place: $scope.selection.zone.place,
       data: {}
     };
 
@@ -44,17 +45,18 @@ app.controller("GBHOrders", ["$scope", "$rootScope", "Events", "GBHEngine", "GBH
   };
 
   $scope.addOrder = $scope.doAction(function () {
-    if (!$scope.selection.mission) {
-      $scope.selection.mission = Models.createMission();
+    if (!$rootScope.newMission) {
+      $rootScope.newMission = Models.createMission({});
     }
 
-    $scope.selection.mission.orders.push($scope.selection.order);
+    $rootScope.newMission.orders.push($scope.selection.order);
+    window.o = $scope.selection.order;
+    $scope.selection.order = undefined;
   });
 
   $scope.createMission = $scope.doAction(function () {
-    console.log("createMission", $rootScope.newMission);
     $rootScope.currentPlayer.missions.push($rootScope.newMission);
-    $rootScope.newMission = {};
+    $rootScope.newMission = undefined;
   });
 
 }]);

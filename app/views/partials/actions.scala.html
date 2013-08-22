@@ -6,8 +6,6 @@
   <div class="gbh-visible-contents">
     <div ng-hide="selection.zone">Pick a place, fucking bastard!</div>
 
-    <p>{{$log.debug(selection)}}</p>
-
     <div ng-show="selection.zone">
       <ul>
         <li class="order" ng-repeat="order in orders | ordersAvailable:selection.zone" ng-class="{selected: isOrderSelected(order)}">
@@ -26,22 +24,20 @@
 
     <div ng-show="selection.order">
       <hr/>
-
-      <form ng-submit="createMission()">
         <div ng-repeat="input in selection.order.value.inputs">
           <gbh-input-order type="input.type" value="selection.order.data[input.name]"></gbh-input-order>
         </div>
 
-        <div class="row">
-          <div class="col-sm-6">
-            <button type="button" class="btn btn-block btn-danger">Cancel</button>
-          </div>
-          <div class="col-sm-6">
-            <button type="input" class="btn btn-block btn-primary">Add order</button>
-          </div>
-        </div>
-      </form>
+        <button type="button" class="btn btn-block btn-primary" ng-click="addOrder()">Add order</button>
     </div>
+
+    <hr/>
+
+    <div ng-repeat="order in newMission.orders">
+      {{ order | json }}
+    </div>
+
+    <button type="button" class="btn btn-block btn-primary" ng-click="createMission()">Go go go!</button>
 
   </div>
 </div>
