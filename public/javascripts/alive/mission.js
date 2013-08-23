@@ -1,106 +1,142 @@
-app.factory("Mission", ["$rootScope", "$log", "Horde", "Env", function ($rootScope, $log, Horde, Env) {
+app.factory("Mission", ["$rootScope", "$log", "Env", function ($rootScope, $log, Env) {
   "use strict";
 
   var missionId = 0;
 
+  function OrderListItem(args) {
+    this.path = args.path;
+    this.order = args.order;
+  }
+  OrderListItem.prototype.targetPlace = function () {
+    return _.last(this.path);
+  };
+
+  var OrderListId = 0;
+  function OrderList() {
+    this.id = OrderListId++;
+    this.orders = [];
+    this.currentOrderIndex = 0;
+    this.currentPathIndex = 0;
+  }
+  OrderList.prototype.add = function (args) {
+    this.orders.push(new OrderListItem(args));
+  };
+  OrderList.prototype.currentOrderItem = function () {
+    return this.orders[this.currentOrderIndex];
+  };
+  OrderList.prototype.currentOrder = function () {
+    var orderItem = this.currentOrderItem();
+    if (orderItem) {
+      if (this.currentPathIndex == orderItem.path.length - 1) {
+        return orderItem.order;
+      }
+      return null;  // we might return a Walking order instead?
+    }
+    return null;
+  };
+  OrderList.prototype.currentPlace = function () {
+    var orderItem = this.currentOrderItem();
+    if (orderItem) {
+      return orderItem.path[this.currentPathIndex];
+    }
+    return null;
+  };
+  OrderList.prototype.current = function () {
+    console.log("current:", this);
+    var place = this.currentPlace();
+    if (place) {
+      return {
+        place: place,
+        order: this.currentOrder()
+      };
+    }
+    return null;
+  };
+  OrderList.prototype.next = function () {
+    this.currentPathIndex++;
+    if (!this.currentPlace()) {
+      this.currentOrderIndex++;
+      this.currentPath = 0;
+    }
+    return this.current();
+  };
+  OrderList.prototype.forEach = function (f) {
+    _.forEach(this.orders, f);
+  };
+  OrderList.prototype.isEmpty = function () {
+    return this.orders.length == 0;
+  }
+
   function Mission(args) {
     this.id = missionId++;
     this.status = "walking";
-    this.orders = args.orders || [];
+    this.orders = new OrderList();
     this.group = args.group;
-    this.place = args.place;
-    this.path = args.path || [];
-    this.currentPlace = args.currentPlace;
-    this.remainingPath = this.path;
-    this.remainingReturnPath = [];
-    var i;
-    for (i = 0; i < this.path.length; i++) {
-      this.remainingReturnPath.unshift(this.path[i]);
-    }
-    this.elapsedPath = [];
-    // this.runningTime = this.order.time.rand();
-    this.remainingRunningTime = this.runningTime;
-    this.time = this.runningTime + this.path.length * 2;
-    this.remainingTime = this.time;
-    this.elapsedTime = 0;
   }
 
+  Mission.prototype.addOrder = function (path, order) {
+    this.orders.add({
+      path: path,
+      order: order
+    });
+  };
+
+  Mission.prototype.allOrders = function () {
+    return this.orders.orders;
+  };
+  Mission.prototype.hasOrders = function () {
+    return !this.orders.isEmpty();
+  };
+
+  Mission.prototype.currentPlace = function () {
+    return this.orders.currentPlace();
+  };
+
   Mission.prototype.estimatedTime = function () {
-    return this.order.time.standard + this.path.length;
+    return 1;
   };
 
   Mission.prototype.currentEnv = function () {
+    var place = this.currentPlace();
     return Env.create({
       group: this.group,
-      place: this.currentPlace,
-      horde: Horde.create(10)  // CHANGEME
+      place: place,
+      horde: place.horde
     });
   };
 
   Mission.prototype.estimatedTimeToComplete = function () {
-    return this.estimatedTime() - this.elapsedTime;
-  };
-
-  Mission.prototype.turnWalking = function (ts) {
-    if (this.remainingPath.length === 0) {
-      this.status = "running";
-      return this.turnRunning(ts);
-    }
-    this.order.onWalk.apply(this);
-    this.currentPlace.highlighted = false;
-    this.elapsedPath.push(this.currentPlace);
-    this.currentPlace = this.remainingPath.shift();
-    this.currentPlace.highlighted = true;
-    this.remainingTime--;
-    this.elapsedTime++;
-    this.order.onWalk.apply(this);
-    return true;
-  };
-
-  Mission.prototype.turnRunning = function (ts) {
-    if (this.remainingRunningTime > 0) {
-      this.order.onRun.apply(this);
-      this.remainingTime--;
-      this.remainingRunningTime--;
-      this.elapsedTime++;
-    } else {
-      this.order.run.call(this, this.currentEnv());
-      this.status = "returning";
-    }
-    return true;
-  };
-
-  Mission.prototype.turnReturning = function (ts) {
-    if (this.remainingReturnPath.length === 0) {
-      this.status = "finished";
-      this.currentPlace.highlighted = false;
-      this.toRemove = this.order.finish.call(this, this.currentEnv());
-      if (this.toRemove) { remove(this); }
-      console.log("Mission finished", this);
-      return false;
-    }
-    this.order.onReturn.apply(this);
-    this.currentPlace.highlighted = false;
-    this.elapsedPath.push(this.currentPlace);
-    this.currentPlace = this.remainingReturnPath.shift();
-    this.currentPlace.highlighted = true;
-    this.remainingTime--;
-    this.elapsedTime++;
-    return true;
+    return 2;
   };
 
   Mission.prototype.turn = function (ts) {
-    var visit;
-    if (this.status == "running") {
-      visit = this.turnRunning(ts);
-    } else if (this.status == "walking") {
-      visit = this.turnWalking(ts);
-    } else if (this.status == "returning") {
-      visit = this.turnReturning(ts);
+    if (this.currentPlace()) {
+      this.currentPlace().highlighted = false;
     }
-    if (visit) {
-      this.group.visitPlace(ts, this.currentPlace);
+    console.log("TURN for", this);
+    var orderItem;
+    this.currentPlace.highlighted = false;
+    orderItem = this.orders.next();
+    console.log("orderItem:", orderItem);
+    if (orderItem) {
+      this.currentPlace.highlighted = true;
+      if (orderItem.order) {
+        this.status = "running";
+        orderItem.order.run(this.currentEnv());
+      } else {
+        this.status = "walking";
+      }
+    } else {
+      this.status = "finished";
+      remove(this);
+      console.log("Mission finished", this);
+      return false;
     }
+    if (this.currentPlace()) {
+      this.currentPlace().highlighted = true;
+      this.group.visitPlace(ts, this.currentPlace());
+    }
+    console.log("Status:", this.status);
   };
 
   function create(args) {
@@ -117,12 +153,12 @@ app.factory("Mission", ["$rootScope", "$log", "Horde", "Env", function ($rootSco
   function remove(missionToRemove) {
     var newMissions = [], i, mission;
     for (i in $rootScope.missions) {
-      mission = $rootScope.missions[i];
+      mission = $rootScope.currentPlayer.missions[i];
       if (mission.id !== missionToRemove.id) {
         newMissions.push(mission);
       }
     }
-    $rootScope.missions = newMissions;
+    $rootScope.currentPlayer.missions = newMissions;
   }
 
   return {

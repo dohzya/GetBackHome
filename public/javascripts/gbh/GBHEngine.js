@@ -117,7 +117,7 @@ app.service("GBHEngine", ["$rootScope", "GBHDisplay", "$log", "GBHOrders", "GBHM
   }
 
   function turn() {
-    Models.eachMission(function (mission) {
+    _.forEach($rootScope.currentPlayer.missions, function (mission) {
       if (mission) {  // TODO fix this creepy line
         mission.turn($rootScope.engine.turnNb);
       }

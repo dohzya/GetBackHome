@@ -36,12 +36,12 @@
       <hr/>
 
       <ul class="list-unstyled">
-        <li ng-repeat="order in newMission.orders">{{ order.value.name }}</li>
+        <li ng-repeat="orderItem in newMission.allOrders()">{{ orderItem.order.value.name }}</li>
       </ul>
 
       <hr/>
 
-      <button type="button" class="btn btn-block btn-primary" ng-click="createMission()" ng-disabled="!newMission.orders.length">Go go go!</button>
+      <button type="button" class="btn btn-block btn-primary" ng-click="sendMission()" ng-disabled="!newMission.hasOrders()">Go go go!</button>
 
     </div>
   </div>

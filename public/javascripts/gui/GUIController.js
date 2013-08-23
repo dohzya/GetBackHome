@@ -192,7 +192,7 @@ app.controller("GUICtrl", ["$scope", "$rootScope", "Events", "GUIMap", "GUISprit
         }
       };
 
-      var from = $rootScope.newMission && $rootScope.newMission.orders.length ? _.last($rootScope.newMission.orders).place : EngineMap.getCenterPlace();
+      var from = $rootScope.newMission && $rootScope.newMission.hasOrders() ? _.last($rootScope.newMission.allOrders()).targetPlace() : EngineMap.getCenterPlace();
       
       var path = FindMe.astar(from, zone.place, opts);
 

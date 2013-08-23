@@ -1,6 +1,7 @@
-app.controller("GBHOrders", ["$scope", "$rootScope", "Events", "GBHEngine", "GBHModels",
-  function ($scope, $rootScope, Events, Engine, Models) {
+app.controller("GBHOrders", ["$scope", "$rootScope", "Events", "GBHEngine", "GBHModels", function ($scope, $rootScope, Events, Engine, Models) {
   "use strict";
+
+  var $ = window.jQuery;
 
   $scope.$on(Events.gui.zones.selected, function () {
     //$scope.selection.order = undefined;
@@ -31,21 +32,21 @@ app.controller("GBHOrders", ["$scope", "$rootScope", "Events", "GBHEngine", "GBH
     }
   }
 
-  function updateMissionPlaces (mission) {
-    _.forEach(mission.orders, function (order) {
-      order.place.hasOrder = true;
-      _.forEach(order.path, function (place) {
+  function updateMissionPlaces(mission) {
+    mission.orders.forEach(function (orderItem) {
+      orderItem.targetPlace().hasOrder = true;
+      _.forEach(orderItem.path, function (place) {
         place.inPath = true;
       });
     });
   }
 
-  function clearMissionPlaces (mission) {
-    _.forEach(mission.orders, function (order) {
-      order.place.hasOrder = false;
-      _.forEach(order.path, function (place) {
-        place.selected = false;
+  function clearMissionPlaces(mission) {
+    mission.orders.forEach(function (orderItem) {
+      orderItem.targetPlace().hasOrder = false;
+      _.forEach(orderItem.path, function (place) {
         place.inPath = false;
+        place.selected = false;
       });
     });
   }
@@ -80,17 +81,18 @@ app.controller("GBHOrders", ["$scope", "$rootScope", "Events", "GBHEngine", "GBH
 
   $scope.addOrder = $scope.doAction(function () {
     if (!$rootScope.newMission) {
-      $rootScope.newMission = Models.createMission({});
+      $rootScope.newMission = Models.createMission({
+        group: $rootScope.engine.mainGroup
+      });
     }
-
-    $rootScope.newMission.orders.push($scope.selection.order);
+    $rootScope.newMission.orders.add($scope.selection.order);
     updateMissionPlaces($rootScope.newMission);
     $scope.selection.order = undefined;
   });
 
-  $scope.createMission = $scope.doAction(function () {
+  $scope.sendMission = $scope.doAction(function () {
 
-    clearMissionPlaces($rootScope.newMission)
+    clearMissionPlaces($rootScope.newMission);
     $scope.selection.clearPath();
 
     $rootScope.currentPlayer.missions.push($rootScope.newMission);
