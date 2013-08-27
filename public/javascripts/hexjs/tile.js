@@ -53,7 +53,7 @@
     return Math.max(Math.abs(tile1.x - tile2.x), Math.abs(tile1.y - tile2.y), Math.abs(tile1.z - tile2.z));
   }
 
-  function neighbors (x, y, z) {
+  function cubeNeighbors (x, y, z) {
     z = checkZ(x, y, z);
 
     return [
@@ -145,9 +145,11 @@
     });
   }
 
-  function findNeighbors (tiles, x, y, accessor) {
-    return _.map(neighbors(x, y), function (neighbor) {
+  function neighbors (tiles, x, y, accessor) {
+    return _.filter(_.map(cubeNeighbors(x, y), function (neighbor) {
       return Hexjs.find(tiles, neighbor.x, neighbor.y, accessor);
+    }), function (tile) {
+      return !!tile;
     });
   }
 
@@ -157,8 +159,10 @@
   }
 
   function interpolateNeighbors (tiles, px, py, accessor) {
-    return _.map(neighbors(px, py), function (neighbor) {
+    return _.filter(_.map(cubeNeighbors(px, py), function (neighbor) {
       return Hexjs.interpolate(tiles, neighbor.x, neighbor.y, accessor);
+    }), function (tile) {
+      return !!tile;
     });
   }
 
@@ -201,12 +205,12 @@
     return this.center;
   };
 
-  Tile.prototype.neighbors = function () {
-    return Hexjs.neighbors(this.x, this.y, this.z);
+  Tile.prototype.cubeNeighbors = function () {
+    return Hexjs.cubeNeighbors(this.x, this.y, this.z);
   };
 
-  Tile.prototype.findNeighbors = function (tiles, accessor) {
-    return Hexjs.findNeighbors(tiles, this.x, this.y, this.z, accessor);
+  Tile.prototype.neighbors = function (tiles, accessor) {
+    return Hexjs.neighbors(tiles, this.x, this.y, this.z, accessor);
   };
 
   Tile.prototype.axialNeighbors = function () {
@@ -236,14 +240,14 @@
     cubeToAxial: cubeToAxial,
     buildPoints: buildPoints,
     distance: distance,
-    neighbors: neighbors,
+    cubeNeighbors: cubeNeighbors,
     axialNeighbors: axialNeighbors,
     roundCube: roundCube,
     tileToPixel: tileToPixel,
     pixelToAxial: pixelToAxial,
     pixelToCube: pixelToCube,
     find: find,
-    findNeighbors: findNeighbors,
+    neighbors: neighbors,
     interpolate: interpolate,
     interpolateNeighbors: interpolateNeighbors,
     tile: function (x, y, z) {

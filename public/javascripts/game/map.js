@@ -23,8 +23,8 @@ app.service("Map", [function () {
     return getPlace(7, 4);
   }
 
-  function findNeighbors(place) {
-    return Hexjs.findNeighbors(map.places, place.x(), place.y(), tileAccessor);
+  function neighbors(place) {
+    return Hexjs.neighbors(map.places, place.x(), place.y(), tileAccessor);
   }
 
   function forEach(func) {
@@ -44,12 +44,12 @@ app.service("Map", [function () {
     return tile1.x == tile2.x && tile1.y == tile2.y;
   }
 
-  function neighbors(place) {
-    return Hexjs.neighbors(place.x(), place.y(), place.z());
+  function cubeNeighbors(place) {
+    return Hexjs.cubeNeighbors(place.x(), place.y(), place.z());
   }
 
   function inNeighborhood(place, place2) {
-    var _neighbors = neighbors(place), i;
+    var _neighbors = cubeNeighbors(place), i;
     for (i = 0; i < _neighbors.length; i++) {
       if (tileEqual(_neighbors[i], place2.tile)) {
         return true;
@@ -118,7 +118,7 @@ app.service("Map", [function () {
     getPlace: getPlace,
     getCenterPlace: getCenterPlace,
     forEach: forEach,
-    findNeighbors: findNeighbors,
+    neighbors: neighbors,
     findPath: findPath
   };
 

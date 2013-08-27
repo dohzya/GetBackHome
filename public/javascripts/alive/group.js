@@ -9,7 +9,7 @@ app.factory("Group", ["Survivor", "Memory", "Map", function (Survivor, Memory, M
   Group.prototype.visitPlace = function (ts, place) {
     var self = this;
     self.memory.addItem(ts, place);
-    Map.findNeighbors(place).map(function (p) {
+    Map.neighbors(place).map(function (p) {
       self.memory.addItem(ts, p);
     });
   };

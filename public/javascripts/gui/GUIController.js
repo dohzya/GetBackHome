@@ -167,24 +167,45 @@ app.controller("GUICtrl", ["$scope", "$rootScope", "Events", "GUIMap", "GUISprit
   }
 
   var selectedPlaces = [];
-  function select(arr) {
-    eachSelected(function (s) {
-      s.onUnSelected();
-    });
-    drawer.selected = arr.length ? arr : [arr];
-    eachSelected(function (s) {
-      s.onSelected();
-    });
+  function select(zone) {
+    // eachSelected(function (s) {
+    //   s.onUnSelected();
+    // });
+
+    // drawer.selected = zone;
+
+    // eachSelected(function (s) {
+    //   s.onSelected();
+    // });
+
     $scope.$apply(function () {
       _.each(selectedPlaces, function (place) {
         place.selected = false;
       });
-      selectedPlaces = EngineMap.findPath(EngineMap.getCenterPlace(), arr.place);
+
+      //selectedPlaces = EngineMap.findPath(EngineMap.getCenterPlace(), zone.place);
+
+      var opts = {
+        clean: true,
+        heuristic: function (place1, place2) {
+          return place1.distanceTo(place2);
+        }
+      };
+      var path = FindMe.astar(EngineMap.getCenterPlace(), zone.place, opts);
+      console.log("path");
+      console.log(path);
+
+      _.each(path, function (place) {
+        place.selected = true;
+      });
+
       _.each(selectedPlaces, function (place) {
         place.selected = true;
       });
-      $scope.gui.selectedZone = arr;
-      $scope.selection.zone = arr;
+      $scope.gui.selectedZone = zone;
+      $scope.selection.zone = zone;
+      console.log($scope.selection);
+
       $rootScope.$broadcast(Events.gui.zones.selected);
     });
   }

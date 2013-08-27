@@ -38,8 +38,6 @@
     }
   }
 
-  
-
   // Requirements:
   // "neighbors" method returning all nodes near one node
   // "costTo" method returning the cost to move through the node
@@ -52,26 +50,34 @@
       cleanList = [start],
       node, cost;
 
-    while (!openList.isEmpty()) {
+    start[names.findme] = {
+      cost: 0
+    };
+
+    while (openList.length > 0) {
       node = openList.pop();
       node[names.findme].closed = true;
 
       // Congrats! You reached your destination point,
       // Let's stop here and return the path to get there
+      if (node.x() == end.x() && node.y() == end.y()) {
+      }
       if (node === end) {
+        var path = FindMe.util.reversePath(node, names.findme);
         if (opts.clean) {
           FindMe.util.clean(cleanList, names.findme);
         }
-        return FindMe.util.reversePath(node, names.findme);
+        return path;
       }
 
       _.forEach(node[names.neighbors](opts), function (neighbor) {
+        neighbor[names.findme] = neighbor[names.findme] || {};
         // Get the cost to move to a neighbor node
         cost = node[names.costTo](neighbor, opts);
 
         // If the node is already closed or unreachable (== its cost is not a number),
         // we don't need to do anything.
-        if (!neighbor.closed && _.isNumber(cost)) {
+        if (!neighbor[names.findme].closed && _.isNumber(cost)) {
           // If not, we can get the total cost by adding the current node cost
           // to the cost to move to the next node
           cost = node[names.findme].cost + cost;
@@ -87,12 +93,15 @@
             if (!neighbor[names.findme].opened) {
               neighbor[names.findme].opened = true;
               // TODO : add n to openList
+              openList.push(neighbor);
+              openList = _.sortBy(openList, function (item) { return 1/item[names.findme].rank; });
 
               if (opts.clean) {
                 cleanList.push(neighbor);
               }
             } else {
               // TODO : update n position in openList based on rank
+              openList = _.sortBy(openList, function (item) { return 1/item[names.findme].rank; });
             }
           }
 

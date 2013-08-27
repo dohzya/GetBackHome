@@ -60,6 +60,18 @@ window.app.factory("Place", ["Map", "MemoryItem", function (Map, MemoryItem) {
     return parseInt(Math.min(999.99, l) / 10, 10);
   };
 
+  Place.prototype.distanceTo = function (place) {
+    return this.tile.distanceTo(place.tile);
+  };
+
+  Place.prototype.costTo = function (place) {
+    return 10;
+  };
+
+  Place.prototype.neighbors = function () {
+    return Map.neighbors(this);
+  };
+
   function create(args) {
     var place = new Place(args);
     Map.addPlace(place);
