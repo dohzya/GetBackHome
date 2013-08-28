@@ -75,6 +75,7 @@ window.app.factory("GUIZone", ["$log", "$rootScope", "Util", "GUISprites", funct
     } else {
       style = "rgb(238, 238, 207)";
     }
+    if (this.isInPath()) { style = "rgba(255, 250, 71, 0.6)"; }
     if (this.isSelected()) { style = "rgb(255, 250, 71)"; }
     if (this.isHighlighted()) { style = "rgb(0, 0, 255)"; }
     ctx.fillStyle = style;
@@ -90,6 +91,14 @@ window.app.factory("GUIZone", ["$log", "$rootScope", "Util", "GUISprites", funct
     ctx.closePath();
     ctx.stroke();
     ctx.fill();
+    
+    if (this.isWithOrder()) {
+      ctx.beginPath();
+      ctx.arc(this.place.tile.center.x - x, this.place.tile.center.y - y, 8, 0, 2 * Math.PI, false);
+      ctx.closePath();
+      ctx.fillStyle = "#FF0000";
+      ctx.fill();
+    }
   };
 
   Zone.prototype.drawImage = function (ctx, x, y, memory) {
@@ -149,6 +158,14 @@ window.app.factory("GUIZone", ["$log", "$rootScope", "Util", "GUISprites", funct
 
   Zone.prototype.isHighlighted = function () {
     return this.place.highlighted || this.highlighted;
+  };
+
+  Zone.prototype.isInPath = function () {
+    return this.place.inPath || this.inPath;
+  };
+
+  Zone.prototype.isWithOrder = function () {
+    return this.place.hasOrder || this.hasOrder;
   };
 
   Zone.prototype.onSelected = function () {

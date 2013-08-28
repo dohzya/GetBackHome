@@ -1,7 +1,7 @@
 @()
 
 <div id="ghb-frame-actions" class="gbh-frame gbh-frame-actions">
-  <div class="gbh-title">Actions</div>
+  <div class="gbh-title">New mission</div>
 
   <div class="gbh-visible-contents">
     <div ng-hide="selection.zone">Pick a place, fucking bastard!</div>
@@ -20,24 +20,29 @@
           </div>
         </li>
       </ul>
-    </div>
+    
+      <div ng-show="selection.order">
+        <hr/>
+        
+        <h3>{{ selection.order.value.name }}</h3>
 
-    <div ng-show="selection.order">
-      <hr/>
         <div ng-repeat="input in selection.order.value.inputs">
           <gbh-input-order type="input.type" value="selection.order.data[input.name]"></gbh-input-order>
         </div>
 
-        <button type="button" class="btn btn-block btn-primary" ng-click="addOrder()">Add order</button>
+          <button type="button" class="btn btn-block btn-primary" ng-click="addOrder()">Add order</button>
+      </div>
+
+      <hr/>
+
+      <ul class="list-unstyled">
+        <li ng-repeat="order in newMission.orders">{{ order.value.name }}</li>
+      </ul>
+
+      <hr/>
+
+      <button type="button" class="btn btn-block btn-primary" ng-click="createMission()" ng-disabled="!newMission.orders.length">Go go go!</button>
+
     </div>
-
-    <hr/>
-
-    <div ng-repeat="order in newMission.orders">
-      {{ order | json }}
-    </div>
-
-    <button type="button" class="btn btn-block btn-primary" ng-click="createMission()">Go go go!</button>
-
   </div>
 </div>

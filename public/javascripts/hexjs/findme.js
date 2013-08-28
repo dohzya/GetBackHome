@@ -55,7 +55,7 @@
     };
 
     while (openList.length > 0) {
-      node = openList.pop();
+      node = openList.shift();
       node[names.findme].closed = true;
 
       // Congrats! You reached your destination point,
@@ -94,14 +94,14 @@
               neighbor[names.findme].opened = true;
               // TODO : add n to openList
               openList.push(neighbor);
-              openList = _.sortBy(openList, function (item) { return 1/item[names.findme].rank; });
+              openList = _.sortBy(openList, function (item) { return item[names.findme].rank; });
 
               if (opts.clean) {
                 cleanList.push(neighbor);
               }
             } else {
               // TODO : update n position in openList based on rank
-              openList = _.sortBy(openList, function (item) { return 1/item[names.findme].rank; });
+              openList = _.sortBy(openList, function (item) { return item[names.findme].rank; });
             }
           }
 

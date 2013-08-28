@@ -191,20 +191,18 @@ app.controller("GUICtrl", ["$scope", "$rootScope", "Events", "GUIMap", "GUISprit
           return place1.distanceTo(place2);
         }
       };
-      var path = FindMe.astar(EngineMap.getCenterPlace(), zone.place, opts);
-      console.log("path");
-      console.log(path);
 
-      _.each(path, function (place) {
-        place.selected = true;
-      });
+      var from = $rootScope.newMission && $rootScope.newMission.orders.length ? _.last($rootScope.newMission.orders).place : EngineMap.getCenterPlace();
+      
+      var path = FindMe.astar(from, zone.place, opts);
+
+      $scope.selection.selectPath(path);
 
       _.each(selectedPlaces, function (place) {
         place.selected = true;
       });
       $scope.gui.selectedZone = zone;
       $scope.selection.zone = zone;
-      console.log($scope.selection);
 
       $rootScope.$broadcast(Events.gui.zones.selected);
     });

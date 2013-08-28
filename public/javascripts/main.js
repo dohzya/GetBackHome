@@ -32,7 +32,21 @@ var app = angular
     $rootScope.orders = Orders.all();
     $rootScope.currentPlayer = Models.createPlayer();
     $rootScope.newMission = undefined;
-    $rootScope.selection = {};
+
+    $rootScope.selection = {
+      selectPath: function (newPath) {
+        $rootScope.selection.clearPath();
+        $rootScope.selection.path = newPath;
+        _.forEach($rootScope.selection.path, function (place) {
+          place.selected = true;
+        });
+      },
+      clearPath: function () {
+        _.forEach($rootScope.selection.path, function (place) {
+          place.selected = false;
+        });
+      }
+    };
   }])
   .filter("ordersAvailable", function () {
     return function (orders, zone) {
