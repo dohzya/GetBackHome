@@ -1,4 +1,4 @@
-window.app.factory("MemoryItem", [function () {
+window.app.factory("MemoryItems", [function () {
   "use strict";
 
   function getInfosForFighting(fighting) {

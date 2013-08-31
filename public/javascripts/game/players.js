@@ -1,4 +1,4 @@
-app.factory("Player", [function () {
+app.factory("Players", [function () {
   "use strict";
 
   function Player() {

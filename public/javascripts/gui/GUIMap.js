@@ -1,4 +1,4 @@
-app.factory("GUIMap", ["Models", "Sprite", "Zone", "UTGenerator", function (Models, Sprites, Zone, Generator) {
+app.factory("GUIMap", ["Models", "Sprites", "Zones", "UTGenerator", function (Models, Sprites, Zones, Generator) {
   "use strict";
 
   var canvas = document.getElementById("map");
@@ -24,7 +24,7 @@ app.factory("GUIMap", ["Models", "Sprite", "Zone", "UTGenerator", function (Mode
   Sprites.isLoaded().then(function () {
     zones = Generator.generate("001", 0, 20, 0, 20, function (json) {
       var place = Models.createPlace(json);
-      return Zone.create(place);
+      return Zones.create(place);
     });
   });
 

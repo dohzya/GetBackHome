@@ -1,23 +1,23 @@
-window.app.factory("Models", ["Group", "Mission", "Missions", "Order", "Survivor", "Horde", "Zombie", "Env", "Place", "Map", "Player", "Time", "Memory",
-    function (Group, Mission, Missions, Order, Survivor, Horde, Zombie, Env, Place, Map, Player, Time, Memory) {
+window.app.factory("Models", ["Groups", "Missions", "Orders", "Survivors", "Hordes", "Zombies", "Env", "Places", "Map", "Players", "Times", "Memories",
+    function (Groups, Missions, Orders, Survivors, Hordes, Zombies, Env, Places, Map, Players, Times, Memories) {
   "use strict";
 
   return {
-    createGroup: Group.create,
-    createMission: Mission.create,
+    createGroup: Groups.create,
+    createMission: Missions.create,
     eachMission: Missions.each,
     removeMission: Missions.remove,
-    createOrder: Order.create,
-    createSurvivor: Survivor.create,
-    createHorde: Horde.create,
-    createZombie: Zombie.create,
+    createOrder: Orders.create,
+    createSurvivor: Survivors.create,
+    createHorde: Hordes.create,
+    createZombie: Zombies.create,
     createEnv: Env.create,
-    createPlace: Place.create,
-    createPlayer: Player.create,
+    createPlace: Places.create,
+    createPlayer: Players.create,
     getPlace: Map.getPlace,
     getCenterPlace: Map.getCenterPlace,
-    createTime: Time.create,
-    createMemory: Memory.create
+    createTime: Times.create,
+    createMemory: Memories.create
   };
 
 }]);

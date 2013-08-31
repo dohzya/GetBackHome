@@ -1,5 +1,26 @@
-app.service("Orders", ["GBHDisplay", "$log", "Models", function (Display, $log, Models) {
+app.service("Orders", ["GBHDisplay", "$log", "Util", "Times", function (Display, $log, Util, Times) {
   "use strict";
+
+  function Order(args) {
+    this.id = args.id;
+    this.name = args.name;
+    this.icon = args.icon;
+    this.description = args.description;
+    this.inputs = args.inputs || [];
+    this.time = args.time;
+    this.onWalk = args.onWalk || Util.noop;
+    this.onTurn = args.onTurn || Util.noop;
+    this.onRun = args.onRun || Util.noop;
+    this.onReturn = args.onReturn || Util.noop;
+    this.isAvailableAt = args.isAvailableAt || function () { return true; };
+    this.isValid = args.isValid || function () { return true; };
+    this.run = args.run;
+    this.finish = args.finish;
+  }
+
+  function create(args) {
+    return new Order(args);
+  }
 
   var inputTypes = {
     home: {
@@ -27,7 +48,7 @@ app.service("Orders", ["GBHDisplay", "$log", "Models", function (Display, $log, 
           name: "survivors"
         }
       ],
-      time: Models.createTime({
+      time: Times.create({
         min: 1,
         standard: 3
       }),
@@ -56,7 +77,7 @@ app.service("Orders", ["GBHDisplay", "$log", "Models", function (Display, $log, 
       name: "Fortification",
       icon: "building",
       description: "",
-      time: Models.createTime({
+      time: Times.create({
         min: 1,
         standard: 2
       }),
@@ -80,7 +101,7 @@ app.service("Orders", ["GBHDisplay", "$log", "Models", function (Display, $log, 
 
   var orders = {};
   _.each(rawOrders, function (order) {
-    orders[order.id] = Models.createOrder(order);
+    orders[order.id] = create(order);
   });
 
   var self = this;
@@ -180,6 +201,7 @@ app.service("Orders", ["GBHDisplay", "$log", "Models", function (Display, $log, 
 
   // Export
   return {
+    create: create,
     all: function () { return orders; },
     get: function (idOrder) { return orders[idOrder] },
     ordersTurn: ordersTurn,

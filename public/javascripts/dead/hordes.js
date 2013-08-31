@@ -1,4 +1,4 @@
-app.factory("Horde", ["Zombie", function (Zombie) {
+app.factory("Hordes", ["Zombies", function (Zombies) {
 
   function Horde(args) {
     this.zombies = args.zombies;
@@ -35,7 +35,7 @@ app.factory("Horde", ["Zombie", function (Zombie) {
   };
 
   Horde.prototype.addZombies = function (nb) {
-    var newZombies = Zombie.createSeveral(nb), i;
+    var newZombies = Zombies.createSeveral(nb), i;
     for (i in newZombies) {
       this.zombies.push(newZombies[i]);
     }
@@ -51,7 +51,7 @@ app.factory("Horde", ["Zombie", function (Zombie) {
   function create(args) {
     if (typeof args === "number") {
       return create({
-        zombies: Zombie.createSeveral(args)
+        zombies: Zombies.createSeveral(args)
       });
     }
     return new Horde(args);

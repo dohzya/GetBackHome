@@ -1,4 +1,4 @@
-window.app.factory("Place", ["Map", "MemoryItem", function (Map, MemoryItem) {
+window.app.factory("Places", ["Map", "MemoryItems", function (Map, MemoryItems) {
   "use strict";
 
   var Hexjs = window.Hexjs;
@@ -19,7 +19,7 @@ window.app.factory("Place", ["Map", "MemoryItem", function (Map, MemoryItem) {
 
   Place.prototype.endTurn = function (ts) {
     // TODO save new memory only if a group saved it
-    this.memory[ts] = MemoryItem.create(ts, this);
+    this.memory[ts] = MemoryItems.create(ts, this);
   };
 
   Place.prototype.x = function () {

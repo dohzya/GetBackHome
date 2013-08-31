@@ -1,4 +1,4 @@
-app.controller("MapCtrl", ["$scope", "$rootScope", "Events", "GUIMap", "Sprite", "Zone", "Map", function ($scope, $rootScope, Events, Map, Sprites, Zone, EngineMap) {
+app.controller("MapCtrl", ["$scope", "$rootScope", "Events", "GUIMap", "Sprites", "Zones", "Map", function ($scope, $rootScope, Events, Map, Sprites, Zones, EngineMap) {
   "use strict";
   var Q = window.Q;
 
@@ -36,10 +36,10 @@ app.controller("MapCtrl", ["$scope", "$rootScope", "Events", "GUIMap", "Sprite",
     var centerX = (drawer.x + drawer.width / 2) / size;
     var centerY = (drawer.y + drawer.height / 2) / size;
 
-    Zone.setSize($scope.gui.zoom, $scope.gui.zoom);
+    Zones.setSize($scope.gui.zoom, $scope.gui.zoom);
 
-    drawer.x = centerX * Zone.getWidth() - drawer.width / 2;
-    drawer.y = centerY * Zone.getHeight() - drawer.height / 2;
+    drawer.x = centerX * Zones.getWidth() - drawer.width / 2;
+    drawer.y = centerY * Zones.getHeight() - drawer.height / 2;
 
     redraw();
   };

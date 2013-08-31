@@ -1,4 +1,4 @@
-window.app.factory("Zone", ["$log", "$rootScope", "Util", "Sprite", function ($log, $rootScope, Util, Sprites) {
+window.app.factory("Zones", ["$log", "$rootScope", "Util", "Sprites", function ($log, $rootScope, Util, Sprites) {
   "use strict";
 
   var Hexjs = window.Hexjs;

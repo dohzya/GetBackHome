@@ -1,9 +1,9 @@
-app.factory("Group", ["Survivor", "Memory", "Map", function (Survivor, Memory, Map) {
+app.factory("Groups", ["Survivors", "Memories", "Map", function (Survivors, Memories, Map) {
   "use strict";
 
   function Group(args) {
     this.survivors = args.survivors;
-    this.memory = Memory.create();
+    this.memory = Memories.create();
   }
 
   Group.prototype.visitPlace = function (ts, place) {
@@ -54,7 +54,7 @@ app.factory("Group", ["Survivor", "Memory", "Map", function (Survivor, Memory, M
   };
 
   Group.prototype.addSurvivors = function (nb) {
-    var newSurvivors = Survivor.createSeveral(nb), i;
+    var newSurvivors = Survivors.createSeveral(nb), i;
     for (i in newSurvivors) {
       this.survivors.push(newSurvivors[i]);
     }
@@ -70,7 +70,7 @@ app.factory("Group", ["Survivor", "Memory", "Map", function (Survivor, Memory, M
   function create(args) {
     if (typeof args === "number") {
       return create({
-        survivors: Survivor.createSeveral(args)
+        survivors: Survivors.createSeveral(args)
       });
     }
     return new Group(args);
