@@ -1,4 +1,4 @@
-app.controller("GUICtrl", ["$scope", "$rootScope", "Events", "GUIMap", "GUISprites", "GUIZone", "Map", function ($scope, $rootScope, Events, Map, Sprites, Zone, EngineMap) {
+app.controller("MapCtrl", ["$scope", "$rootScope", "Events", "GUIMap", "Sprite", "Zone", "Map", function ($scope, $rootScope, Events, Map, Sprites, Zone, EngineMap) {
   "use strict";
   var Q = window.Q;
 

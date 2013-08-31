@@ -1,11 +1,12 @@
-window.app.factory("GBHModels", ["Group", "Mission", "Order", "Survivor", "Horde", "Zombie", "Env", "Place", "Map", "Player", "Time", "Memory", function (Group, Mission, Order, Survivor, Horde, Zombie, Env, Place, Map, Player, Time, Memory) {
+window.app.factory("Models", ["Group", "Mission", "Missions", "Order", "Survivor", "Horde", "Zombie", "Env", "Place", "Map", "Player", "Time", "Memory",
+    function (Group, Mission, Missions, Order, Survivor, Horde, Zombie, Env, Place, Map, Player, Time, Memory) {
   "use strict";
 
   return {
     createGroup: Group.create,
     createMission: Mission.create,
-    eachMission: Mission.each,
-    removeMission: Mission.remove,
+    eachMission: Missions.each,
+    removeMission: Missions.remove,
     createOrder: Order.create,
     createSurvivor: Survivor.create,
     createHorde: Horde.create,

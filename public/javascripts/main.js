@@ -23,7 +23,7 @@ var app = angular
   .config(["$locationProvider", function ($locationProvider) {
     $locationProvider.html5Mode(true).hashPrefix("!");
   }])
-  .run(["$rootScope", "$log", "GBHModels", "Util", "GBHOrders", function ($rootScope, $log, Models, Util, Orders) {
+  .run(["$rootScope", "$log", "Models", "Util", "Orders", function ($rootScope, $log, Models, Util, Orders) {
     $rootScope.$log = $log;
 
     $rootScope.engine = {};

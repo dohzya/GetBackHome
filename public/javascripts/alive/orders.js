@@ -1,4 +1,4 @@
-app.service("GBHOrders", ["GBHDisplay", "$log", "GBHModels", function (Display, $log, Models) {
+app.service("Orders", ["GBHDisplay", "$log", "Models", function (Display, $log, Models) {
   "use strict";
 
   var inputTypes = {

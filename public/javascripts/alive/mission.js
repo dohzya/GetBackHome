@@ -139,32 +139,22 @@ app.factory("Mission", ["$rootScope", "$log", "Env", function ($rootScope, $log,
     console.log("Status:", this.status);
   };
 
+  function each(func) {
+    _.forEach($rootScope.currentPlayer.missions, func);
+  }
+
+  function remove(missionToRemove) {
+    $rootScope.currentPlayer.missions = _.filter($rootScope.currentPlayer.missions, function (mission) {
+      return mission.id !== missionToRemove.id;
+    });
+  }
+
   function create(args) {
     return new Mission(args);
   }
 
-  function each(func) {
-    var i;
-    for (i in $rootScope.missions) {
-      func($rootScope.missions[i]);
-    }
-  }
-
-  function remove(missionToRemove) {
-    var newMissions = [], i, mission;
-    for (i in $rootScope.missions) {
-      mission = $rootScope.currentPlayer.missions[i];
-      if (mission.id !== missionToRemove.id) {
-        newMissions.push(mission);
-      }
-    }
-    $rootScope.currentPlayer.missions = newMissions;
-  }
-
   return {
-    create: create,
-    each: each,
-    remove: remove
+    create: create
   };
 
 }]);

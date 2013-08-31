@@ -1,4 +1,4 @@
-app.controller("GBHOrders", ["$scope", "$rootScope", "Events", "GBHEngine", "GBHModels", function ($scope, $rootScope, Events, Engine, Models) {
+app.controller("NewMissionCtrl", ["$scope", "$rootScope", "Events", "Engine", "Models", function ($scope, $rootScope, Events, Engine, Models) {
   "use strict";
 
   var $ = window.jQuery;

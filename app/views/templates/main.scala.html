@@ -45,58 +45,61 @@
   <!--<script data-main="@routes.Assets.at("javascripts/require-main" + { if (conf.scriptsMin) "-" + conf.version + ".min" else "" } + ".js")" src="@routes.Assets.at("javascripts/vendors/requirejs/require.js")"></script>-->
 
   @if(conf.scriptsMin) {
-    <script src="@routes.Assets.at("javascripts/main" + conf.version + ".min.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/main" + conf.version + ".min.js")"></script>
   } else {
-    <script src="@routes.Assets.at("javascripts/vendors/jquery/jquery.min.js")"></script>
-    <script src="@routes.Assets.at("javascripts/vendors/q/q.js")"></script>
-    <script src="@routes.Assets.at("javascripts/vendors/lodash/lodash.js")"></script>
-    <script src="@routes.Assets.at("javascripts/vendors/angular/angular.js")"></script>
-    <script src="@routes.Assets.at("javascripts/vendors/angular/angular-resource.js")"></script>
-    <script src="@routes.Assets.at("javascripts/vendors/restangular/restangular.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/vendors/jquery/jquery.min.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/vendors/q/q.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/vendors/lodash/lodash.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/vendors/angular/angular.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/vendors/angular/angular-resource.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/vendors/restangular/restangular.js")"></script>
 
-    <script src="@routes.Assets.at("javascripts/hexjs/tile.js")"></script>
-    <script src="@routes.Assets.at("javascripts/hexjs/findme.js")"></script>
-    <!-- -->
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/hexjs/tile.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/hexjs/findme.js")"></script>
 
-    <script src="@routes.Assets.at("javascripts/main.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/main.js")"></script>
 
-    <script src="@routes.Assets.at("javascripts/utils/Rc4Random.js")"></script>
-    <script src="@routes.Assets.at("javascripts/utils/perlin_simplex.js")"></script>
-    <script src="@routes.Assets.at("javascripts/utils/generator.js")"></script>
-    <script src="@routes.Assets.at("javascripts/utils/util.js")" type="text/javascript"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/utils/Rc4Random.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/utils/perlin_simplex.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/utils/generator.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/utils/util.js")"></script>
 
-    <script src="@routes.Assets.at("javascripts/gbh/GBHCtrl.js")"></script>
-    <script src="@routes.Assets.at("javascripts/gbh/GBHOrdersCtrl.js")"></script>
-    <script src="@routes.Assets.at("javascripts/gbh/GBHDisplay.js")"></script>
-    <script src="@routes.Assets.at("javascripts/gbh/GBHOrders.js")"></script>
-    <script src="@routes.Assets.at("javascripts/gbh/GBHEngine.js")"></script>
-    <script src="@routes.Assets.at("javascripts/gbh/GBHModels.js")"></script>
-    <script src="@routes.Assets.at("javascripts/gbh/GBHActions.js")"></script>
-    <script src="@routes.Assets.at("javascripts/gbh/GBHStats.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/gbh/GBHCtrl.js")"></script>
+    
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/gbh/GBHDisplay.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/gbh/GBHActions.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/gbh/GBHStats.js")"></script>
 
-    <script src="@routes.Assets.at("javascripts/gui/GUISprites.js")" type="text/javascript"></script>
-    <script src="@routes.Assets.at("javascripts/gui/GUIZone.js")" type="text/javascript"></script>
-    <script src="@routes.Assets.at("javascripts/gui/GUIMap.js")" type="text/javascript"></script>
-    <script src="@routes.Assets.at("javascripts/gui/GUIController.js")" type="text/javascript"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/alive/group.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/alive/order.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/alive/orders.js")" ></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/alive/mission.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/alive/missions.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/alive/newMissionController.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/alive/survivor.js")"></script>
 
-    <script src="@routes.Assets.at("javascripts/alive/group.js")" type="text/javascript"></script>
-    <script src="@routes.Assets.at("javascripts/alive/order.js")" type="text/javascript"></script>
-    <script src="@routes.Assets.at("javascripts/alive/mission.js")" type="text/javascript"></script>
-    <script src="@routes.Assets.at("javascripts/alive/survivor.js")" type="text/javascript"></script>
-    <script src="@routes.Assets.at("javascripts/dead/horde.js")" type="text/javascript"></script>
-    <script src="@routes.Assets.at("javascripts/dead/zombie.js")" type="text/javascript"></script>
-    <script src="@routes.Assets.at("javascripts/game/env.js")" type="text/javascript"></script>
-    <script src="@routes.Assets.at("javascripts/game/gbhInputOrder.js")" type="text/javascript"></script>
-    <script src="@routes.Assets.at("javascripts/game/map.js")" type="text/javascript"></script>
-    <script src="@routes.Assets.at("javascripts/game/memory.js")" type="text/javascript"></script>
-    <script src="@routes.Assets.at("javascripts/game/memory_item.js")" type="text/javascript"></script>
-    <script src="@routes.Assets.at("javascripts/game/place.js")" type="text/javascript"></script>
-    <script src="@routes.Assets.at("javascripts/game/player.js")" type="text/javascript"></script>
-    <script src="@routes.Assets.at("javascripts/game/time.js")" type="text/javascript"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/dead/horde.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/dead/zombie.js")"></script>
+
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/game/engine.js")" ></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/game/env.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/game/gbhInputOrder.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/game/models.js")" ></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/game/player.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/game/time.js")"></script>
+
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/map/map.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/map/mapController.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/map/memory.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/map/memory_item.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/map/place.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/map/sprite.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/map/zone.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/gui/GUIMap.js")"></script>
   }
 
   @if(conf.livereload) {
-    <script src="http://localhost:35729/livereload.js?snipver=1"></script>
+    <script type="text/javascript" src="http://localhost:35729/livereload.js?snipver=1"></script>
   }
 
 </body>

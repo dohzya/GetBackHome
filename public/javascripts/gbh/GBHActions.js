@@ -1,4 +1,4 @@
-app.service("GBHActions", ["$rootScope", "$log", "GBHModels", function ($rootScope, $log, Models) {
+app.service("GBHActions", ["$rootScope", "$log", "Models", function ($rootScope, $log, Models) {
   "use strict";
 
   var self = this;

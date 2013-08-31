@@ -1,4 +1,4 @@
-app.service("UTGenerator", ["UTPerlinSimplex", "Rc4Random", "GBHModels", function (PerlinSimplex, Rc4Random, Models) {
+app.service("UTGenerator", ["UTPerlinSimplex", "Rc4Random", "Models", function (PerlinSimplex, Rc4Random, Models) {
   "use strict";
 
   function initNoise(seed) {

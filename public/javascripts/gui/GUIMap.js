@@ -1,4 +1,4 @@
-app.factory("GUIMap", ["GBHModels", "GUISprites", "GUIZone", "UTGenerator", function (Models, Sprites, Zone, Generator) {
+app.factory("GUIMap", ["Models", "Sprite", "Zone", "UTGenerator", function (Models, Sprites, Zone, Generator) {
   "use strict";
 
   var canvas = document.getElementById("map");
