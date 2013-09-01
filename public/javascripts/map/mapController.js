@@ -1,4 +1,4 @@
-app.controller("MapCtrl", ["$scope", "$rootScope", "Events", "GUIMap", "Sprites", "Zones", "Map", function ($scope, $rootScope, Events, Map, Sprites, Zones, EngineMap) {
+app.controller("MapCtrl", ["$scope", "$rootScope", "Events", "GUIMap", "Sprites", "Zones", "Places", function ($scope, $rootScope, Events, Map, Sprites, Zones, Places) {
   "use strict";
   var Q = window.Q;
 
@@ -183,7 +183,7 @@ app.controller("MapCtrl", ["$scope", "$rootScope", "Events", "GUIMap", "Sprites"
         place.selected = false;
       });
 
-      //selectedPlaces = EngineMap.findPath(EngineMap.getCenterPlace(), zone.place);
+      //selectedPlaces = EngineMap.findPath(Places.getCenterPlace(), zone.place);
 
       var opts = {
         clean: true,
@@ -192,7 +192,7 @@ app.controller("MapCtrl", ["$scope", "$rootScope", "Events", "GUIMap", "Sprites"
         }
       };
 
-      var from = $rootScope.newMission && $rootScope.newMission.hasOrders() ? _.last($rootScope.newMission.allOrders()).targetPlace() : EngineMap.getCenterPlace();
+      var from = $rootScope.newMission && $rootScope.newMission.hasOrders() ? _.last($rootScope.newMission.allOrders()).targetPlace() : Places.getCenterPlace();
       
       var path = FindMe.astar(from, zone.place, opts);
 

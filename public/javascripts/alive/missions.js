@@ -6,10 +6,16 @@ app.factory("Missions", ["$rootScope", "$log", "Env", function ($rootScope, $log
   function OrderListItem(args) {
     this.path = args.path;
     this.order = args.order;
+    this.data = args.data;
   }
+
   OrderListItem.prototype.targetPlace = function () {
     return _.last(this.path);
   };
+
+  function createOrderListItem(args) {
+    return new OrderListItem(args);
+  }
 
   var OrderListId = 0;
   function OrderList() {
@@ -18,12 +24,15 @@ app.factory("Missions", ["$rootScope", "$log", "Env", function ($rootScope, $log
     this.currentOrderIndex = 0;
     this.currentPathIndex = 0;
   }
-  OrderList.prototype.add = function (args) {
-    this.orders.push(new OrderListItem(args));
+
+  OrderList.prototype.add = function (item) {
+    this.orders.push(item);
   };
+
   OrderList.prototype.currentOrderItem = function () {
     return this.orders[this.currentOrderIndex];
   };
+
   OrderList.prototype.currentOrder = function () {
     var orderItem = this.currentOrderItem();
     if (orderItem) {
@@ -34,6 +43,7 @@ app.factory("Missions", ["$rootScope", "$log", "Env", function ($rootScope, $log
     }
     return null;
   };
+
   OrderList.prototype.currentPlace = function () {
     var orderItem = this.currentOrderItem();
     if (orderItem) {
@@ -41,6 +51,7 @@ app.factory("Missions", ["$rootScope", "$log", "Env", function ($rootScope, $log
     }
     return null;
   };
+
   OrderList.prototype.current = function () {
     console.log("current:", this);
     var place = this.currentPlace();
@@ -52,6 +63,7 @@ app.factory("Missions", ["$rootScope", "$log", "Env", function ($rootScope, $log
     }
     return null;
   };
+
   OrderList.prototype.next = function () {
     this.currentPathIndex++;
     if (!this.currentPlace()) {
@@ -60,9 +72,11 @@ app.factory("Missions", ["$rootScope", "$log", "Env", function ($rootScope, $log
     }
     return this.current();
   };
+
   OrderList.prototype.forEach = function (f) {
     _.forEach(this.orders, f);
   };
+
   OrderList.prototype.isEmpty = function () {
     return this.orders.length == 0;
   }
@@ -155,6 +169,7 @@ app.factory("Missions", ["$rootScope", "$log", "Env", function ($rootScope, $log
 
   return {
     create: create,
+    createOrderListItem: createOrderListItem,
     each: each,
     remove: remove
   };

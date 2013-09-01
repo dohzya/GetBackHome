@@ -1,18 +1,31 @@
-app.service("Engine", ["$rootScope", "GBHDisplay", "$log", "Util", "Orders", "Models", "GBHActions", "GBHStats", "Map", function ($rootScope, Display, $log, Util, Orders, Models, Actions, Stats, Map) {
+app.service("Engine", ["$rootScope", "GBHDisplay", "$log", "Util", "Orders", "Groups", "Missions", "Env", "Times", "GBHActions", "GBHStats", "Map",
+  function ($rootScope, Display, $log, Util, Orders, Groups, Missions, Env, Times, Actions, Stats, Map) {
   "use strict";
 
   var self = this;
 
+
+
+  // When everything is ready, start the engine!
+  function start() {
+    $rootScope.engine.mainPlace = Map.getCenterPlace();
+    mainEnv = Env.create({
+      group: $rootScope.engine.mainGroup,
+      place: $rootScope.engine.mainPlace
+    });
+    turnForPlaces();
+  }
+
   // Global
   $rootScope.engine.turnNb = 0;
-  $rootScope.engine.mainGroup = Models.createGroup(10);
+  $rootScope.engine.mainGroup = Groups.create(10);
   var selectedSurvivors = 0;
 
   // Main
   var mainEnv;
   setTimeout(function () {
-    $rootScope.engine.mainPlace = Models.getCenterPlace();
-    mainEnv = Models.createEnv({
+    $rootScope.engine.mainPlace = Map.getCenterPlace();
+    mainEnv = Env.create({
       group: $rootScope.engine.mainGroup,
       place: $rootScope.engine.mainPlace
     });
@@ -23,7 +36,7 @@ app.service("Engine", ["$rootScope", "GBHDisplay", "$log", "Util", "Orders", "Mo
     return $rootScope.gui.selectedZone ? $rootScope.gui.selectedZone.place : $rootScope.engine.mainPlace;
   }
   function selectedEnv() {
-    return Models.createEnv({
+    return Env.create({
       group: $rootScope.engine.mainGroup,
       place: selectedPlace()
     });
@@ -50,7 +63,7 @@ app.service("Engine", ["$rootScope", "GBHDisplay", "$log", "Util", "Orders", "Mo
     for (i = 0; i < nb; i++) {
       removed.push(group.survivors.shift());
     }
-    return Models.createGroup({
+    return Groups.create({
       memory: group.memory.clone(),
       survivors: removed
     });
@@ -66,7 +79,7 @@ app.service("Engine", ["$rootScope", "GBHDisplay", "$log", "Util", "Orders", "Mo
     for (i = 0; i < path.length; i++) {
       path[i].selected = false;
     }
-    var mission = Models.createMission({
+    var mission = Missions.create({
       order: order,
       group: sendSelected(selectedSurvivors),
       place: selectedPlace(),
@@ -165,13 +178,13 @@ app.service("Engine", ["$rootScope", "GBHDisplay", "$log", "Util", "Orders", "Mo
   }
 
   function defineOrder(args) {
-    //$rootScope.orders[args.id] = Models.createOrder(args);
+    //$rootScope.orders[args.id] = Orders.create(args);
   }
 
   defineOrder({
     id: "purify",
     name: "Purification",
-    time: Models.createTime({
+    time: Times.create({
       min: 1,
       standard: 3
     }),
@@ -216,7 +229,7 @@ app.service("Engine", ["$rootScope", "GBHDisplay", "$log", "Util", "Orders", "Mo
   defineOrder({
     id: "fortify",
     name: "Fortification",
-    time: Models.createTime({
+    time: Times.create({
       min: 1,
       standard: 2
     }),
@@ -263,10 +276,10 @@ app.service("Engine", ["$rootScope", "GBHDisplay", "$log", "Util", "Orders", "Mo
     order: "fortify"
   });
 
-  Models.createOrder({
+  Orders.create({
     id: "scavange",
     name: "Fouille",
-    time: Models.createTime({
+    time: Times.create({
       min: 1,
       standard: 2
     }),

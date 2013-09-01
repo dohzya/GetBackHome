@@ -1,4 +1,4 @@
-app.service("UTGenerator", ["UTPerlinSimplex", "Rc4Random", "Models", function (PerlinSimplex, Rc4Random, Models) {
+app.service("UTGenerator", ["UTPerlinSimplex", "Rc4Random", "Hordes", function (PerlinSimplex, Rc4Random, Hordes) {
   "use strict";
 
   function initNoise(seed) {
@@ -79,7 +79,7 @@ app.service("UTGenerator", ["UTPerlinSimplex", "Rc4Random", "Models", function (
           },
           food: food,
           height: height,
-          horde: Models.createHorde(infection),  // TODO generate
+          horde: Hordes.create(infection),  // TODO generate
           pos: [x, y],
           ts: 0,
           types: types

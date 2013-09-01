@@ -1,4 +1,4 @@
-app.controller("NewMissionCtrl", ["$scope", "$rootScope", "Events", "Engine", "Models", function ($scope, $rootScope, Events, Engine, Models) {
+app.controller("NewMissionCtrl", ["$scope", "$rootScope", "Events", "Engine", "Missions", function ($scope, $rootScope, Events, Engine, Missions) {
   "use strict";
 
   var $ = window.jQuery;
@@ -28,6 +28,7 @@ app.controller("NewMissionCtrl", ["$scope", "$rootScope", "Events", "Engine", "M
   function updateSelectedOrder () {
     if ($scope.selection.order) {
       $scope.selection.order.place = $scope.selection.zone.place;
+      console.log($scope.selection.path);
       $scope.selection.order.path = $scope.selection.path;
     }
   }
@@ -58,21 +59,18 @@ app.controller("NewMissionCtrl", ["$scope", "$rootScope", "Events", "Engine", "M
 
 
   $scope.selectOrder = $scope.doAction(function (order) {
-    order = {
-      value: order,
-      data: {}
-    };
+    var orderItem = Missions.createOrderListItem({order: order, data: {}});
 
-    _.each(order.value.inputs, function (input) {
-      order.data[input.name] = input.type.default;
+    _.each(orderItem.order.inputs, function (input) {
+      orderItem.data[input.name] = input.type.default;
     });
 
-    $scope.selection.order = order;
+    $scope.selection.order = orderItem;
     updateSelectedOrder();
   });
 
   $scope.isOrderSelected = function (order) {
-    return $scope.selection.order && $scope.selection.order.value.id === order.id;
+    return $scope.selection.order && $scope.selection.order.order.id === order.id;
   };
 
   $scope.$on(Events.gui.zones.selected, function () {
@@ -81,7 +79,7 @@ app.controller("NewMissionCtrl", ["$scope", "$rootScope", "Events", "Engine", "M
 
   $scope.addOrder = $scope.doAction(function () {
     if (!$rootScope.newMission) {
-      $rootScope.newMission = Models.createMission({
+      $rootScope.newMission = Missions.create({
         group: $rootScope.engine.mainGroup
       });
     }

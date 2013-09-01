@@ -23,14 +23,14 @@ var app = angular
   .config(["$locationProvider", function ($locationProvider) {
     $locationProvider.html5Mode(true).hashPrefix("!");
   }])
-  .run(["$rootScope", "$log", "Models", "Util", "Orders", function ($rootScope, $log, Models, Util, Orders) {
+  .run(["$rootScope", "$log", "Players", "Util", "Orders", function ($rootScope, $log, Players, Util, Orders) {
     $rootScope.$log = $log;
 
     $rootScope.engine = {};
     $rootScope.game = {};
     $rootScope.gui = {};
     $rootScope.orders = Orders.all();
-    $rootScope.currentPlayer = Models.createPlayer();
+    $rootScope.currentPlayer = Players.create();
     $rootScope.newMission = undefined;
 
     $rootScope.selection = {

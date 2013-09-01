@@ -1,7 +1,15 @@
-window.app.factory("Places", ["Map", "MemoryItems", function (Map, MemoryItems) {
+window.app.factory("Places", ["MemoryItems", "UTGenerator", function (MemoryItems, UTGenerator) {
   "use strict";
 
   var Hexjs = window.Hexjs;
+
+  var places = UTGenerator.generate("001", 0, 20, 0, 20, function (json) {
+    return create(json);
+  });
+
+  function tileAccessor (place) {
+    return place.tile;
+  }
 
   function Place(args) {
     this.fighting = args.fighting;
@@ -69,17 +77,65 @@ window.app.factory("Places", ["Map", "MemoryItems", function (Map, MemoryItems) 
   };
 
   Place.prototype.neighbors = function () {
-    return Map.neighbors(this);
+    return neighbors(this);
   };
 
   function create(args) {
-    var place = new Place(args);
-    Map.addPlace(place);
-    return place;
+    return new Place(args);
+  }
+
+  function at(x, y) {
+    return Hexjs.find(places, x, y, tileAccessor);
+  }
+
+  function getCenterPlace() {
+    return at(7, 4);
+  }
+
+  function neighbors(place) {
+    return Hexjs.neighbors(places, place.x(), place.y(), tileAccessor);
+  }
+
+  function forEach(func) {
+    _.forEach(places, func);
+  }
+
+  function hex_round(pos) {
+    var x = Math.ceil(pos[0]);
+    var y = Math.ceil(pos[1]);
+    return at(x, y);
+  }
+
+  function tileEqual(tile1, tile2) {
+    return tile1.x == tile2.x && tile1.y == tile2.y;
+  }
+
+  function cubeNeighbors(place) {
+    return Hexjs.cubeNeighbors(place.x(), place.y(), place.z());
+  }
+
+  function inNeighborhood(place, place2) {
+    var _neighbors = cubeNeighbors(place), i;
+    for (i = 0; i < _neighbors.length; i++) {
+      if (tileEqual(_neighbors[i], place2.tile)) {
+        return true;
+      }
+    }
+    return false;
+  }
+  function multPos(place, num) {
+    return [place.x() * num, place.y() * num, place.z() * num];
+  }
+
+  function addPos(pos1, pos2) {
+    return [pos1[0] + pos2[0], pos1[1] + pos2[1], pos1[2] + pos2[2]];
   }
 
   return {
-    create: create
+    create: create,
+    all: function () { return places; },
+    at: at,
+    getCenterPlace: getCenterPlace
   };
 
 }]);
