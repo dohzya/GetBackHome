@@ -1,4 +1,4 @@
-window.app.factory("Places", ["MemoryItems", "UTGenerator", function (MemoryItems, UTGenerator) {
+window.app.factory("Places", ["Config", "MemoryItems", "UTGenerator", function (Config, MemoryItems, UTGenerator) {
   "use strict";
 
   var Hexjs = window.Hexjs;
@@ -80,16 +80,16 @@ window.app.factory("Places", ["MemoryItems", "UTGenerator", function (MemoryItem
     return neighbors(this);
   };
 
+  Place.prototype.pathTo = function (destination) {
+    return FindMe.astar(this, destination, Config.hexjs);
+  };
+
   function create(args) {
     return new Place(args);
   }
 
   function at(x, y) {
     return Hexjs.find(places, x, y, tileAccessor);
-  }
-
-  function getCenterPlace() {
-    return at(7, 4);
   }
 
   function neighbors(place) {
@@ -135,8 +135,7 @@ window.app.factory("Places", ["MemoryItems", "UTGenerator", function (MemoryItem
     create: create,
     all: function () { return places; },
     at: at,
-    forEach: forEach,
-    getCenterPlace: getCenterPlace
+    forEach: forEach
   };
 
 }]);

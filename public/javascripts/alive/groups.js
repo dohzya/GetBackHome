@@ -4,6 +4,7 @@ app.factory("Groups", ["Survivors", "Memories", "Map", function (Survivors, Memo
   function Group(args) {
     this.survivors = args.survivors;
     this.memory = Memories.create();
+    this.endurance = 0;
   }
 
   Group.prototype.visitPlace = function (ts, place) {
@@ -66,6 +67,11 @@ app.factory("Groups", ["Survivors", "Memories", "Map", function (Survivors, Memo
       this.survivors.pop();
     }
   };
+
+  Group.prototype.getMaxEndurance = function () {
+    // TODO : calculate it from survivors
+    return 20;
+  }
 
   function create(args) {
     if (typeof args === "number") {

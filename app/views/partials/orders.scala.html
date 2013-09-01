@@ -4,7 +4,7 @@
   <div class="gbh-title">Ordres</div>
   <div class="gbh-visible-contents">
     <div class="gbh-contents">
-      <div class="gbh-content" data-id="{{mission.id}}" data-ng-repeat="mission in currentPlayer.missions">
+      <div class="gbh-content" data-id="{{mission.id}}" data-ng-repeat="mission in currentPlayer().missions">
         <span>{{mission.order.name}}</span>
         (<span>{{mission.status}}</span>)
         <div class="btn btn-default btn-small" ng-click="cancelOrder({{mission.id}})">

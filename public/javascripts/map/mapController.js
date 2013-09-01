@@ -183,7 +183,7 @@ app.controller("MapCtrl", ["$scope", "$rootScope", "Events", "GUIMap", "Sprites"
         place.selected = false;
       });
 
-      //selectedPlaces = EngineMap.findPath(Places.getCenterPlace(), zone.place);
+      //selectedPlaces = EngineMap.findPath($rootScope.selection.base.place, zone.place);
 
       var opts = {
         clean: true,
@@ -192,9 +192,9 @@ app.controller("MapCtrl", ["$scope", "$rootScope", "Events", "GUIMap", "Sprites"
         }
       };
 
-      var from = $rootScope.newMission && $rootScope.newMission.hasOrders() ? _.last($rootScope.newMission.allOrders()).targetPlace() : Places.getCenterPlace();
+      var from = $rootScope.newMission && $rootScope.newMission.hasOrders() ? _.last($rootScope.newMission.allOrders()).targetPlace() : $rootScope.selection.base.place;
       
-      var path = FindMe.astar(from, zone.place, opts);
+      var path = from.pathTo(zone.place);
 
       $scope.selection.selectPath(path);
 

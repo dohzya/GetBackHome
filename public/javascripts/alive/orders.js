@@ -38,6 +38,22 @@ app.service("Orders", ["GBHDisplay", "$log", "Util", "Times", function (Display,
 
   var rawOrders = [
     {
+      id: "move",
+      name: "Move to",
+      icon: "location-arrow",
+      description: "",
+      time: Times.create({
+        min: 1,
+        standard: 2
+      }),
+      run: function (env) {
+        console.log("Moving");
+      },
+      finish: function () {
+        return true;
+      }
+    },
+    {
       id: "purify",
       name: "Purification",
       icon: "fire",
@@ -56,8 +72,8 @@ app.service("Orders", ["GBHDisplay", "$log", "Util", "Times", function (Display,
         var ratio = env.ratio();
         var killZombies = 0;
         var killSurvivors = 0;
-        killZombies = positiveFloor(env.horde().length() * Util.random(ratio * 50, ratio * 100) / 100);
-        killSurvivors = positiveFloor(env.group.length() * Util.random((1 - ratio) * 50, (1 - ratio) * 100) / 100);
+        killZombies = Util.positiveFloor(env.horde().length() * Util.random(ratio * 50, ratio * 100) / 100);
+        killSurvivors = Util.positiveFloor(env.group.length() * Util.random((1 - ratio) * 50, (1 - ratio) * 100) / 100);
         env.horde().killZombies(killZombies);
         env.group.killSurvivors(killSurvivors);
         Display.addMessage(
@@ -68,7 +84,6 @@ app.service("Orders", ["GBHDisplay", "$log", "Util", "Times", function (Display,
         );
       },
       finish: function () {
-        finishMission(this);
         return true;
       }
     },
@@ -93,7 +108,6 @@ app.service("Orders", ["GBHDisplay", "$log", "Util", "Times", function (Display,
         );
       },
       finish: function () {
-        finishMission(this);
         return true;
       }
     }

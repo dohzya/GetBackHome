@@ -1,16 +1,27 @@
-app.factory("Missions", ["$rootScope", "$log", "Env", function ($rootScope, $log, Env) {
+app.factory("Missions", ["$rootScope", "$log", "Env", "Orders", function ($rootScope, $log, Env, Orders) {
   "use strict";
 
   var missionId = 0;
 
   function OrderListItem(args) {
+    this.estimatedPath = args.path;
     this.path = args.path;
     this.order = args.order;
     this.data = args.data;
+    this.finished = false;
   }
 
   OrderListItem.prototype.targetPlace = function () {
     return _.last(this.path);
+  };
+
+  OrderListItem.prototype.run = function (env) {
+    this.order.run(env);
+    this.finished = true;
+  };
+
+  OrderListItem.prototype.isFinished = function () {
+    return this.finished;
   };
 
   function createOrderListItem(args) {
@@ -25,12 +36,19 @@ app.factory("Missions", ["$rootScope", "$log", "Env", function ($rootScope, $log
     this.currentPathIndex = 0;
   }
 
-  OrderList.prototype.add = function (item) {
-    this.orders.push(item);
+  OrderList.prototype.add = function (args) {
+    if (args instanceof OrderListItem) {
+      this.orders.push(args);
+    }
+    else {
+      this.add(new OrderListItem(args));
+    }
   };
 
   OrderList.prototype.currentOrderItem = function () {
-    return this.orders[this.currentOrderIndex];
+    return _.find(this.orders, function (orderItem) {
+      return !orderItem.isFinished();
+    });
   };
 
   OrderList.prototype.currentOrder = function () {
@@ -81,11 +99,18 @@ app.factory("Missions", ["$rootScope", "$log", "Env", function ($rootScope, $log
     return this.orders.length == 0;
   }
 
+  var statuses = {
+
+  };
+
   function Mission(args) {
     this.id = missionId++;
     this.status = "walking";
     this.orders = new OrderList();
     this.group = args.group;
+    this.fromBase = args.fromBase;
+    this.toBase = args.toBase;
+    this.place = this.fromBase.place;
   }
 
   Mission.prototype.addOrder = function (path, order) {
@@ -111,11 +136,10 @@ app.factory("Missions", ["$rootScope", "$log", "Env", function ($rootScope, $log
   };
 
   Mission.prototype.currentEnv = function () {
-    var place = this.currentPlace();
     return Env.create({
       group: this.group,
-      place: place,
-      horde: place.horde
+      place: this.place,
+      horde: this.place.horde
     });
   };
 
@@ -124,41 +148,57 @@ app.factory("Missions", ["$rootScope", "$log", "Env", function ($rootScope, $log
   };
 
   Mission.prototype.turn = function (ts) {
-    if (this.currentPlace()) {
-      this.currentPlace().highlighted = false;
-    }
     console.log("TURN for", this);
+    if (this.place) {
+      this.place.highlighted = false;
+    }
+    
     var orderItem;
-    this.currentPlace.highlighted = false;
-    orderItem = this.orders.next();
+    orderItem = this.orders.currentOrderItem();
     console.log("orderItem:", orderItem);
+
     if (orderItem) {
-      this.currentPlace.highlighted = true;
-      if (orderItem.order) {
+
+      // Something to do!
+      if (this.place === orderItem.targetPlace()) {
+        // We are in position, let's rock
         this.status = "running";
-        orderItem.order.run(this.currentEnv());
+        orderItem.run(this.currentEnv());
       } else {
+        // We need to move to our target point
         this.status = "walking";
+        var index = _.indexOf(orderItem.path, this.place);
+        console.log("moving from", this.place, "to", orderItem.path[index+1]);
+        this.place = orderItem.path[index+1];
       }
     } else {
-      this.status = "finished";
-      remove(this);
-      console.log("Mission finished", this);
-      return false;
+      // No more order? Let's see if we are at destination
+      if (this.place === this.toBase.place) {
+        // And we are done here
+        this.status = "finished";
+        remove(this);
+        console.log("Mission finished", this);
+        return false;
+      } else {
+        // Let's add a bonus order to move to our final destination
+        this.addOrder(this.place.pathTo(this.toBase.place), Orders.get("move"));
+        this.turn();
+      }
     }
-    if (this.currentPlace()) {
-      this.currentPlace().highlighted = true;
-      this.group.visitPlace(ts, this.currentPlace());
+
+    if (this.place) {
+      this.place.highlighted = true;
+      this.group.visitPlace(ts, this.place);
     }
     console.log("Status:", this.status);
   };
 
   function each(func) {
-    _.forEach($rootScope.currentPlayer.missions, func);
+    _.forEach($rootScope.currentPlayer().missions, func);
   }
 
   function remove(missionToRemove) {
-    $rootScope.currentPlayer.missions = _.filter($rootScope.currentPlayer.missions, function (mission) {
+    $rootScope.currentPlayer().missions = _.filter($rootScope.currentPlayer().missions, function (mission) {
       return mission.id !== missionToRemove.id;
     });
   }

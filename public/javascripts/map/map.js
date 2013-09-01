@@ -11,10 +11,6 @@ app.service("Map", ["Places", function (Places) {
     return Hexjs.find(Places.all(), x, y, tileAccessor);
   }
 
-  function getCenterPlace() {
-    return getPlace(7, 4);
-  }
-
   function neighbors(place) {
     return Hexjs.neighbors(Places.all(), place.x(), place.y(), tileAccessor);
   }
@@ -59,7 +55,6 @@ app.service("Map", ["Places", function (Places) {
 
   return {
     getPlace: getPlace,
-    getCenterPlace: getCenterPlace,
     forEach: forEach,
     neighbors: neighbors
   };

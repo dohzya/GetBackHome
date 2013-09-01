@@ -1,5 +1,13 @@
 var app = angular
   .module("app", ["ngResource", "restangular"])
+  .constant("Config", {
+    hexjs: {
+      clean: true,
+      heuristic: function (place1, place2) {
+        return place1.distanceTo(place2);
+      }
+    }
+  })
   .constant("Events", {
     gui: {
       draw: "gui-draw",
@@ -29,11 +37,15 @@ var app = angular
     $rootScope.engine = {};
     $rootScope.game = {};
     $rootScope.gui = {};
-    $rootScope.orders = Orders.all();
-    $rootScope.currentPlayer = Players.create();
+
+    $rootScope.orders = Orders.all;
+
+    Players.init();
+    $rootScope.currentPlayer = Players.current;
     $rootScope.newMission = undefined;
 
     $rootScope.selection = {
+      base: $rootScope.currentPlayer().getPrimaryBase(),
       selectPath: function (newPath) {
         $rootScope.selection.clearPath();
         $rootScope.selection.path = newPath;

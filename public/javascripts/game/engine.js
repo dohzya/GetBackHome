@@ -14,7 +14,7 @@ app.service("Engine", ["$rootScope", "GBHDisplay", "$log", "Util", "Events", "Pl
 
   // When everything is ready, start the engine!
   function start() {
-    $rootScope.engine.mainPlace = Places.getCenterPlace();
+    $rootScope.engine.mainPlace = $rootScope.selection.base.place;
     mainEnv = Env.create({
       group: $rootScope.engine.mainGroup,
       place: $rootScope.engine.mainPlace
@@ -26,7 +26,7 @@ app.service("Engine", ["$rootScope", "GBHDisplay", "$log", "Util", "Events", "Pl
 
   
   // setTimeout(function () {
-  //   $rootScope.engine.mainPlace = Places.getCenterPlace();
+  //   $rootScope.engine.mainPlace = $rootScope.selection.base.place;
   //   mainEnv = Env.create({
   //     group: $rootScope.engine.mainGroup,
   //     place: $rootScope.engine.mainPlace
@@ -106,7 +106,7 @@ app.service("Engine", ["$rootScope", "GBHDisplay", "$log", "Util", "Events", "Pl
   }
 
   function turn() {
-    _.forEach($rootScope.currentPlayer.missions, function (mission) {
+    _.forEach($rootScope.currentPlayer().missions, function (mission) {
       if (mission) {  // TODO fix this creepy line
         mission.turn($rootScope.engine.turnNb);
       }

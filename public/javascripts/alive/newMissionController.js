@@ -80,7 +80,9 @@ app.controller("NewMissionCtrl", ["$scope", "$rootScope", "Events", "Engine", "M
   $scope.addOrder = $scope.doAction(function () {
     if (!$rootScope.newMission) {
       $rootScope.newMission = Missions.create({
-        group: $rootScope.engine.mainGroup
+        group: $rootScope.engine.mainGroup,
+        fromBase: $scope.selection.base,
+        toBase: $scope.selection.base
       });
     }
     $rootScope.newMission.orders.add($scope.selection.order);
@@ -93,7 +95,7 @@ app.controller("NewMissionCtrl", ["$scope", "$rootScope", "Events", "Engine", "M
     clearMissionPlaces($rootScope.newMission);
     $scope.selection.clearPath();
 
-    $rootScope.currentPlayer.missions.push($rootScope.newMission);
+    $rootScope.currentPlayer().missions.push($rootScope.newMission);
     $rootScope.newMission = undefined;
     $rootScope.$broadcast(Events.gui.draw);
   });
