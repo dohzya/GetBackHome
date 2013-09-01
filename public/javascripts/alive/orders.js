@@ -56,8 +56,8 @@ app.service("Orders", ["GBHDisplay", "$log", "Util", "Times", function (Display,
         var ratio = env.ratio();
         var killZombies = 0;
         var killSurvivors = 0;
-        killZombies = positiveFloor(env.horde().length() * random(ratio * 50, ratio * 100) / 100);
-        killSurvivors = positiveFloor(env.group.length() * random((1 - ratio) * 50, (1 - ratio) * 100) / 100);
+        killZombies = positiveFloor(env.horde().length() * Util.random(ratio * 50, ratio * 100) / 100);
+        killSurvivors = positiveFloor(env.group.length() * Util.random((1 - ratio) * 50, (1 - ratio) * 100) / 100);
         env.horde().killZombies(killZombies);
         env.group.killSurvivors(killSurvivors);
         Display.addMessage(
@@ -84,7 +84,7 @@ app.service("Orders", ["GBHDisplay", "$log", "Util", "Times", function (Display,
       run: function (env) {
         var tooling = env.group.tooling() / 10;
         var max = Math.min(tooling, 1 - env.place.defense()) * 100;
-        var fortifying = random(max / 2, max) / 100;
+        var fortifying = Util.random(max / 2, max) / 100;
         env.place.addDefense(fortifying);
         Display.addMessage(
           "La zone a été fortifiée (de {0}%) par {1} survivants",

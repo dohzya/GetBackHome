@@ -135,6 +135,7 @@ window.app.factory("Places", ["MemoryItems", "UTGenerator", function (MemoryItem
     create: create,
     all: function () { return places; },
     at: at,
+    forEach: forEach,
     getCenterPlace: getCenterPlace
   };
 

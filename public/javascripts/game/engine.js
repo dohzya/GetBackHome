@@ -1,20 +1,8 @@
-app.service("Engine", ["$rootScope", "GBHDisplay", "$log", "Util", "Orders", "Groups", "Missions", "Env", "Times", "GBHActions", "GBHStats", "Map",
-  function ($rootScope, Display, $log, Util, Orders, Groups, Missions, Env, Times, Actions, Stats, Map) {
+app.service("Engine", ["$rootScope", "GBHDisplay", "$log", "Util", "Events", "Places", "Orders", "Groups", "Missions", "Env", "Times", "GBHActions", "GBHStats", "Map",
+  function ($rootScope, Display, $log, Util, Events, Places, Orders, Groups, Missions, Env, Times, Actions, Stats, Map) {
   "use strict";
 
   var self = this;
-
-
-
-  // When everything is ready, start the engine!
-  function start() {
-    $rootScope.engine.mainPlace = Map.getCenterPlace();
-    mainEnv = Env.create({
-      group: $rootScope.engine.mainGroup,
-      place: $rootScope.engine.mainPlace
-    });
-    turnForPlaces();
-  }
 
   // Global
   $rootScope.engine.turnNb = 0;
@@ -23,14 +11,28 @@ app.service("Engine", ["$rootScope", "GBHDisplay", "$log", "Util", "Orders", "Gr
 
   // Main
   var mainEnv;
-  setTimeout(function () {
-    $rootScope.engine.mainPlace = Map.getCenterPlace();
+
+  // When everything is ready, start the engine!
+  function start() {
+    $rootScope.engine.mainPlace = Places.getCenterPlace();
     mainEnv = Env.create({
       group: $rootScope.engine.mainGroup,
       place: $rootScope.engine.mainPlace
     });
     turnForPlaces();
-  }, 2000);
+  }
+
+  start();
+
+  
+  // setTimeout(function () {
+  //   $rootScope.engine.mainPlace = Places.getCenterPlace();
+  //   mainEnv = Env.create({
+  //     group: $rootScope.engine.mainGroup,
+  //     place: $rootScope.engine.mainPlace
+  //   });
+  //   turnForPlaces();
+  // }, 2000);
 
   function selectedPlace() {
     return $rootScope.gui.selectedZone ? $rootScope.gui.selectedZone.place : $rootScope.engine.mainPlace;
@@ -113,10 +115,11 @@ app.service("Engine", ["$rootScope", "GBHDisplay", "$log", "Util", "Orders", "Gr
     turnForEnv(mainEnv);
     turnForPlaces();
     changed();
+    $rootScope.$broadcast(Events.gui.draw);
   }
 
   function turnForPlaces() {
-    Map.forEach(turnForPlace);
+    Places.forEach(turnForPlace);
     $rootScope.engine.mainGroup.visitPlace($rootScope.engine.turnNb, $rootScope.engine.mainPlace);
   }
 

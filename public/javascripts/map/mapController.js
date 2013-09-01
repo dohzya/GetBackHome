@@ -211,6 +211,6 @@ app.controller("MapCtrl", ["$scope", "$rootScope", "Events", "GUIMap", "Sprites"
   init(Map.getCanvas(), Map.getOpts());
 
   Q.when(Map.isReady(), function () {
-    setTimeout(start, 3000);
+    start();
   });
 }]);
