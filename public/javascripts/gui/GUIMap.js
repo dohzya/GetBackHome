@@ -1,4 +1,4 @@
-app.factory("GUIMap", ["GBHModels", "GUISprites", "GUIZone", "UTGenerator", function (Models, Sprites, Zone, Generator) {
+app.factory("GUIMap", ["Places", "Sprites", "Zones", "UTGenerator", function (Places, Sprites, Zones, Generator) {
   "use strict";
 
   var canvas = document.getElementById("map");
@@ -23,8 +23,8 @@ app.factory("GUIMap", ["GBHModels", "GUISprites", "GUIZone", "UTGenerator", func
   var zones = [];
   Sprites.isLoaded().then(function () {
     zones = Generator.generate("001", 0, 20, 0, 20, function (json) {
-      var place = Models.createPlace(json);
-      return Zone.create(place);
+      var place = Places.create(json);
+      return Zones.create(place);
     });
   });
 
@@ -33,11 +33,11 @@ app.factory("GUIMap", ["GBHModels", "GUISprites", "GUIZone", "UTGenerator", func
   }
 
   function getZone(x, y) {
-    return Hexjs.find(zones, x, y, tileAccessor);
+    return Hexjs.find(Zones.all(), x, y, tileAccessor);
   }
 
   function interpolateZone(px, py) {
-    return Hexjs.interpolate(zones, px, py, tileAccessor);
+    return Hexjs.interpolate(Zones.all(), px, py, tileAccessor);
   }
 
   function isReady() {
@@ -45,7 +45,7 @@ app.factory("GUIMap", ["GBHModels", "GUISprites", "GUIZone", "UTGenerator", func
   }
 
   return {
-    getZones: function () { return zones; },
+    getZones: function () { return Zones.all(); },
     getCanvas: function () { return canvas; },
     getOpts: function () { return opts; },
     getZone: getZone,

@@ -129,8 +129,6 @@
 
       // Congrats! You reached your destination point,
       // Let's stop here and return the path to get there
-      if (node.x() == end.x() && node.y() == end.y()) {
-      }
       if (node === end) {
         var path = FindMe.util.reversePath(node, names.findme);
         if (opts.clean) {

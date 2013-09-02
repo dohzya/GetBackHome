@@ -1,4 +1,4 @@
-app.factory("GUISprites", ["$q", function ($q) {
+app.factory("Sprites", ["$q", function ($q) {
   "use strict";
 
   var png = {

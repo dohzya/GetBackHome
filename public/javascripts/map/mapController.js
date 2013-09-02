@@ -1,4 +1,4 @@
-app.controller("GUICtrl", ["$scope", "$rootScope", "Events", "GUIMap", "GUISprites", "GUIZone", "Map", function ($scope, $rootScope, Events, Map, Sprites, Zone, EngineMap) {
+app.controller("MapCtrl", ["$scope", "$rootScope", "Events", "GUIMap", "Sprites", "Zones", "Places", function ($scope, $rootScope, Events, Map, Sprites, Zones, Places) {
   "use strict";
   var Q = window.Q;
 
@@ -36,10 +36,10 @@ app.controller("GUICtrl", ["$scope", "$rootScope", "Events", "GUIMap", "GUISprit
     var centerX = (drawer.x + drawer.width / 2) / size;
     var centerY = (drawer.y + drawer.height / 2) / size;
 
-    Zone.setSize($scope.gui.zoom, $scope.gui.zoom);
+    Zones.setSize($scope.gui.zoom, $scope.gui.zoom);
 
-    drawer.x = centerX * Zone.getWidth() - drawer.width / 2;
-    drawer.y = centerY * Zone.getHeight() - drawer.height / 2;
+    drawer.x = centerX * Zones.getWidth() - drawer.width / 2;
+    drawer.y = centerY * Zones.getHeight() - drawer.height / 2;
 
     redraw();
   };
@@ -183,7 +183,7 @@ app.controller("GUICtrl", ["$scope", "$rootScope", "Events", "GUIMap", "GUISprit
         place.selected = false;
       });
 
-      //selectedPlaces = EngineMap.findPath(EngineMap.getCenterPlace(), zone.place);
+      //selectedPlaces = EngineMap.findPath($rootScope.selection.base.place, zone.place);
 
       var opts = {
         clean: true,
@@ -192,9 +192,9 @@ app.controller("GUICtrl", ["$scope", "$rootScope", "Events", "GUIMap", "GUISprit
         }
       };
 
-      var from = $rootScope.newMission && $rootScope.newMission.orders.length ? _.last($rootScope.newMission.orders).place : EngineMap.getCenterPlace();
+      var from = $rootScope.newMission && $rootScope.newMission.hasOrders() ? _.last($rootScope.newMission.allOrders()).targetPlace() : $rootScope.selection.base.place;
       
-      var path = FindMe.astar(from, zone.place, opts);
+      var path = from.pathTo(zone.place);
 
       $scope.selection.selectPath(path);
 
@@ -211,6 +211,6 @@ app.controller("GUICtrl", ["$scope", "$rootScope", "Events", "GUIMap", "GUISprit
   init(Map.getCanvas(), Map.getOpts());
 
   Q.when(Map.isReady(), function () {
-    setTimeout(start, 3000);
+    start();
   });
 }]);

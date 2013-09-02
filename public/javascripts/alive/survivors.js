@@ -1,4 +1,4 @@
-app.factory("Survivor", [function () {
+app.factory("Survivors", [function () {
   "use strict";
 
   function Survivor(args) {

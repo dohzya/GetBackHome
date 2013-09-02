@@ -8,7 +8,7 @@
 
     <div ng-show="selection.zone">
       <ul>
-        <li class="order" ng-repeat="order in orders | ordersAvailable:selection.zone" ng-class="{selected: isOrderSelected(order)}">
+        <li class="order" ng-repeat="order in orders() | ordersAvailable:selection.zone" ng-class="{selected: isOrderSelected(order)}">
           <div class="media" ng-click="selectOrder(order)">
             <div class="pull-left media-object">
               <span ng-class="'icon-' + order.icon"></span>
@@ -36,12 +36,15 @@
       <hr/>
 
       <ul class="list-unstyled">
-        <li ng-repeat="order in newMission.orders">{{ order.value.name }}</li>
+        <li ng-repeat="orderItem in newMission.allOrders()">
+          <span ng-class="'icon-' + orderItem.order.icon"></span>
+          {{ orderItem.order.name }} ({{ orderItem.targetPlace().x() }} x {{ orderItem.targetPlace().y() }})
+        </li>
       </ul>
 
       <hr/>
 
-      <button type="button" class="btn btn-block btn-primary" ng-click="createMission()" ng-disabled="!newMission.orders.length">Go go go!</button>
+      <button type="button" class="btn btn-block btn-primary" ng-click="sendMission()" ng-disabled="!newMission.hasOrders()">Go go go!</button>
 
     </div>
   </div>

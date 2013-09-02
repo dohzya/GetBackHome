@@ -1,4 +1,4 @@
-app.factory("Time", ["Util", function (Util) {
+app.factory("Times", ["Util", function (Util) {
   "use strict";
 
   function Time(args) {

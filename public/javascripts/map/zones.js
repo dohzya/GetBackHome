@@ -1,4 +1,4 @@
-window.app.factory("GUIZone", ["$log", "$rootScope", "Util", "GUISprites", function ($log, $rootScope, Util, Sprites) {
+window.app.factory("Zones", ["$log", "$rootScope", "Util", "Sprites", "Places", function ($log, $rootScope, Util, Sprites, Places) {
   "use strict";
 
   var Hexjs = window.Hexjs;
@@ -180,12 +180,21 @@ window.app.factory("GUIZone", ["$log", "$rootScope", "Util", "GUISprites", funct
     this.selected = false;
   };
 
-  function create(zn, opts) {
-    return new Zone(zn, opts);
+  function create(place) {
+    return new Zone(place);
   }
 
+  var zones = [];
+
+  Sprites.isLoaded().then(function () {
+    zones = _.map(Places.all(), function (place) {
+      return create(place);
+    });
+  });
+
   return {
-    create: create
+    create: create,
+    all: function () { return zones; }
   };
 
 }]);

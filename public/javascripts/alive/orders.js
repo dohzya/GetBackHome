@@ -1,5 +1,26 @@
-app.service("GBHOrders", ["GBHDisplay", "$log", "GBHModels", function (Display, $log, Models) {
+app.service("Orders", ["GBHDisplay", "$log", "Util", "Times", function (Display, $log, Util, Times) {
   "use strict";
+
+  function Order(args) {
+    this.id = args.id;
+    this.name = args.name;
+    this.icon = args.icon;
+    this.description = args.description;
+    this.inputs = args.inputs || [];
+    this.time = args.time;
+    this.onWalk = args.onWalk || Util.noop;
+    this.onTurn = args.onTurn || Util.noop;
+    this.onRun = args.onRun || Util.noop;
+    this.onReturn = args.onReturn || Util.noop;
+    this.isAvailableAt = args.isAvailableAt || function () { return true; };
+    this.isValid = args.isValid || function () { return true; };
+    this.run = args.run;
+    this.finish = args.finish;
+  }
+
+  function create(args) {
+    return new Order(args);
+  }
 
   var inputTypes = {
     home: {
@@ -17,6 +38,22 @@ app.service("GBHOrders", ["GBHDisplay", "$log", "GBHModels", function (Display, 
 
   var rawOrders = [
     {
+      id: "move",
+      name: "Move to",
+      icon: "location-arrow",
+      description: "",
+      time: Times.create({
+        min: 1,
+        standard: 2
+      }),
+      run: function (env) {
+        console.log("Moving");
+      },
+      finish: function () {
+        return true;
+      }
+    },
+    {
       id: "purify",
       name: "Purification",
       icon: "fire",
@@ -27,7 +64,7 @@ app.service("GBHOrders", ["GBHDisplay", "$log", "GBHModels", function (Display, 
           name: "survivors"
         }
       ],
-      time: Models.createTime({
+      time: Times.create({
         min: 1,
         standard: 3
       }),
@@ -35,8 +72,8 @@ app.service("GBHOrders", ["GBHDisplay", "$log", "GBHModels", function (Display, 
         var ratio = env.ratio();
         var killZombies = 0;
         var killSurvivors = 0;
-        killZombies = positiveFloor(env.horde().length() * random(ratio * 50, ratio * 100) / 100);
-        killSurvivors = positiveFloor(env.group.length() * random((1 - ratio) * 50, (1 - ratio) * 100) / 100);
+        killZombies = Util.positiveFloor(env.horde().length() * Util.random(ratio * 50, ratio * 100) / 100);
+        killSurvivors = Util.positiveFloor(env.group.length() * Util.random((1 - ratio) * 50, (1 - ratio) * 100) / 100);
         env.horde().killZombies(killZombies);
         env.group.killSurvivors(killSurvivors);
         Display.addMessage(
@@ -47,7 +84,6 @@ app.service("GBHOrders", ["GBHDisplay", "$log", "GBHModels", function (Display, 
         );
       },
       finish: function () {
-        finishMission(this);
         return true;
       }
     },
@@ -56,14 +92,14 @@ app.service("GBHOrders", ["GBHDisplay", "$log", "GBHModels", function (Display, 
       name: "Fortification",
       icon: "building",
       description: "",
-      time: Models.createTime({
+      time: Times.create({
         min: 1,
         standard: 2
       }),
       run: function (env) {
         var tooling = env.group.tooling() / 10;
         var max = Math.min(tooling, 1 - env.place.defense()) * 100;
-        var fortifying = random(max / 2, max) / 100;
+        var fortifying = Util.random(max / 2, max) / 100;
         env.place.addDefense(fortifying);
         Display.addMessage(
           "La zone a été fortifiée (de {0}%) par {1} survivants",
@@ -72,7 +108,6 @@ app.service("GBHOrders", ["GBHDisplay", "$log", "GBHModels", function (Display, 
         );
       },
       finish: function () {
-        finishMission(this);
         return true;
       }
     }
@@ -80,7 +115,7 @@ app.service("GBHOrders", ["GBHDisplay", "$log", "GBHModels", function (Display, 
 
   var orders = {};
   _.each(rawOrders, function (order) {
-    orders[order.id] = Models.createOrder(order);
+    orders[order.id] = create(order);
   });
 
   var self = this;
@@ -180,6 +215,7 @@ app.service("GBHOrders", ["GBHDisplay", "$log", "GBHModels", function (Display, 
 
   // Export
   return {
+    create: create,
     all: function () { return orders; },
     get: function (idOrder) { return orders[idOrder] },
     ordersTurn: ordersTurn,

@@ -1,6 +1,7 @@
-app.controller("GBHOrders", ["$scope", "$rootScope", "Events", "GBHEngine", "GBHModels",
-  function ($scope, $rootScope, Events, Engine, Models) {
+app.controller("NewMissionCtrl", ["$scope", "$rootScope", "Events", "Engine", "Missions", function ($scope, $rootScope, Events, Engine, Missions) {
   "use strict";
+
+  var $ = window.jQuery;
 
   $scope.$on(Events.gui.zones.selected, function () {
     //$scope.selection.order = undefined;
@@ -27,25 +28,26 @@ app.controller("GBHOrders", ["$scope", "$rootScope", "Events", "GBHEngine", "GBH
   function updateSelectedOrder () {
     if ($scope.selection.order) {
       $scope.selection.order.place = $scope.selection.zone.place;
+      console.log($scope.selection.path);
       $scope.selection.order.path = $scope.selection.path;
     }
   }
 
-  function updateMissionPlaces (mission) {
-    _.forEach(mission.orders, function (order) {
-      order.place.hasOrder = true;
-      _.forEach(order.path, function (place) {
+  function updateMissionPlaces(mission) {
+    mission.orders.forEach(function (orderItem) {
+      orderItem.targetPlace().hasOrder = true;
+      _.forEach(orderItem.path, function (place) {
         place.inPath = true;
       });
     });
   }
 
-  function clearMissionPlaces (mission) {
-    _.forEach(mission.orders, function (order) {
-      order.place.hasOrder = false;
-      _.forEach(order.path, function (place) {
-        place.selected = false;
+  function clearMissionPlaces(mission) {
+    mission.orders.forEach(function (orderItem) {
+      orderItem.targetPlace().hasOrder = false;
+      _.forEach(orderItem.path, function (place) {
         place.inPath = false;
+        place.selected = false;
       });
     });
   }
@@ -57,21 +59,18 @@ app.controller("GBHOrders", ["$scope", "$rootScope", "Events", "GBHEngine", "GBH
 
 
   $scope.selectOrder = $scope.doAction(function (order) {
-    order = {
-      value: order,
-      data: {}
-    };
+    var orderItem = Missions.createOrderListItem({order: order, data: {}});
 
-    _.each(order.value.inputs, function (input) {
-      order.data[input.name] = input.type.default;
+    _.each(orderItem.order.inputs, function (input) {
+      orderItem.data[input.name] = input.type.default;
     });
 
-    $scope.selection.order = order;
+    $scope.selection.order = orderItem;
     updateSelectedOrder();
   });
 
   $scope.isOrderSelected = function (order) {
-    return $scope.selection.order && $scope.selection.order.value.id === order.id;
+    return $scope.selection.order && $scope.selection.order.order.id === order.id;
   };
 
   $scope.$on(Events.gui.zones.selected, function () {
@@ -80,20 +79,23 @@ app.controller("GBHOrders", ["$scope", "$rootScope", "Events", "GBHEngine", "GBH
 
   $scope.addOrder = $scope.doAction(function () {
     if (!$rootScope.newMission) {
-      $rootScope.newMission = Models.createMission({});
+      $rootScope.newMission = Missions.create({
+        group: $rootScope.engine.mainGroup,
+        fromBase: $scope.selection.base,
+        toBase: $scope.selection.base
+      });
     }
-
-    $rootScope.newMission.orders.push($scope.selection.order);
+    $rootScope.newMission.orders.add($scope.selection.order);
     updateMissionPlaces($rootScope.newMission);
     $scope.selection.order = undefined;
   });
 
-  $scope.createMission = $scope.doAction(function () {
+  $scope.sendMission = $scope.doAction(function () {
 
-    clearMissionPlaces($rootScope.newMission)
+    clearMissionPlaces($rootScope.newMission);
     $scope.selection.clearPath();
 
-    $rootScope.currentPlayer.missions.push($rootScope.newMission);
+    $rootScope.currentPlayer().missions.push($rootScope.newMission);
     $rootScope.newMission = undefined;
     $rootScope.$broadcast(Events.gui.draw);
   });

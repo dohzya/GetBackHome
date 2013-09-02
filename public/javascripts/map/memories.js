@@ -1,4 +1,4 @@
-window.app.factory("Memory", ["Map", function (Map) {
+window.app.factory("Memories", ["Map", function (Map) {
   "use strict";
 
   function placeToKey(place) {
