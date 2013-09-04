@@ -11,6 +11,15 @@ app.factory("Missions", ["$rootScope", "$log", "Env", "Orders", function ($rootS
     this.finished = false;
   }
 
+  OrderListItem.prototype.nextPlace = function (currentPlace) {
+    var currentIndex = _.indexOf(this.path, currentPlace);
+    if (currentIndex > -1 && currentIndex < this.path.length) {
+      return this.path[currentIndex+1];
+    } else {
+      return this.path[0];
+    }
+  };
+
   OrderListItem.prototype.targetPlace = function () {
     return _.last(this.path);
   };
@@ -167,9 +176,11 @@ app.factory("Missions", ["$rootScope", "$log", "Env", "Orders", function ($rootS
       } else {
         // We need to move to our target point
         this.status = "walking";
-        var index = _.indexOf(orderItem.path, this.place);
-        console.log("moving from", this.place, "to", orderItem.path[index+1]);
-        this.place = orderItem.path[index+1];
+        var nextPlace = orderItem.nextPlace(this.place);
+        console.log("moving from", this.place, "to", nextPlace);
+        if (nextPlace) {
+          this.place = nextPlace;
+        }
       }
     } else {
       // No more order? Let's see if we are at destination
