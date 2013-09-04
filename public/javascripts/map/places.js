@@ -135,7 +135,8 @@ window.app.factory("Places", ["Config", "MemoryItems", "UTGenerator", function (
     create: create,
     all: function () { return places; },
     at: at,
-    forEach: forEach
+    forEach: forEach,
+    tileAccessor: tileAccessor
   };
 
 }]);

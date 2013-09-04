@@ -192,9 +192,24 @@ window.app.factory("Zones", ["$log", "$rootScope", "Util", "Sprites", "Places", 
     });
   });
 
+  function tileAccessor(zone) {
+    return zone.place.tile;
+  }
+
+  function at(x, y) {
+    return Hexjs.find(zones, x, y, tileAccessor);
+  }
+
+  function interpolate(px, py) {
+    return Hexjs.interpolate(zones, px, py, tileAccessor);
+  }
+
   return {
     create: create,
-    all: function () { return zones; }
+    all: function () { return zones; },
+    at: at,
+    interpolate: interpolate,
+    isReady: function () { return Q.all([Sprites.isLoaded()]); }
   };
 
 }]);

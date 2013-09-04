@@ -1,5 +1,5 @@
-app.service("Engine", ["$rootScope", "GBHDisplay", "$log", "Util", "Events", "Places", "Orders", "Groups", "Missions", "Env", "Times", "GBHActions", "GBHStats", "Map",
-  function ($rootScope, Display, $log, Util, Events, Places, Orders, Groups, Missions, Env, Times, Actions, Stats, Map) {
+app.service("Engine", ["$rootScope", "$log", "Util", "Events", "Places", "Orders", "Groups", "Missions", "Env", "Times", "GBHActions", "Map",
+  function ($rootScope, $log, Util, Events, Places, Orders, Groups, Missions, Env, Times, Actions, Map) {
   "use strict";
 
   var self = this;
@@ -139,25 +139,21 @@ app.service("Engine", ["$rootScope", "GBHDisplay", "$log", "Util", "Events", "Pl
     var consumedFood = Util.random(nb * 0.8, nb * 1.2);
     if (consumedFood < env.place.food) {
       env.place.food -= consumedFood;
-      Display.addMessage("{0} de nourritures ont été consommés.", consumedFood);
     } else {
       var diff = consumedFood - env.place.food;
       env.place.food = 0;
-      Display.addMessage("Il n'y a plus de nourriture (il aurait fallu {0} de plus).", diff);
     }
   }
 
   function addZombies(env) {
     var newZombies = Util.random(10, 100);
     env.place.horde.addZombies(newZombies);
-    Display.addMessage("{0} zombies ont été aperçu.", newZombies);
   }
 
   function addSurvivors(env) {
     if (Util.random() > 0.8) {
       var newSurvivors = Math.round(Util.random(1, 6) / 2);
       env.group.addSurvivors += newSurvivors;
-      Display.addMessage("Vous avez été rejoint par {0} survivants", newSurvivors);
     }
   }
 
@@ -172,12 +168,11 @@ app.service("Engine", ["$rootScope", "GBHDisplay", "$log", "Util", "Events", "Pl
     env.horde().removeZombies(killZombies);
     env.group.removeSurvivors(killSurvivors);
     env.place.addDefense(-damage / 100);
-    Display.addMessage("La zone a été attaquée ! ({0} zombies éliminés, {1} survivants tués, {2}% de dégats)", killZombies, killSurvivors, damage);
     changed();
   }
 
   function changed() {
-    Stats.updateStats();
+    
   }
 
   function defineOrder(args) {
@@ -199,12 +194,6 @@ app.service("Engine", ["$rootScope", "GBHDisplay", "$log", "Util", "Events", "Pl
       killSurvivors = Util.positiveFloor(env.group.length() * Util.random((1 - ratio) * 50, (1 - ratio) * 100) / 100);
       env.horde().killZombies(killZombies);
       env.group.killSurvivors(killSurvivors);
-      Display.addMessage(
-        "La zone a été purifée ({0} survivants impliqués dont {2} tués, {1} zombies éliminés)",
-        env.group.length(),
-        killZombies,
-        killSurvivors
-      );
     },
     finish: function () {
       finishMission(this);
@@ -241,11 +230,6 @@ app.service("Engine", ["$rootScope", "GBHDisplay", "$log", "Util", "Events", "Pl
       var max = Math.min(tooling, 1 - env.place.defense()) * 100;
       var fortifying = Util.random(max / 2, max) / 100;
       env.place.addDefense(fortifying);
-      Display.addMessage(
-        "La zone a été fortifiée (de {0}%) par {1} survivants",
-        Math.round(fortifying * 100),
-        env.group.length()
-      );
     },
     finish: function () {
       finishMission(this);
@@ -289,7 +273,6 @@ app.service("Engine", ["$rootScope", "GBHDisplay", "$log", "Util", "Events", "Pl
     run: function (env) {
       var scavangedFood = Util.random(2, 10);
       env.place.food += scavangedFood;
-      Display.addMessage("Du materiel a été récupéré ({0} nourritures)", scavangedFood);
       finishMission(this);
       return true;
     }
@@ -316,52 +299,6 @@ app.service("Engine", ["$rootScope", "GBHDisplay", "$log", "Util", "Events", "Pl
     },
     order: "scavange"
   });
-
-  Stats.createStat({
-    id: "turn",
-    label: "Tour",
-    update: function () { this.value = $rootScope.engine.turnNb; }
-  });
-  Stats.createStat({
-    id: "ratio",
-    label: "Sécurité",
-    suffix: " %",
-    update: function () { this.value = Util.to2digits(selectedEnv().ratio() * 100); }
-  });
-  Stats.createStat({
-    id: "defense",
-    label: "Étant du fort",
-    suffix: " %",
-    update: function () { this.value = Util.to2digits(selectedPlace().defense() * 100); }
-  });
-  Stats.createStat({
-    id: "zombies",
-    label: "Zombies aux alentour",
-    update: function () { this.value = selectedEnv().horde().length(); }
-  });
-  Stats.createStat({
-    id: "survivors",
-    label: "Survivants",
-    update: function () {
-      var value = $rootScope.engine.mainGroup.length();
-      Models.eachMission(function (mission) {
-        value += mission.group.length();
-      });
-      this.value = value;
-    }
-  });
-  Stats.createStat({
-    id: "idle",
-    label: "Survivants inactif",
-    update: function () { this.value = $rootScope.engine.mainGroup.length(); }
-  });
-  Stats.createStat({
-    id: "food",
-    label: "Nourriture restante",
-    update: function () { this.value = selectedPlace().food; }
-  });
-
-  Stats.updateStats();
 
   // Export
   $.extend(self, {

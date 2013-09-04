@@ -1,4 +1,4 @@
-app.controller("MapCtrl", ["$scope", "$rootScope", "Events", "GUIMap", "Sprites", "Zones", "Places", function ($scope, $rootScope, Events, Map, Sprites, Zones, Places) {
+app.controller("MapCtrl", ["$scope", "$rootScope", "Events", "Sprites", "Places", "Zones", function ($scope, $rootScope, Events, Sprites, Places, Zones) {
   "use strict";
   var Q = window.Q;
 
@@ -9,9 +9,10 @@ app.controller("MapCtrl", ["$scope", "$rootScope", "Events", "GUIMap", "Sprites"
     redraw();
   });
 
+  var canvas = document.getElementById("map");
   var drawer = {};
 
-  function init(canvas) {
+  function init() {
     drawer.canvas = canvas;
     drawer.bounding = drawer.canvas.getBoundingClientRect();
     drawer.ctx = canvas.getContext("2d");
@@ -65,11 +66,11 @@ app.controller("MapCtrl", ["$scope", "$rootScope", "Events", "GUIMap", "Sprites"
   }
 
   function getDrawable(x, y) {
-    return Map.interpolateZone(x, y);
+    return Zones.interpolate(x, y);
   }
   // TODO merge these 2 functions
   function eachDrawables(f) {
-    _.each(Map.getZones(), function (zone) {
+    _.each(Zones.all(), function (zone) {
       if (zone.place.tile.isContained(drawer.x, drawer.y, drawer.width, drawer.height)) {
         f(zone);
       }
@@ -208,9 +209,9 @@ app.controller("MapCtrl", ["$scope", "$rootScope", "Events", "GUIMap", "Sprites"
     });
   }
 
-  init(Map.getCanvas(), Map.getOpts());
+  init();
 
-  Q.when(Map.isReady(), function () {
+  Q.when(Zones.isReady(), function () {
     start();
   });
 }]);

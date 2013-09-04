@@ -10,11 +10,11 @@
 
 <!DOCTYPE html>
 
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" data-ng-app="app" data-ng-controller="GBHCtrl"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" data-ng-app="app" data-ng-controller="GBHCtrl"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9" data-ng-app="app" data-ng-controller="GBHCtrl"> <![endif]-->
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" data-ng-app="app" data-ng-controller="AppCtrl"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" data-ng-app="app" data-ng-controller="AppCtrl"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" data-ng-app="app" data-ng-controller="AppCtrl"> <![endif]-->
 <!--[if gt IE 8]><!-->
-  <html class="no-js" data-ng-app="app" data-ng-controller="GBHCtrl">
+  <html class="no-js" data-ng-app="app" data-ng-controller="AppCtrl">
 <!--<![endif]-->
 
 <head>
@@ -80,10 +80,9 @@
     <script type="text/javascript" src="@routes.Assets.at("javascripts/game/players.js")"></script>
     <script type="text/javascript" src="@routes.Assets.at("javascripts/game/times.js")"></script>
 
-    <script type="text/javascript" src="@routes.Assets.at("javascripts/gbh/GBHCtrl.js")"></script>
-    <script type="text/javascript" src="@routes.Assets.at("javascripts/gbh/GBHDisplay.js")"></script>
     <script type="text/javascript" src="@routes.Assets.at("javascripts/gbh/GBHActions.js")"></script>
-    <script type="text/javascript" src="@routes.Assets.at("javascripts/gbh/GBHStats.js")"></script>
+
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/global/appCtrl.js")"></script>
 
     <script type="text/javascript" src="@routes.Assets.at("javascripts/map/map.js")"></script>
     <script type="text/javascript" src="@routes.Assets.at("javascripts/map/mapController.js")"></script>
@@ -92,7 +91,6 @@
     <script type="text/javascript" src="@routes.Assets.at("javascripts/map/places.js")"></script>
     <script type="text/javascript" src="@routes.Assets.at("javascripts/map/sprites.js")"></script>
     <script type="text/javascript" src="@routes.Assets.at("javascripts/map/zones.js")"></script>
-    <script type="text/javascript" src="@routes.Assets.at("javascripts/gui/GUIMap.js")"></script>
   }
 
   @if(conf.livereload) {
