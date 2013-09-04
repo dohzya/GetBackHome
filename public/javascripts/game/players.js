@@ -1,4 +1,4 @@
-app.factory("Players", ["Bases", "Places", function (Bases, Places) {
+app.factory("Players", ["Bases", "Places", "Groups", "Survivors", function (Bases, Places, Groups, Survivors) {
   "use strict";
 
   var players = [];
@@ -24,7 +24,11 @@ app.factory("Players", ["Bases", "Places", function (Bases, Places) {
 
   function init() {
     var currentPlayer = create();
-    currentPlayer.bases.push(Bases.create({place: Places.at(7, 3), isPrimary: true}));
+    currentPlayer.bases.push(Bases.create({
+      place: Places.at(7, 3),
+      isPrimary: true,
+      group: Groups.create({ survivors: Survivors.createSeveral(10) })
+    }));
     players.push(currentPlayer);
     current = currentPlayer;
   }

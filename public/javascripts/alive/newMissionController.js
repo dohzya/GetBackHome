@@ -97,6 +97,7 @@ app.controller("NewMissionCtrl", ["$scope", "$rootScope", "Events", "Engine", "M
 
     $rootScope.currentPlayer().missions.push($rootScope.newMission);
     $rootScope.newMission = undefined;
+    $scope.selection.zone = undefined;
     $rootScope.$broadcast(Events.gui.draw);
   });
 

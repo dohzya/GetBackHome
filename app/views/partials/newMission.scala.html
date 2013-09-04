@@ -24,7 +24,7 @@
       <div ng-show="selection.order">
         <hr/>
         
-        <h3>{{ selection.order.value.name }}</h3>
+        <h3>{{ selection.order.order.name }} {{ selection.zone.x() }} x {{ selection.zone.y() }}</h3>
 
         <div ng-repeat="input in selection.order.value.inputs">
           <gbh-input-order type="input.type" value="selection.order.data[input.name]"></gbh-input-order>
@@ -39,6 +39,16 @@
         <li ng-repeat="orderItem in newMission.allOrders()">
           <span ng-class="'icon-' + orderItem.order.icon"></span>
           {{ orderItem.order.name }} ({{ orderItem.targetPlace().x() }} x {{ orderItem.targetPlace().y() }})
+        </li>
+        <li ng-hide="newMission.allOrders().length">No orders yet...</li>
+      </ul>
+
+      <hr/>
+
+      <ul class="list-unstyled">
+        <li ng-repeat="s in selection.base.group.survivors">
+          <span ng-class="'icon-' + (s.gender ? 'male' : 'female')"></span>
+          {{ s.name }} ({{ s.age }})
         </li>
       </ul>
 
