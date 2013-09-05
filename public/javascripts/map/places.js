@@ -19,6 +19,7 @@ window.app.factory("Places", ["Config", "MemoryItems", "UTGenerator", function (
     this.tile = Hexjs.tile(args.pos[0], args.pos[1]);
     this.types = args.types;
     this.memory = {};
+    this.missions = [];
   }
 
   Place.prototype.memoryItem = function (ts) {
@@ -82,6 +83,17 @@ window.app.factory("Places", ["Config", "MemoryItems", "UTGenerator", function (
 
   Place.prototype.pathTo = function (destination) {
     return FindMe.astar(this, destination, Config.hexjs);
+  };
+
+  Place.prototype.addMission = function (mission) {
+    this.missions.push(mission);
+  };
+  Place.prototype.removeMission = function (mission) {
+    this.missions = _.without(this.missions, mission);
+  };
+
+  Place.prototype.groupsOnThisPlace = function () {
+    return _.map(this.missions, function (mission) { return mission.group; })
   };
 
   function create(args) {

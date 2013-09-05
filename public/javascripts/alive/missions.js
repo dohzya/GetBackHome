@@ -159,6 +159,7 @@ app.factory("Missions", ["$rootScope", "$log", "Env", "Orders", function ($rootS
     console.log("TURN for", this);
     if (this.place) {
       this.place.highlighted = false;
+      this.place.removeMission(this);
     }
 
     var orderItem;
@@ -199,6 +200,7 @@ app.factory("Missions", ["$rootScope", "$log", "Env", "Orders", function ($rootS
     if (this.place) {
       this.place.highlighted = true;
       this.group.visitPlace(ts, this.place);
+      this.place.addMission(this);
     }
     console.log("Status:", this.status);
   };
