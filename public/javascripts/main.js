@@ -31,7 +31,7 @@ var app = angular
   .config(["$locationProvider", function ($locationProvider) {
     $locationProvider.html5Mode(true).hashPrefix("!");
   }])
-  .run(["$rootScope", "$log", "Players", "Util", "Orders", function ($rootScope, $log, Players, Util, Orders) {
+  .run(["$rootScope", "$log", "Players", "Util", "Orders", "Places", function ($rootScope, $log, Players, Util, Orders, Places) {
     $rootScope.$log = $log;
 
     $rootScope.engine = {};
@@ -40,7 +40,7 @@ var app = angular
 
     $rootScope.orders = Orders.all;
 
-    Players.init();
+    Players.init(Places.at(7, 3));
     $rootScope.currentPlayer = Players.current;
     $rootScope.newMission = undefined;
 
