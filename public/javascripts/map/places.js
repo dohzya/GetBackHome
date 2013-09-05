@@ -7,7 +7,7 @@ window.app.factory("Places", ["Config", "MemoryItems", "UTGenerator", function (
     return create(json);
   });
 
-  function tileAccessor (place) {
+  function tileAccessor(place) {
     return place.tile;
   }
 

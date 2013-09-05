@@ -1,4 +1,4 @@
-app.service("Engine", ["$rootScope", "$log", "Util", "Events", "Places", "Orders", "Groups", "Missions", "Env", "Times", "GBHActions", "Map", function ($rootScope, $log, Util, Events, Places, Orders, Groups, Missions, Env, Times, Actions, Map) {
+app.service("Engine", ["$rootScope", "Util", "Events", "Places", "Groups", "Env", function ($rootScope, Util, Events, Places, Groups, Env) {
   "use strict";
 
   var self = this;

@@ -160,7 +160,7 @@ app.factory("Missions", ["$rootScope", "$log", "Env", "Orders", function ($rootS
     if (this.place) {
       this.place.highlighted = false;
     }
-    
+
     var orderItem;
     orderItem = this.orders.currentOrderItem();
     console.log("orderItem:", orderItem);

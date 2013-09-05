@@ -1,4 +1,4 @@
-window.app.factory("Memories", ["Map", function (Map) {
+window.app.factory("Memories", ["Places", function (Places) {
   "use strict";
 
   function placeToKey(place) {
@@ -7,7 +7,7 @@ window.app.factory("Memories", ["Map", function (Map) {
 
   function keyToPlace(key) {
     var pos = _.map(key.split("x"), function (n) { return parseInt(n, 10); });
-    return Map.getPlace(pos[0], pos[1]);
+    return Places.at(pos[0], pos[1]);
   }
 
   function memoryItem(key, ts) {
