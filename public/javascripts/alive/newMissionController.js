@@ -3,28 +3,6 @@ app.controller("NewMissionCtrl", ["$scope", "$rootScope", "Events", "Engine", "M
 
   var $ = window.jQuery;
 
-  $scope.$on(Events.gui.zones.selected, function () {
-    //$scope.selection.order = undefined;
-  });
-
-  $scope.game.selectedSurvivors = Engine.selectSurvivors(0);
-  $scope.game.selectedOrder = null;
-
-  $scope.sendOrder = $scope.doAction(function (id) {
-    Engine.sendOrder(id);
-    $scope.game.selectedSurvivors = Engine.selectSurvivors(0);
-  });
-
-  $scope.selectSurvivors = $scope.doAction(function (selectedSurvivors) {
-    $scope.game.selectedSurvivors = Engine.selectSurvivors(selectedSurvivors);
-  });
-
-  // $scope.selectOrder = $scope.doAction(function (selectedOrder) {
-  //   $scope.currentOrder = Engine.selectOrder(selectedOrder);
-  // });
-
-
-
   function updateSelectedOrder () {
     if ($scope.selection.order) {
       $scope.selection.order.place = $scope.selection.zone.place;

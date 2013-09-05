@@ -48,8 +48,7 @@ app.factory("Missions", ["$rootScope", "$log", "Env", "Orders", function ($rootS
   OrderList.prototype.add = function (args) {
     if (args instanceof OrderListItem) {
       this.orders.push(args);
-    }
-    else {
+    } else {
       this.add(new OrderListItem(args));
     }
   };
