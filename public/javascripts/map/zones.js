@@ -63,7 +63,7 @@ window.app.factory("Zones", ["$log", "$rootScope", "Util", "Sprites", "Places", 
   };
 
   Zone.prototype.youth = function (memory) {
-    return $rootScope.engine.turnNb - memory.ts;
+    return Math.min(60, $rootScope.engine.turnNb - memory.ts);
   };
 
   Zone.prototype.drawBackground = function (ctx, x, y, memory) {
