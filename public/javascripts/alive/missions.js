@@ -146,8 +146,7 @@ app.factory("Missions", ["$rootScope", "$log", "Env", "Orders", function ($rootS
   Mission.prototype.currentEnv = function () {
     return Env.create({
       group: this.group,
-      place: this.place,
-      horde: this.place.horde
+      place: this.place
     });
   };
 

@@ -1,4 +1,4 @@
-app.factory("Players", ["Bases", "Groups", "Survivors", function (Bases, Groups, Survivors) {
+window.app.factory("Players", [function () {
   "use strict";
 
   var players = [];
@@ -16,19 +16,21 @@ app.factory("Players", ["Bases", "Groups", "Survivors", function (Bases, Groups,
     return _.find(this.bases, function (base) {
       return base.isPrimary;
     });
-  }
+  };
+
+  Player.prototype.visitBases = function (turnNb) {
+    _.forEach(this.bases, function (base) {
+      base.visit(turnNb);
+    });
+  };
 
   function create() {
     return new Player();
   }
 
-  function init(place) {
+  function init(base) {
     var currentPlayer = create();
-    currentPlayer.bases.push(Bases.create({
-      place: place,
-      isPrimary: true,
-      group: Groups.create({ survivors: Survivors.createSeveral(10) })
-    }));
+    currentPlayer.bases.push(base);
     players.push(currentPlayer);
     current = currentPlayer;
   }

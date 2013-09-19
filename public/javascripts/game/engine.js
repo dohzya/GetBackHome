@@ -3,8 +3,6 @@ app.service("Engine", ["$rootScope", "Util", "Events", "Places", "Groups", "Env"
 
   var self = this;
 
-  var mainEnv;
-
   function consumeFood(env) {
     var nb = env.group.length();
     var consumedFood = Util.random(nb * 0.8, nb * 1.2);
@@ -41,43 +39,44 @@ app.service("Engine", ["$rootScope", "Util", "Events", "Places", "Groups", "Env"
   }
 
   function turnForPlace(place) {
+    var env;
     place.endTurn($rootScope.engine.turnNb);
+    _.each(place.groups, function (group) {
+      env = Env.create({
+        place: place,
+        group: group
+      });
+      consumeFood(env);
+      addZombies(env);
+      addSurvivors(env);
+      if (place.horde.length() > 0 && Util.random() > 0.7) { zombieAttack(env); }
+    });
   }
 
   function turnForPlaces() {
     Places.forEach(turnForPlace);
-    $rootScope.engine.mainGroup.visitPlace($rootScope.engine.turnNb, $rootScope.engine.mainPlace);
-  }
-
-  function turnForEnv(env) {
-    consumeFood(env);
-    addZombies(env);
-    addSurvivors(env);
-    if (env.horde().length() > 0 && Util.random() > 0.7) { zombieAttack(env); }
+    $rootScope.currentPlayer().visitBases($rootScope.engine.turnNb);
   }
 
   function turn() {
-    _.forEach($rootScope.currentPlayer().missions, function (mission) {
+    var player = $rootScope.currentPlayer();
+    _.forEach(player.missions, function (mission) {
       if (mission) {  // TODO fix this creepy line
         mission.turn($rootScope.engine.turnNb);
+        console.log(mission.group.log);
       }
     });
-    $rootScope.engine.turnNb++;
-    turnForEnv(mainEnv);
     turnForPlaces();
+    $rootScope.engine.turnNb++;
     $rootScope.$broadcast(Events.gui.draw);
   }
 
   // Global
   $rootScope.engine.turnNb = 0;
-  $rootScope.engine.mainGroup = Groups.create(10);
+  $rootScope.engine.mainGroup = $rootScope.currentPlayer().bases[0].group;
 
   // When everything is ready, start the engine!
-  $rootScope.engine.mainPlace = $rootScope.selection.base.place;
-  mainEnv = Env.create({
-    group: $rootScope.engine.mainGroup,
-    place: $rootScope.engine.mainPlace
-  });
+  $rootScope.engine.mainPlace = $rootScope.currentPlayer().bases[0].place;
   turnForPlaces();
 
   // Export

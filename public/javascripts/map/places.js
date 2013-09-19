@@ -1,4 +1,4 @@
-window.app.factory("Places", ["Config", "MemoryItems", "UTGenerator", function (Config, MemoryItems, UTGenerator) {
+window.app.factory("Places", ["Config", "MemoryItems", "UTGenerator", "Players", function (Config, MemoryItems, UTGenerator, Players) {
   "use strict";
 
   var Hexjs = window.Hexjs;
@@ -92,8 +92,11 @@ window.app.factory("Places", ["Config", "MemoryItems", "UTGenerator", function (
     this.missions = _.without(this.missions, mission);
   };
 
-  Place.prototype.groupsOnThisPlace = function () {
-    return _.map(this.missions, function (mission) { return mission.group; })
+  Place.prototype.groups = function () {
+    var groups = [];
+    _.each(this.missions, function (mission) { groups.push(mission.group); });
+    _.each(Players.bases, function (base) { groups.push(base.group); });
+    return groups;
   };
 
   function create(args) {
