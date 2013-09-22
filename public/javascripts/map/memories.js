@@ -1,4 +1,4 @@
-window.app.factory("Memories", ["Places", function (Places) {
+window.app.factory("Memories", ["Places", "Logs", function (Places, Logs) {
   "use strict";
 
   function placeToKey(place) {
@@ -17,11 +17,16 @@ window.app.factory("Memories", ["Places", function (Places) {
 
   function Memory() {
     this.items = {};
+    this.logs = Logs.create();
   }
 
   Memory.prototype.addItem = function (ts, place) {
     var key = placeToKey(place);
     this.items[key] = ts;
+  };
+
+  Memory.prototype.addLog = function (msg, args, base) {
+    this.logs.addMessage(msg, args, base);
   };
 
   Memory.prototype.item = function (key) {
@@ -45,6 +50,7 @@ window.app.factory("Memories", ["Places", function (Places) {
         }
       }
     }
+    
   };
 
   Memory.prototype.mergeBothWay = function (memory) {
@@ -52,7 +58,7 @@ window.app.factory("Memories", ["Places", function (Places) {
     memory.merge(this);
   };
 
-  Memory.prototype.forEach = function (func) {
+  Memory.prototype.forEachItems = function (func) {
     var key, ts, item;
     for (key in this.items) {
       if (this.items.hasOwnProperty(key)) {
@@ -68,10 +74,11 @@ window.app.factory("Memories", ["Places", function (Places) {
     var key, item;
     for (key in this.items) {
       if (this.items.hasOwnProperty(key)) {
-        memory[key] = this.items[key];
+        memory.items[key] = this.items[key];
       }
     }
-    return memory;
+    memory.logs = this.logs.clone();
+    return _.cloneDeep(this);
   };
 
   function create() {

@@ -10,6 +10,10 @@ window.app.factory("Env", ["Util", function (Util) {
     return this.place.horde;
   };
 
+  Env.prototype.logs = function () {
+    return this.groupe.logs();
+  };
+
   Env.prototype.ratio = function () {
     var r1 = Util.min0(this.group.attack() + this.place.attack() - this.horde().defense());
     var r2 = Util.min0(this.horde().attack() - this.place.defense() - this.group.defense());

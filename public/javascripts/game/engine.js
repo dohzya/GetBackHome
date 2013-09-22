@@ -26,6 +26,7 @@ app.service("Engine", ["$rootScope", "Util", "Events", "Places", "Groups", "Env"
   }
 
   function zombieAttack(env) {
+    console.log("zombieAttack env = ", env);
     var ratio = env.ratio();
     var killZombies = 0;
     var killSurvivors = 0;
@@ -33,6 +34,12 @@ app.service("Engine", ["$rootScope", "Util", "Events", "Places", "Groups", "Env"
     killZombies = Util.positiveFloor(env.horde().length() * Util.random(ratio * 50, ratio * 100) / 100);
     killSurvivors = Util.positiveFloor(env.group.length()  *  Util.random((1 - ratio) * 50, (1 - ratio) * 100) / 100);
     damage = Util.positiveFloor(env.place.defense() * 100  *  Util.random((1 - ratio) * 50, (1 - ratio) * 100) / 100);
+    env.log.addMessage(
+      "Attaque zombie (zombies killed: {0}, survivors killed: {1}, damage: {2})",
+      killZombies,
+      killSurvivors,
+      damage
+    );
     env.horde().removeZombies(killZombies);
     env.group.removeSurvivors(killSurvivors);
     env.place.addDefense(-damage / 100);
@@ -67,16 +74,20 @@ app.service("Engine", ["$rootScope", "Util", "Events", "Places", "Groups", "Env"
       }
     });
     turnForPlaces();
+    _.forEach(player.bases, function (base) {
+      console.log(base.group.log);
+    });
     $rootScope.engine.turnNb++;
     $rootScope.$broadcast(Events.gui.draw);
   }
 
   // Global
   $rootScope.engine.turnNb = 0;
-  $rootScope.engine.mainGroup = $rootScope.currentPlayer().bases[0].group;
+  $rootScope.engine.mainBase = $rootScope.currentPlayer().getPrimaryBase();
+  $rootScope.engine.mainGroup = $rootScope.engine.mainBase.group;
+  $rootScope.engine.mainPlace = $rootScope.engine.mainBase.place;
 
   // When everything is ready, start the engine!
-  $rootScope.engine.mainPlace = $rootScope.currentPlayer().bases[0].place;
   turnForPlaces();
 
   // Export

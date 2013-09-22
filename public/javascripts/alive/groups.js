@@ -1,4 +1,4 @@
-app.factory("Groups", ["Survivors", "Memories", "Map", function (Survivors, Memories, Map) {
+app.factory("Groups", ["Survivors", "Memories", "Map", "Logs", function (Survivors, Memories, Map, Logs) {
   "use strict";
 
   function Group(args) {
@@ -53,6 +53,10 @@ app.factory("Groups", ["Survivors", "Memories", "Map", function (Survivors, Memo
   Group.prototype.length = function () {
     return this.survivors.length;
   };
+
+  Group.prototype.logs = function () {
+    return this.memory.logs;
+  }
 
   Group.prototype.addSurvivors = function (nb) {
     var newSurvivors = Survivors.createSeveral(nb), i;
