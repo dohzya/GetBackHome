@@ -25,8 +25,9 @@ window.app.factory("Memories", ["Places", "Logs", function (Places, Logs) {
     this.items[key] = ts;
   };
 
-  Memory.prototype.addLog = function (msg, args, base) {
-    this.logs.addMessage(msg, args, base);
+  Memory.prototype.addLog = function (msg) {
+    console.log("Memory#addLog(", msg, ", *", arguments, ")");
+    this.logs.addMessage.apply(this.logs, msg, arguments);
   };
 
   Memory.prototype.item = function (key) {
@@ -50,7 +51,7 @@ window.app.factory("Memories", ["Places", "Logs", function (Places, Logs) {
         }
       }
     }
-    
+    this.logs.merge(memory.logs);
   };
 
   Memory.prototype.mergeBothWay = function (memory) {
@@ -78,7 +79,7 @@ window.app.factory("Memories", ["Places", "Logs", function (Places, Logs) {
       }
     }
     memory.logs = this.logs.clone();
-    return _.cloneDeep(this);
+    return memory;
   };
 
   function create() {

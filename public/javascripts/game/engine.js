@@ -34,7 +34,7 @@ app.service("Engine", ["$rootScope", "Util", "Events", "Places", "Groups", "Env"
     killZombies = Util.positiveFloor(env.horde().length() * Util.random(ratio * 50, ratio * 100) / 100);
     killSurvivors = Util.positiveFloor(env.group.length()  *  Util.random((1 - ratio) * 50, (1 - ratio) * 100) / 100);
     damage = Util.positiveFloor(env.place.defense() * 100  *  Util.random((1 - ratio) * 50, (1 - ratio) * 100) / 100);
-    env.log.addMessage(
+    env.addLog(
       "Attaque zombie (zombies killed: {0}, survivors killed: {1}, damage: {2})",
       killZombies,
       killSurvivors,
@@ -47,17 +47,28 @@ app.service("Engine", ["$rootScope", "Util", "Events", "Places", "Groups", "Env"
 
   function turnForPlace(place) {
     var env;
+    console.log("turnForPlace (", place.groups.length, " groups)")
     place.endTurn($rootScope.engine.turnNb);
     _.each(place.groups, function (group) {
       env = Env.create({
         place: place,
         group: group
       });
+      console.log("Turn for env");
       consumeFood(env);
       addZombies(env);
       addSurvivors(env);
       if (place.horde.length() > 0 && Util.random() > 0.7) { zombieAttack(env); }
     });
+    Env.create({
+      place: $rootScope.engine.mainPlace,
+      group: $rootScope.engine.mainGroup
+    }).addLog(
+      "Attaque zombie (zombies killed: {0}, survivors killed: {1}, damage: {2})",
+      10,
+      2,
+      1
+    );
   }
 
   function turnForPlaces() {
@@ -70,12 +81,12 @@ app.service("Engine", ["$rootScope", "Util", "Events", "Places", "Groups", "Env"
     _.forEach(player.missions, function (mission) {
       if (mission) {  // TODO fix this creepy line
         mission.turn($rootScope.engine.turnNb);
-        console.log(mission.group.log);
+        console.log(mission.group.memory.logs);
       }
     });
     turnForPlaces();
     _.forEach(player.bases, function (base) {
-      console.log(base.group.log);
+      console.log(base.group.memory.logs);
     });
     $rootScope.engine.turnNb++;
     $rootScope.$broadcast(Events.gui.draw);

@@ -54,8 +54,9 @@ app.factory("Groups", ["Survivors", "Memories", "Map", "Logs", function (Survivo
     return this.survivors.length;
   };
 
-  Group.prototype.logs = function () {
-    return this.memory.logs;
+  Group.prototype.addLog = function (msg) {
+    console.log("Group#addLog(", msg, ", *", arguments, ")");
+    return this.memory.addLog.apply(this.memory, msg, arguments);
   }
 
   Group.prototype.addSurvivors = function (nb) {

@@ -10,8 +10,9 @@ window.app.factory("Env", ["Util", function (Util) {
     return this.place.horde;
   };
 
-  Env.prototype.logs = function () {
-    return this.groupe.logs();
+  Env.prototype.addLog = function (msg) {
+    console.log("Env#addLog(", msg, ", *", arguments, ")");
+    return this.group.addLog.apply(this.group, msg, arguments);
   };
 
   Env.prototype.ratio = function () {

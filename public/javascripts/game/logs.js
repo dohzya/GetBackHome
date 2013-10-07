@@ -1,7 +1,7 @@
 window.app.factory("Logs", [function () {
   "use strict";
 
-  function _formatMessage(msg, args) {
+  function formatMessage(msg, args) {
     return msg.replace(/\{(\d+)\}/g, function (_, n) {
       var arg = args[parseInt(n, 10)];
       if (typeof arg == "object") { arg = JSON.stringify(arg); }
@@ -9,41 +9,61 @@ window.app.factory("Logs", [function () {
     });
   }
 
-  function Log() {
+  var messageId = 0;
+  function Message(ts, msg, args) {
+    this.id = messageId++;
+    this.ts = ts;
+    this.msg = msg;
+    this.args = args;
+  }
+
+  Message.prototype.format = function () {
+    return formatMessage(this.msg, this.args);
+  };
+
+  Message.create = function (ts, msg, args) {
+    return new Message(ts, msg, args);
+  };
+
+  function Logs() {
     this.messages = [];
   }
 
-  function create() {
-    return new Log();
-  }
-
-  Log.prototype.addMessage = function (ts, msg) {
+  Logs.prototype.addMessage = function (ts, msg) {
     var args = Array.prototype.splice.call(arguments, 0);
-    var message = {ts: ts, msg: msg, params: args.slice(2, args.length)};
+    var message = Message.create(ts, msg, args.slice(2, args.length));
     this.messages.push(message);
+    this[message.id] = message;
   };
 
-  Log.prototype.clone = function () {
-    var log = create();
+  Logs.prototype.merge = function (logs) {
+    _.forEach(logs.messages, function (msg) {
+      this[msg.id] = msg;
+    });
+  };
+
+  Logs.prototype.clone = function () {
+    var log = Logs.create();
     log.messages = _.map(this.messages, function (msg) { return msg; });
     return log;
   };
 
-  function formatMessage(msg) {
-    return _formatMessage(msg.msg, msg.params);
-  }
+  Logs.create = function () {
+    return new Logs();
+  };
 
-  var log = create();
+  var log = Logs.create();
   log.addMessage(1, "{0} zombies killed by {1} survivors!", 3, 10);
   log.addMessage(2, "{0} zombies killed by {1} survivors!", 3, 10);
   log.addMessage(3, "{0} zombies killed by {1} survivors!", 3, 10);
   console.log(log.messages);
   _.forEach(log.messages, function (msg) {
-    console.log(formatMessage(msg));
+    console.log(msg);
+    console.log(msg.format());
   });
 
   return {
-    create: create,
+    create: Message.create,
     formatMessage: formatMessage
   };
 
