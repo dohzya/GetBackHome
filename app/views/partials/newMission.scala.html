@@ -36,19 +36,51 @@
       <hr/>
 
       <ul class="list-unstyled">
-        <li ng-repeat="orderItem in newMission.allOrders()">
+        <li ng-repeat="orderItem in newMission.getAllOrders()">
           <span ng-class="'icon-' + orderItem.order.icon"></span>
           {{ orderItem.order.name }} ({{ orderItem.targetPlace().x() }} x {{ orderItem.targetPlace().y() }})
         </li>
-        <li ng-hide="newMission.allOrders().length">No orders yet...</li>
+        <li ng-hide="newMission.getAllOrders().length">No orders yet...</li>
       </ul>
 
       <hr/>
 
-      <ul class="list-unstyled">
-        <li ng-repeat="s in selection.base.group.survivors">
-          <span ng-class="'icon-' + (s.gender ? 'male' : 'female')"></span>
-          {{ s.name }} ({{ s.age }})
+      <ul class="list-unstyled survivors">
+        <li class="survivor" ng-repeat="s in selection.base.group.survivors">
+          <div class="media">
+            <a class="pull-left" href="#">
+              <img class="media-object" ng-src="{{s.avatar}}" alt="{{ s.name }}'s face" ng-if="s.avatar">
+              <span ng-class="'media-object icon-3x icon-' + (s.gender ? 'male' : 'female')" ng-if="!s.avatar"></span>
+            </a>
+            <div class="media-body">
+              <h4 class="media-heading">{{ s.name }}</h4>
+              <p>{{ s.levelToString() }}</p>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-xs-6">
+              <div class="progress progress-xs">
+                <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="{{ 100 * s.percentHealth() }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ 100 * s.percentHealth() }}%;">
+                  <span class="sr-only">Health {{ 100 * s.percentHealth() }}%</span>
+                </div>
+              </div>
+
+              <div class="progress progress-xs">
+                <div class="progress-bar" role="progressbar" aria-valuenow="{{ 100 * s.percentHunger() }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ 100 * s.percentHunger() }}%;">
+                  <span class="sr-only">Hunger {{ 100 * s.percentHunger() }}%</span>
+                </div>
+              </div>
+
+              <div class="progress progress-xs">
+                <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="{{ 100 * s.percentMental() }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ 100 * s.percentMental() }}%;">
+                  <span class="sr-only">Mental {{ 100 * s.percentMental() }}%</span>
+                </div>
+              </div>
+            </div>
+            <div class="col-xs-6"></div>
+          </div>
+          
         </li>
       </ul>
 

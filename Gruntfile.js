@@ -41,7 +41,7 @@ module.exports = function (grunt) {
         root: "test"
       },
       components: {
-        root: "components"
+        root: "bower_components"
       }
     }
   };
@@ -84,8 +84,7 @@ module.exports = function (grunt) {
         "<%= config.dir.public.styles %>/vendors/**/*"
       ],
       components: [
-        "<%= config.dir.components.root %>/angular",
-        "<%= config.dir.components.root %>/angular-resource"
+        "<%= config.dir.components.root %>/angular/"
       ],
       dist: [
         "<%= config.dir.public.styles %>/<%= config.play.application.files.style %>*.min.css",
@@ -99,7 +98,7 @@ module.exports = function (grunt) {
 
     less: {
       options: {
-        paths: ["components", "public/stylesheets/less"]
+        paths: ["<%= config.dir.components.root %>", "public/stylesheets/less"]
       },
       raw: {
         files: {
@@ -184,10 +183,7 @@ module.exports = function (grunt) {
             "<%= config.dir.public.scripts %>/vendors/angular-ui/bootstrap/ui-bootstrap-tpls.js",
             "<%= config.dir.public.scripts %>/vendors/restangular/restangular.js",
             "<%= config.dir.public.scripts %>/vendors/angular-http-auth/http-auth-interceptor.js",
-            "<%= config.dir.public.scripts %>/vendors/blockui/jquery.blockUI.js",
-            "<%= config.dir.public.scripts %>/vendors/snapjs/snap.js",
-            "<%= config.dir.public.scripts %>/util/blockUI.js",
-            "<%= config.dir.public.scripts %>/app.js",
+            "<%= config.dir.public.scripts %>/main.js",
             "<%= config.dir.public.scripts %>/*.js",
             "<%= config.dir.public.scripts %>/!(vendors)/**/*.js",
             "!<%= config.dir.public.scripts %>/<%= config.play.application.files.script %>.<%= config.play.application.version %>.min.js"
@@ -238,14 +234,6 @@ module.exports = function (grunt) {
           cwd: "<%= config.dir.components.root %>/lodash/dist/",
           src: ["lodash.js", "lodash.min.js"],
           dest: "<%= config.dir.public.scripts %>/vendors/lodash/"
-        }]
-      },
-      bowerJson3: {
-        files: [{
-          expand: true,
-          cwd: "<%= config.dir.components.root %>/json3/lib/",
-          src: ["*.js"],
-          dest: "<%= config.dir.public.scripts %>/vendors/json3/"
         }]
       },
       bowerAngular: {
@@ -306,25 +294,25 @@ module.exports = function (grunt) {
         }
       },
       angularNpm: {
-        command: "(cd ./components/angular-latest && exec npm install)",
+        command: "(cd ./bower_components/angular-latest && exec npm install)",
         options: {
           stdout: true
         }
       },
       angularPackage: {
-        command: "(cd ./components/angular-latest && exec grunt clean buildall minall)",
+        command: "(cd ./bower_components/angular-latest && exec grunt clean buildall)",
         options: {
           stdout: true
         }
       },
       angularUiUtilsNpm: {
-        command: "(cd ./components/angular-ui-utils && exec npm install)",
+        command: "(cd ./bower_components/angular-ui-utils && exec npm install)",
         options: {
           stdout: true
         }
       },
       angularUiUtilsBuild: {
-        command: "(cd ./components/angular-ui-utils && exec grunt build)",
+        command: "(cd ./bower_components/angular-ui-utils && exec grunt build)",
         options: {
           stdout: true
         }
@@ -343,8 +331,8 @@ module.exports = function (grunt) {
       },
       bowerBuild: {
         tasks: [
-          ["shell:angularNpm", "shell:angularPackage"],
-          ["shell:angularUiUtilsNpm", "shell:angularUiUtilsBuild"]
+          ["shell:angularNpm", "shell:angularPackage"]
+          //["shell:angularUiUtilsNpm", "shell:angularUiUtilsBuild"]
         ]
       },
       bowerCopy: {
@@ -354,7 +342,6 @@ module.exports = function (grunt) {
           "copy:bowerJQuery",
           "copy:bowerModernizr",
           "copy:bowerLodash",
-          "copy:bowerJson3",
           "copy:bowerAngular",
           "copy:bowerRestangular",
           "copy:bowerAngularHttpAuth",

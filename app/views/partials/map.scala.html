@@ -3,10 +3,8 @@
 <div class="game">
 
   <canvas id="map" class="drawer" width="600px" height="500px"></canvas>
-  <br/>
-  <input class="zoomer" type="range"  min="10" max="200" ng-model="zoom" ng-change="onZoomChange()" />
 
-  <div>
+  <div ng-if="gui.selectedZone">
     <h3>Zone {{gui.selectedZone.x()}} x {{gui.selectedZone.y()}}</h3>
     Infection: {{gui.selectedZone.place.infection()}}<br/>
     Attack: {{gui.selectedZone.place.attack()}}<br/>

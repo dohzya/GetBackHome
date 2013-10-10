@@ -1,5 +1,5 @@
 var app = angular
-  .module("app", ["ngResource", "restangular"])
+  .module("app", ["restangular", "ui.router"])
   .constant("Config", {
     hexjs: {
       clean: true,
@@ -16,13 +16,13 @@ var app = angular
       }
     }
   })
-  .config(["$routeProvider", function ($routeProvider) {
-    $routeProvider
-      .when("/", {
-        templateUrl: "/views/index"
-      })
-      .otherwise({
-        redirectTo: "/"
+  .config(["$stateProvider", "$urlRouterProvider", function ($stateProvider, $urlRouterProvider) {
+    $urlRouterProvider.otherwise('/');
+
+    $stateProvider
+      .state('index', {
+        url: '/',
+        templateUrl: 'views/index'
       });
   }])
   .config(["RestangularProvider", function (RestangularProvider) {
@@ -50,19 +50,7 @@ var app = angular
     $rootScope.newMission = undefined;
 
     $rootScope.selection = {
-      base: $rootScope.currentPlayer().getPrimaryBase(),
-      selectPath: function (newPath) {
-        $rootScope.selection.clearPath();
-        $rootScope.selection.path = newPath;
-        _.forEach($rootScope.selection.path, function (place) {
-          place.selected = true;
-        });
-      },
-      clearPath: function () {
-        _.forEach($rootScope.selection.path, function (place) {
-          place.selected = false;
-        });
-      }
+      base: $rootScope.currentPlayer().getPrimaryBase()
     };
   }])
   .filter("ordersAvailable", function () {

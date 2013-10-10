@@ -21,7 +21,6 @@
     "grunt-contrib-watch": "~0.5.0",
     "grunt-contrib-less": "~0.6.0",
     "grunt-shell": "0.2.2",
-    "grunt-recess": "0.3.3",
     "grunt-karma": "~0.4.4",
     "grunt-parallel": "~0.2.0",
     "matchdep": "~0.1.1",

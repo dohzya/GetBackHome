@@ -1,12 +1,11 @@
-app.controller("MapCtrl", ["$scope", "$rootScope", "Events", "Sprites", "Places", "Zones", function ($scope, $rootScope, Events, Sprites, Places, Zones) {
+app.controller("MapCtrl", ["$scope", "$rootScope", "Events", "Selection", "Sprites", "Places", "Zones", function ($scope, $rootScope, Events, Selection, Sprites, Places, Zones) {
   "use strict";
   var Q = window.Q;
 
   $scope.gui.zoom = 48;
-  $scope.gui.selectedZone = null;
 
   $scope.$on(Events.gui.draw, function () {
-    redraw();
+    draw();
   });
 
   var canvas = document.getElementById("map");
@@ -30,19 +29,19 @@ app.controller("MapCtrl", ["$scope", "$rootScope", "Events", "Sprites", "Places"
   }
 
   function start() {
-    redraw();
+    draw();
   }
 
   $scope.onZoomChange = function () {
-    var centerX = (drawer.x + drawer.width / 2) / size;
-    var centerY = (drawer.y + drawer.height / 2) / size;
+    var centerX = (drawer.x + drawer.width / 2) / $scope.gui.zoom;
+    var centerY = (drawer.y + drawer.height / 2) / $scope.gui.zoom;
 
     Zones.setSize($scope.gui.zoom, $scope.gui.zoom);
 
     drawer.x = centerX * Zones.getWidth() - drawer.width / 2;
     drawer.y = centerY * Zones.getHeight() - drawer.height / 2;
 
-    redraw();
+    draw();
   };
 
   function globalToRelativeX(x) {
@@ -53,7 +52,7 @@ app.controller("MapCtrl", ["$scope", "$rootScope", "Events", "Sprites", "Places"
     return y - drawer.bounding.top + drawer.y;
   }
 
-  function redraw() {
+  function draw() {
     drawBackground();
     eachDrawables(function (d) {
       d.draw(drawer.ctx, drawer.x, drawer.y);
@@ -70,7 +69,7 @@ app.controller("MapCtrl", ["$scope", "$rootScope", "Events", "Sprites", "Places"
   }
   // TODO merge these 2 functions
   function eachDrawables(f) {
-    _.each(Zones.all(), function (zone) {
+    _.forEach(Zones.all(), function (zone) {
       if (zone.place.tile.isContained(drawer.x, drawer.y, drawer.width, drawer.height)) {
         f(zone);
       }
@@ -116,7 +115,7 @@ app.controller("MapCtrl", ["$scope", "$rootScope", "Events", "Sprites", "Places"
       var dy = e.globalY - c.y;
       drawer.x = d.x - dx;
       drawer.y = d.y - dy;
-      redraw();
+      draw();
     }
   }
 
@@ -155,54 +154,17 @@ app.controller("MapCtrl", ["$scope", "$rootScope", "Events", "Sprites", "Places"
       select(drawer.underMouse);
       res = drawer.underMouse.onClick(e);
     }
-    redraw();
+    draw();
     drawer.movedWhenSelected = false;
     return res;
   }
 
-  function eachSelected(func) {
-    var i;
-    for (i in drawer.selected) {
-      func(drawer.selected[i]);
-    }
-  }
-
-  var selectedPlaces = [];
   function select(zone) {
-    // eachSelected(function (s) {
-    //   s.onUnSelected();
-    // });
-
-    // drawer.selected = zone;
-
-    // eachSelected(function (s) {
-    //   s.onSelected();
-    // });
-
     $scope.$apply(function () {
-      _.each(selectedPlaces, function (place) {
-        place.selected = false;
-      });
+      var fromPlace = $rootScope.newMission && $rootScope.newMission.hasOrders() ? _.last($rootScope.newMission.getAllOrders()).targetPlace() : $rootScope.selection.base.place;
+      var path = fromPlace.pathTo(zone.place);
 
-      //selectedPlaces = EngineMap.findPath($rootScope.selection.base.place, zone.place);
-
-      var opts = {
-        clean: true,
-        heuristic: function (place1, place2) {
-          return place1.distanceTo(place2);
-        }
-      };
-
-      var from = $rootScope.newMission && $rootScope.newMission.hasOrders() ? _.last($rootScope.newMission.allOrders()).targetPlace() : $rootScope.selection.base.place;
-      
-      var path = from.pathTo(zone.place);
-
-      $scope.selection.selectPath(path);
-
-      _.each(selectedPlaces, function (place) {
-        place.selected = true;
-      });
-      $scope.gui.selectedZone = zone;
+      Selection.selectPath(path);
       $scope.selection.zone = zone;
 
       $rootScope.$broadcast(Events.gui.zones.selected);

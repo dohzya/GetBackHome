@@ -31,7 +31,8 @@
 </head>
 
 <body>
-  <div class="navbar navbar-fixed-top">
+  <div class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
       <a class="navbar-brand" href="/">GetBackHome</a>
 
       <button type="button" class="btn btn-default navbar-btn pull-right" data-ng-click="nextTurn()">FIN DE TOUR</button>
@@ -39,7 +40,7 @@
   </div>
 
   <div class="container">
-    <div ng-view></div>
+    <div ui-view></div>
   </div>
   
   <!--<script data-main="@routes.Assets.at("javascripts/require-main" + { if (conf.scriptsMin) "-" + conf.version + ".min" else "" } + ".js")" src="@routes.Assets.at("javascripts/vendors/requirejs/require.js")"></script>-->
@@ -51,8 +52,8 @@
     <script type="text/javascript" src="@routes.Assets.at("javascripts/vendors/q/q.js")"></script>
     <script type="text/javascript" src="@routes.Assets.at("javascripts/vendors/lodash/lodash.js")"></script>
     <script type="text/javascript" src="@routes.Assets.at("javascripts/vendors/angular/angular.js")"></script>
-    <script type="text/javascript" src="@routes.Assets.at("javascripts/vendors/angular/angular-resource.js")"></script>
     <script type="text/javascript" src="@routes.Assets.at("javascripts/vendors/restangular/restangular.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/vendors/angular-ui/router/angular-ui-router.js")"></script>
 
     <script type="text/javascript" src="@routes.Assets.at("javascripts/hexjs/tile.js")"></script>
     <script type="text/javascript" src="@routes.Assets.at("javascripts/hexjs/findme.js")"></script>
@@ -81,6 +82,8 @@
     <script type="text/javascript" src="@routes.Assets.at("javascripts/game/times.js")"></script>
 
     <script type="text/javascript" src="@routes.Assets.at("javascripts/global/appCtrl.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/global/fontAwesome.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/global/selection.js")"></script>
 
     <script type="text/javascript" src="@routes.Assets.at("javascripts/map/map.js")"></script>
     <script type="text/javascript" src="@routes.Assets.at("javascripts/map/mapController.js")"></script>

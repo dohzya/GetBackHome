@@ -1,13 +1,21 @@
-window.app.factory("Zones", ["$log", "$rootScope", "Util", "Sprites", "Places", function ($log, $rootScope, Util, Sprites, Places) {
+window.app.factory("Zones", ["$log", "$rootScope", "Util", "FontAwesome", "Selection", "Sprites", "Places", function ($log, $rootScope, Util, FontAwesome, Selection, Sprites, Places) {
   "use strict";
 
+  var Q = window.Q;
   var Hexjs = window.Hexjs;
 
   function Zone(place) {
     var type1, type2;
 
     this.place = place;
+    this.status = {};
     this.points = Hexjs.buildPoints(0, 0);
+
+    _.forEach($rootScope.currentPlayer().bases, function (base) {
+      if (this.place === base.place) {
+        this.status.base = base;
+      }
+    }, this);
 
     type1 = this.types()[0];
     type2 = this.types()[1];
@@ -66,6 +74,28 @@ window.app.factory("Zones", ["$log", "$rootScope", "Util", "Sprites", "Places", 
     return Math.min(60, $rootScope.engine.turnNb - memory.ts);
   };
 
+  Zone.prototype.updateStatus = function () {
+    var mission = Selection.getMission();
+
+    var inPath = mission && mission.anyOrders(function (o) {
+      return _.contains(o.path, this.place);
+    }, this);
+
+    var order;
+    mission && mission.forEachOrders(function (o) {
+      if (this.place === o.targetPlace()) {
+        order = o;
+      }
+    }, this);
+
+    this.status = _.extend(this.status, {
+      selected: Selection.isInPath(this.place),
+      highlighted: this.place.highlighted,
+      inPath: inPath,
+      orderItem: order
+    });
+  };
+
   Zone.prototype.drawBackground = function (ctx, x, y, memory) {
     var points = Hexjs.buildPoints(this.place.tile.center.x - x, this.place.tile.center.y - y, Hexjs.size);
     var style;
@@ -75,9 +105,9 @@ window.app.factory("Zones", ["$log", "$rootScope", "Util", "Sprites", "Places", 
     } else {
       style = "rgb(238, 238, 207)";
     }
-    if (this.isInPath()) { style = "rgba(255, 250, 71, 0.6)"; }
-    if (this.isSelected()) { style = "rgb(255, 250, 71)"; }
-    if (this.isHighlighted()) { style = "rgb(0, 0, 255)"; }
+    if (this.status.inPath) { style = "rgba(255, 250, 71, 0.6)"; }
+    if (this.status.selected) { style = "rgb(255, 250, 71)"; }
+    if (this.status.highlighted) { style = "rgb(0, 0, 255)"; }
     ctx.fillStyle = style;
     ctx.strokeStyle = style;
     ctx.beginPath();
@@ -91,14 +121,6 @@ window.app.factory("Zones", ["$log", "$rootScope", "Util", "Sprites", "Places", 
     ctx.closePath();
     ctx.stroke();
     ctx.fill();
-    
-    if (this.isWithOrder()) {
-      ctx.beginPath();
-      ctx.arc(this.place.tile.center.x - x, this.place.tile.center.y - y, 8, 0, 2 * Math.PI, false);
-      ctx.closePath();
-      ctx.fillStyle = "#FF0000";
-      ctx.fill();
-    }
   };
 
   Zone.prototype.drawImage = function (ctx, x, y, memory) {
@@ -114,6 +136,23 @@ window.app.factory("Zones", ["$log", "$rootScope", "Util", "Sprites", "Places", 
       ctx.globalAlpha = oldGlobalAlpha;
     } else {
       $log.error("No img for Zone (" + x + " x " + y + ")");
+    }
+  };
+
+  Zone.prototype.drawSymbol = function (ctx, x, y) {
+    var cx = this.place.tile.center.x - x;
+    var cy = this.place.tile.center.y - y;
+    ctx.fillStyle = "#FF0000";
+
+    if (this.status.orderItem) {
+      ctx.save();
+      ctx.font = '20px FontAwesome';
+      ctx.fillText(String.fromCharCode(parseInt(FontAwesome.unicode['icon-' + this.status.orderItem.order.icon], 16)), cx - 7, cy + 5);
+      ctx.restore();
+    }
+
+    if (this.status.base) {
+      ctx.fillRect (cx - 5, cy - 5, 11, 11);
     }
   };
 
@@ -143,34 +182,16 @@ window.app.factory("Zones", ["$log", "$rootScope", "Util", "Sprites", "Places", 
   };
 
   Zone.prototype.draw = function (ctx, x, y) {
+    this.updateStatus();
     var memory = this.memory();
     this.drawBackground(ctx, x, y, memory);
     this.drawImage(ctx, x, y, memory);
+    this.drawSymbol(ctx, x, y, memory);
     this.drawBorder(ctx, x, y, memory);
     this.drawCoordinates(ctx, x, y, memory);
   };
 
   Zone.prototype.onClick = Util.noop;
-
-  Zone.prototype.isSelected = function () {
-    return this.place.selected || this.selected;
-  };
-
-  Zone.prototype.isHighlighted = function () {
-    return this.place.highlighted || this.highlighted;
-  };
-
-  Zone.prototype.isInPath = function () {
-    return this.place.inPath || this.inPath;
-  };
-
-  Zone.prototype.isWithOrder = function () {
-    return this.place.hasOrder || this.hasOrder;
-  };
-
-  Zone.prototype.onSelected = function () {
-    this.selected = true;
-  };
 
   Zone.prototype.display = function (dst) {
     dst.displayZone(this);

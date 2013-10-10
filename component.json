@@ -1,9 +1,0 @@
-{
-  "name": "GetBackHome",
-  "version": "0.0.1",
-  "dependencies": {
-    "jquery": "~1.9.0",
-    "modernizr": "~2.6.2",
-    "requirejs": "~2.1.5"
-  }
-}

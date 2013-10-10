@@ -9,6 +9,7 @@ app.factory("Survivors", [function () {
     this.gender = args.gender;
     this.mass = args.mass;
     this.height = args.height;
+    this.description = args.description;
 
     // Attributes
     this.strength = args.strength;
@@ -18,14 +19,15 @@ app.factory("Survivors", [function () {
     this.intelligence = args.intelligence;
     this.charisma = args.charisma;
 
-    // Traits
-    this.health = this.maxHealth();
-    this.mental = this.maxMental();
-    this.endurance = this.maxEndurance();
-
     // Evolution
     this.level = args.level || 1;
     this.xp = args.xp || 0;
+
+    // Traits
+    this.health = args.health || this.maxHealth();
+    this.mental = args.mental || this.maxMental();
+    this.endurance = args.endurance || this.maxEndurance();
+    this.hunger = args.hunger || this.maxHunger();
   }
 
   Survivor.prototype.isMale = function () {
@@ -36,12 +38,32 @@ app.factory("Survivors", [function () {
     return this.level + this.strength;
   };
 
+  Survivor.prototype.percentHealth = function () {
+    return this.health / this.maxHealth();
+  };
+
   Survivor.prototype.maxMental = function () {
     return this.level + this.intelligence;
   };
 
+  Survivor.prototype.percentMental = function () {
+    return this.mental / this.maxMental();
+  };
+
   Survivor.prototype.maxEndurance = function () {
     return this.level + 2 * this.constitution;
+  };
+
+  Survivor.prototype.percentEndurance = function () {
+    return this.endurance / this.maxEndurance();
+  };
+
+  Survivor.prototype.maxHunger = function () {
+    return 100;
+  };
+
+  Survivor.prototype.percentHunger = function () {
+    return this.hunger / this.maxHunger();
   };
 
   Survivor.prototype.defense = function () {
@@ -50,6 +72,16 @@ app.factory("Survivors", [function () {
 
   Survivor.prototype.attack = function () {
     return this.level + this.strength + this.agility;
+  };
+
+  Survivor.prototype.levelToString = function () {
+    if (this.level < 10) {
+      return 'Amateur';
+    } else if (this.level < 20) {
+      return 'Quite good';
+    } else {
+      return 'Zombie killer';
+    }
   };
 
   Survivor.prototype.addXp = function (xp) {
@@ -71,7 +103,7 @@ app.factory("Survivors", [function () {
   function createSeveral(nb) {
     var survivors = [], i;
     for (i = 0; i < nb; i++) {
-      var gender = _.random(1) == 1;
+      var gender = _.random(1) === 1;
       survivors.push(create({
         name: gender ? boyNames[_.random(boyNames.length-1)] : girlNames[_.random(girlNames.length-1)],
         avatar: "",
@@ -79,6 +111,7 @@ app.factory("Survivors", [function () {
         gender: gender,
         mass: _.random(50, 130),
         height: _.random(160, 200),
+        description: 'Lorem ipsum',
         strength: _.random(5, 30),
         constitution: _.random(5, 30),
         agility: _.random(5, 30),

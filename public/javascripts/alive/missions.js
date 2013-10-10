@@ -99,8 +99,8 @@ app.factory("Missions", ["$rootScope", "$log", "Env", "Orders", function ($rootS
     return this.current();
   };
 
-  OrderList.prototype.forEach = function (f) {
-    _.forEach(this.orders, f);
+  OrderList.prototype.forEach = function (predicate, context) {
+    _.forEach(this.orders, predicate, context);
   };
 
   OrderList.prototype.isEmpty = function () {
@@ -128,11 +128,24 @@ app.factory("Missions", ["$rootScope", "$log", "Env", "Orders", function ($rootS
     });
   };
 
-  Mission.prototype.allOrders = function () {
+  Mission.prototype.getAllOrders = function () {
     return this.orders.orders;
   };
+
   Mission.prototype.hasOrders = function () {
     return !this.orders.isEmpty();
+  };
+
+  Mission.prototype.forEachOrders = function (predicate, context) {
+    return this.orders.forEach(predicate, context);
+  };
+
+  Mission.prototype.allOrders = function (predicate, context) {
+    return _.all(this.getAllOrders(), predicate, context);
+  };
+
+  Mission.prototype.anyOrders = function (predicate, context) {
+    return _.any(this.getAllOrders(), predicate, context);
   };
 
   Mission.prototype.currentPlace = function () {
