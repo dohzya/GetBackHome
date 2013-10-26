@@ -45,7 +45,7 @@ app.controller("NewMissionCtrl", ["$scope", "$rootScope", "Events", "Selection",
     $rootScope.currentPlayer().missions.push($rootScope.newMission);
     $rootScope.newMission = undefined;
     $scope.selection.zone = undefined;
-    $scope.selection.survivors = [];
+    $scope.selection.survivors.splice(0, Number.MAX_VALUE);
     $rootScope.$broadcast(Events.gui.draw);
   });
 
