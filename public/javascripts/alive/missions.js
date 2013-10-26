@@ -14,10 +14,9 @@ app.factory("Missions", ["$rootScope", "$log", "Env", "Orders", function ($rootS
   OrderListItem.prototype.nextPlace = function (currentPlace) {
     var currentIndex = _.indexOf(this.path, currentPlace);
     if (currentIndex > -1 && currentIndex < this.path.length) {
-      return this.path[currentIndex+1];
-    } else {
-      return this.path[0];
+      return this.path[currentIndex + 1];
     }
+    return this.path[0];
   };
 
   OrderListItem.prototype.targetPlace = function () {
@@ -33,9 +32,9 @@ app.factory("Missions", ["$rootScope", "$log", "Env", "Orders", function ($rootS
     return this.finished;
   };
 
-  function createOrderListItem(args) {
+  OrderListItem.create = function (args) {
     return new OrderListItem(args);
-  }
+  };
 
   var OrderListId = 0;
   function OrderList() {
@@ -105,10 +104,6 @@ app.factory("Missions", ["$rootScope", "$log", "Env", "Orders", function ($rootS
 
   OrderList.prototype.isEmpty = function () {
     return this.orders.length == 0;
-  }
-
-  var statuses = {
-
   };
 
   function Mission(args) {
@@ -156,7 +151,10 @@ app.factory("Missions", ["$rootScope", "$log", "Env", "Orders", function ($rootS
     return 1;
   };
 
-  Mission.prototype.currentEnv = function () {
+  Mission.prototype.currentEnv = function (place) {
+    if (place && place != this.place) {
+      console.log("MISSION AT THE WRONG PLACE!!", this, place);
+    }
     return Env.create({
       group: this.group,
       place: this.place
@@ -168,18 +166,14 @@ app.factory("Missions", ["$rootScope", "$log", "Env", "Orders", function ($rootS
   };
 
   Mission.prototype.turn = function (ts) {
-    console.log("TURN for", this);
     if (this.place) {
+      // We are not in the place anymore
       this.place.highlighted = false;
       this.place.removeMission(this);
     }
-
     var orderItem;
     orderItem = this.orders.currentOrderItem();
-    console.log("orderItem:", orderItem);
-
     if (orderItem) {
-
       // Something to do!
       if (this.place === orderItem.targetPlace()) {
         // We are in position, let's rock
@@ -189,7 +183,6 @@ app.factory("Missions", ["$rootScope", "$log", "Env", "Orders", function ($rootS
         // We need to move to our target point
         this.status = "walking";
         var nextPlace = orderItem.nextPlace(this.place);
-        console.log("moving from", this.place, "to", nextPlace);
         if (nextPlace) {
           this.place = nextPlace;
         }
@@ -199,43 +192,51 @@ app.factory("Missions", ["$rootScope", "$log", "Env", "Orders", function ($rootS
       if (this.place === this.toBase.place) {
         // And we are done here
         this.status = "finished";
-        remove(this);
-        console.log("Mission finished", this);
+        Mission.finish(this);
         return false;
-      } else {
-        // Let's add a bonus order to move to our final destination
-        this.addOrder(this.place.pathTo(this.toBase.place), Orders.get("move"));
-        this.turn();
       }
+      // Let's add a bonus order to move to our final destination
+      this.addOrder(this.place.pathTo(this.toBase.place), Orders.get("move"));
+      this.turn();
     }
 
     if (this.place) {
+      // Here we are
       this.place.highlighted = true;
       this.group.visitPlace(ts, this.place);
       this.place.addMission(this);
     }
-    console.log("Status:", this.status);
   };
 
-  function each(func) {
+  Mission.each = function (func) {
     _.forEach($rootScope.currentPlayer().missions, func);
-  }
+  };
 
-  function remove(missionToRemove) {
+  Mission.remove = function (missionToRemove) {
     $rootScope.currentPlayer().missions = _.filter($rootScope.currentPlayer().missions, function (mission) {
       return mission.id !== missionToRemove.id;
     });
-  }
+  };
 
-  function create(args) {
+  Mission.finish = function (mission) {
+    mission.currentEnv().addLog(
+      "Mission finished ({0} survivors returned)",
+      mission.group.length()
+    );
+    $rootScope.engine.mainGroup.merge(mission.group);
+    Mission.remove(mission);
+  };
+
+  Mission.create = function (args) {
     return new Mission(args);
-  }
+  };
 
   return {
-    create: create,
-    createOrderListItem: createOrderListItem,
-    each: each,
-    remove: remove
+    create: Mission.create,
+    createOrderListItem: OrderListItem.create,
+    each: Mission.each,
+    finish: Mission.finish,
+    remove: Mission.remove
   };
 
 }]);

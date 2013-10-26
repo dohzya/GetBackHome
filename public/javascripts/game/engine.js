@@ -13,15 +13,16 @@ app.service("Engine", ["$rootScope", "Util", "Events", "Places", "Groups", "Env"
     }
   }
 
-  function addZombies(env) {
+  function addZombies(place) {
     var newZombies = Util.random(10, 100);
-    env.place.horde.addZombies(newZombies);
+    place.horde.addZombies(newZombies);
   }
 
   function addSurvivors(env) {
     if (Util.random() > 0.8) {
       var newSurvivors = Math.round(Util.random(1, 6) / 2);
       env.group.addSurvivors += newSurvivors;
+      env.addLog("Survivors joined us ({0} new survivors)", newSurvivors);
     }
   }
 
@@ -33,6 +34,12 @@ app.service("Engine", ["$rootScope", "Util", "Events", "Places", "Groups", "Env"
     killZombies = Util.positiveFloor(env.horde().length() * Util.random(ratio * 50, ratio * 100) / 100);
     killSurvivors = Util.positiveFloor(env.group.length()  *  Util.random((1 - ratio) * 50, (1 - ratio) * 100) / 100);
     damage = Util.positiveFloor(env.place.defense() * 100  *  Util.random((1 - ratio) * 50, (1 - ratio) * 100) / 100);
+    env.addLog(
+      "Attaque zombie (zombies killed: {0}, survivors killed: {1}, damage: {2})",
+      killZombies,
+      killSurvivors,
+      damage
+    );
     env.horde().removeZombies(killZombies);
     env.group.removeSurvivors(killSurvivors);
     env.place.addDefense(-damage / 100);
@@ -40,14 +47,11 @@ app.service("Engine", ["$rootScope", "Util", "Events", "Places", "Groups", "Env"
 
   function turnForPlace(place) {
     var env;
+    addZombies(place);
     place.endTurn($rootScope.engine.turnNb);
-    _.each(place.groups, function (group) {
-      env = Env.create({
-        place: place,
-        group: group
-      });
+    _.each(place.missions, function (mission) {
+      env = mission.currentEnv(place);
       consumeFood(env);
-      addZombies(env);
       addSurvivors(env);
       if (place.horde.length() > 0 && Util.random() > 0.7) { zombieAttack(env); }
     });
@@ -63,7 +67,6 @@ app.service("Engine", ["$rootScope", "Util", "Events", "Places", "Groups", "Env"
     _.forEach(player.missions, function (mission) {
       if (mission) {  // TODO fix this creepy line
         mission.turn($rootScope.engine.turnNb);
-        console.log(mission.group.log);
       }
     });
     turnForPlaces();
@@ -73,10 +76,11 @@ app.service("Engine", ["$rootScope", "Util", "Events", "Places", "Groups", "Env"
 
   // Global
   $rootScope.engine.turnNb = 0;
-  $rootScope.engine.mainGroup = $rootScope.currentPlayer().bases[0].group;
+  $rootScope.engine.mainBase = $rootScope.currentPlayer().getPrimaryBase();
+  $rootScope.engine.mainGroup = $rootScope.engine.mainBase.group;
+  $rootScope.engine.mainPlace = $rootScope.engine.mainBase.place;
 
   // When everything is ready, start the engine!
-  $rootScope.engine.mainPlace = $rootScope.currentPlayer().bases[0].place;
   turnForPlaces();
 
   // Export

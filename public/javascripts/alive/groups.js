@@ -1,10 +1,11 @@
-app.factory("Groups", ["Survivors", "Memories", "Map", function (Survivors, Memories, Map) {
+app.factory("Groups", ["Survivors", "Memories", "Map", "Logs", function (Survivors, Memories, Map, Logs) {
   "use strict";
 
   function Group(args) {
     this.survivors = args.survivors;
     this.memory = Memories.create();
     this.endurance = 0;
+    this.messages = this.memory.logs.messages;
   }
 
   Group.prototype.visitPlace = function (ts, place) {
@@ -54,6 +55,10 @@ app.factory("Groups", ["Survivors", "Memories", "Map", function (Survivors, Memo
     return this.survivors.length;
   };
 
+  Group.prototype.addLog = function () {
+    return this.memory.addLog.apply(this.memory, arguments);
+  }
+
   Group.prototype.addSurvivors = function (nb) {
     var newSurvivors = Survivors.createSeveral(nb), i;
     for (i in newSurvivors) {
@@ -71,7 +76,14 @@ app.factory("Groups", ["Survivors", "Memories", "Map", function (Survivors, Memo
   Group.prototype.getMaxEndurance = function () {
     // TODO : calculate it from survivors
     return 20;
-  }
+  };
+
+  Group.prototype.merge = function (group) {
+    _.each(group.survivors, function (survivor) {
+      this.survivors.push(survivor);
+    }, this)
+    this.memory.merge(group.memory);
+  };
 
   function create(args) {
     if (typeof args === "number") {
