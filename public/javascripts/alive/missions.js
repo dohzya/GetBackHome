@@ -166,18 +166,14 @@ app.factory("Missions", ["$rootScope", "$log", "Env", "Orders", function ($rootS
   };
 
   Mission.prototype.turn = function (ts) {
-    console.log("TURN for", this);
     if (this.place) {
+      // We are not in the place anymore
       this.place.highlighted = false;
       this.place.removeMission(this);
     }
-
     var orderItem;
     orderItem = this.orders.currentOrderItem();
-    console.log("orderItem:", orderItem);
-
     if (orderItem) {
-
       // Something to do!
       if (this.place === orderItem.targetPlace()) {
         // We are in position, let's rock
@@ -187,7 +183,6 @@ app.factory("Missions", ["$rootScope", "$log", "Env", "Orders", function ($rootS
         // We need to move to our target point
         this.status = "walking";
         var nextPlace = orderItem.nextPlace(this.place);
-        console.log("moving from", this.place, "to", nextPlace);
         if (nextPlace) {
           this.place = nextPlace;
         }
@@ -197,7 +192,6 @@ app.factory("Missions", ["$rootScope", "$log", "Env", "Orders", function ($rootS
       if (this.place === this.toBase.place) {
         // And we are done here
         this.status = "finished";
-        console.log("Mission finished", this);
         Mission.finish(this);
         return false;
       }
@@ -207,11 +201,11 @@ app.factory("Missions", ["$rootScope", "$log", "Env", "Orders", function ($rootS
     }
 
     if (this.place) {
+      // Here we are
       this.place.highlighted = true;
       this.group.visitPlace(ts, this.place);
       this.place.addMission(this);
     }
-    console.log("Status:", this.status);
   };
 
   Mission.each = function (func) {

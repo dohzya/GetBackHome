@@ -47,7 +47,6 @@ app.service("Orders", ["$log", "Util", "Times", function ($log, Util, Times) {
         standard: 2
       }),
       run: function (env) {
-        console.log("Moving");
       },
       finish: function () {
         return true;

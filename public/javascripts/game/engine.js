@@ -60,7 +60,6 @@ app.service("Engine", ["$rootScope", "Util", "Events", "Places", "Groups", "Env"
     _.forEach(player.missions, function (mission) {
       if (mission) {  // TODO fix this creepy line
         mission.turn($rootScope.engine.turnNb);
-        console.log(mission.group.log);
       }
     });
     turnForPlaces();
