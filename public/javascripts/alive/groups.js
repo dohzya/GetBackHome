@@ -17,7 +17,7 @@ app.factory("Groups", ["Survivors", "Memories", "Map", "Logs", "Util", function 
   };
 
   Group.prototype.killSurvivors = function (nb, env) {
-    _.forEach(_.range(nb), function () {
+    _.forEach(_.range(Math.min(this.survivors.length, nb)), function () {
       var index = Util.random(this.survivors.length);
       var survivor = this.survivors[index];
       env.addLog(
