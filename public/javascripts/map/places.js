@@ -86,8 +86,9 @@ window.app.factory("Places", ["Config", "MemoryItems", "UTGenerator", "Players",
   };
 
   Place.prototype.addMission = function (mission) {
-    this.missions.push(mission);
+    this.missions = _.union(this.missions, [mission]);
   };
+
   Place.prototype.removeMission = function (mission) {
     this.missions = _.without(this.missions, mission);
   };

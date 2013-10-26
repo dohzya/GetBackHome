@@ -60,7 +60,7 @@ app.service("Engine", ["$rootScope", "Util", "Events", "Places", "Groups", "Env"
     var env;
     addZombies(place);
     place.endTurn($rootScope.engine.turnNb);
-    _.each(place.missions, function (mission) {
+    _.forEach(place.missions, function (mission) {
       env = mission.currentEnv(place);
       consumeFood(env);
       addSurvivors(env);

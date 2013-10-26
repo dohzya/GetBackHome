@@ -170,8 +170,22 @@ app.factory("Missions", ["$rootScope", "$log", "Env", "Orders", function ($rootS
       // We are not in the place anymore
       this.place.removeMission(this);
     }
-    var orderItem;
-    orderItem = this.orders.currentOrderItem();
+
+    var orderItem = this.orders.currentOrderItem();
+
+    if (!orderItem) {
+      // No more order? Let's see if we are at destination
+      if (this.place === this.toBase.place) {
+        // And we are done here
+        this.status = "finished";
+        Mission.finish(this);
+        return false;
+      }
+      // Let's add a bonus order to move to our final destination
+      this.addOrder(this.place.pathTo(this.toBase.place), Orders.get("move"));
+      orderItem = this.orders.currentOrderItem();
+    }
+
     if (orderItem) {
       // Something to do!
       if (this.place === orderItem.targetPlace()) {
@@ -186,17 +200,6 @@ app.factory("Missions", ["$rootScope", "$log", "Env", "Orders", function ($rootS
           this.place = nextPlace;
         }
       }
-    } else {
-      // No more order? Let's see if we are at destination
-      if (this.place === this.toBase.place) {
-        // And we are done here
-        this.status = "finished";
-        Mission.finish(this);
-        return false;
-      }
-      // Let's add a bonus order to move to our final destination
-      this.addOrder(this.place.pathTo(this.toBase.place), Orders.get("move"));
-      this.turn();
     }
 
     if (this.place) {
