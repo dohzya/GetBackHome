@@ -13,9 +13,9 @@ app.service("Engine", ["$rootScope", "Util", "Events", "Places", "Groups", "Env"
     }
   }
 
-  function addZombies(env) {
+  function addZombies(place) {
     var newZombies = Util.random(10, 100);
-    env.place.horde.addZombies(newZombies);
+    place.horde.addZombies(newZombies);
   }
 
   function addSurvivors(env) {
@@ -40,11 +40,11 @@ app.service("Engine", ["$rootScope", "Util", "Events", "Places", "Groups", "Env"
 
   function turnForPlace(place) {
     var env;
+    addZombies(place);
     place.endTurn($rootScope.engine.turnNb);
     _.each(place.missions, function (mission) {
       env = mission.currentEnv();
       consumeFood(env);
-      addZombies(env);
       addSurvivors(env);
       if (place.horde.length() > 0 && Util.random() > 0.7) { zombieAttack(env); }
     });
