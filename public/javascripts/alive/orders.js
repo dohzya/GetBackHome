@@ -70,16 +70,23 @@ app.service("Orders", ["$log", "Util", "Times", function ($log, Util, Times) {
       }),
       run: function (env) {
         var ratio = env.ratio();
+        env.addLog(
+          "Purification ! (survivors: {0}, zombies: {1}, ratio: {2})",
+          env.group.length(),
+          env.horde().length(),
+          ratio
+        );
         var killZombies = 0;
         var killSurvivors = 0;
         killZombies = Util.positiveFloor(env.horde().length() * Util.random(ratio * 50, ratio * 100) / 100);
         killSurvivors = Util.positiveFloor(env.group.length() * Util.random((1 - ratio) * 50, (1 - ratio) * 100) / 100);
         env.horde().killZombies(killZombies);
-        env.group.killSurvivors(killSurvivors);
+        env.group.killSurvivors(killSurvivors, env);
         env.addLog(
-          "Purification done ({0} zombies killed, {0} survivors killed)",
+          "Purification done ({0} zombies killed, {1} survivors killed, {2} survivors remaining)",
           killZombies,
-          killSurvivors
+          killSurvivors,
+          env.group.length()
         );
       },
       finish: function () {
