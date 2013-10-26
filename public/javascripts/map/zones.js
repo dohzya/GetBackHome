@@ -90,7 +90,7 @@ window.app.factory("Zones", ["$log", "$rootScope", "Util", "FontAwesome", "Selec
 
     this.status = _.extend(this.status, {
       selected: Selection.isInPath(this.place),
-      highlighted: this.place.highlighted,
+      highlighted: !!this.place.missions.length,
       inPath: inPath,
       orderItem: order
     });

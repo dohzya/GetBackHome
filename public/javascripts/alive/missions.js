@@ -168,7 +168,6 @@ app.factory("Missions", ["$rootScope", "$log", "Env", "Orders", function ($rootS
   Mission.prototype.turn = function (ts) {
     if (this.place) {
       // We are not in the place anymore
-      this.place.highlighted = false;
       this.place.removeMission(this);
     }
     var orderItem;
@@ -202,7 +201,6 @@ app.factory("Missions", ["$rootScope", "$log", "Env", "Orders", function ($rootS
 
     if (this.place) {
       // Here we are
-      this.place.highlighted = true;
       this.group.visitPlace(ts, this.place);
       this.place.addMission(this);
     }
