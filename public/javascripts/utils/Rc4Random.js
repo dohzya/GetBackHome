@@ -1,7 +1,7 @@
 app.service("Rc4Random", [function () {
   "use strict";
 
-  function Rc4Random(seed) {
+  function rc4RandomGen(seed) {
     var keySchedule = [];
     var keyScheduleI = 0;
     var keyScheduleJ = 0;
@@ -49,8 +49,36 @@ app.service("Rc4Random", [function () {
 
   }
 
+  var rc4Random = null;
+
+  function genSeed() {
+    var seed = "",
+      chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
+      i;
+    for (i = 0; i < 30; i++) {
+      seed += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return seed;
+  }
+
+  function random(arg1, arg2) {
+    var min, max;
+    if (arguments.length > 0) {
+      if (arguments.length === 1) {
+        min = 0;
+        max = arg1;
+      } else {
+        min = arg1;
+        max = arg2;
+      }
+      return Math.floor((rc4Random.getRandomNumber() * (max - min)) + min);
+    }
+    return rc4Random.getRandomNumber();
+  }
+
   return {
-    create: Rc4Random
+    init: function (seed) { rc4Random = rc4RandomGen(seed || genSeed()); },
+    random: random
   };
 
 }]);

@@ -3,11 +3,8 @@ app.service("UTGenerator", ["UTPerlinSimplex", "Rc4Random", "Hordes", function (
 
   function initNoise(seed) {
     PerlinSimplex.noiseDetail();
-    var seedRand = Rc4Random.create(seed);
-    var rand = {
-      random: function () { return seedRand.getRandomNumber(); }
-    };
-    PerlinSimplex.setRng(rand);
+    Rc4Random.init(seed);
+    PerlinSimplex.setRng({random: Rc4Random.random});
   }
 
   function gen(kind) {
