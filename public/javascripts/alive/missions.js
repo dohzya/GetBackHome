@@ -151,7 +151,10 @@ app.factory("Missions", ["$rootScope", "$log", "Env", "Orders", function ($rootS
     return 1;
   };
 
-  Mission.prototype.currentEnv = function () {
+  Mission.prototype.currentEnv = function (place) {
+    if (place && place != this.place) {
+      console.log("MISSION AT THE WRONG PLACE!!", this, place);
+    }
     return Env.create({
       group: this.group,
       place: this.place

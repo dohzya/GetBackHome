@@ -43,7 +43,7 @@ app.service("Engine", ["$rootScope", "Util", "Events", "Places", "Groups", "Env"
     addZombies(place);
     place.endTurn($rootScope.engine.turnNb);
     _.each(place.missions, function (mission) {
-      env = mission.currentEnv();
+      env = mission.currentEnv(place);
       consumeFood(env);
       addSurvivors(env);
       if (place.horde.length() > 0 && Util.random() > 0.7) { zombieAttack(env); }
