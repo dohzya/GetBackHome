@@ -147,7 +147,7 @@ window.app.factory("Zones", ["$log", "$rootScope", "Util", "FontAwesome", "Selec
     if (this.status.orderItem) {
       ctx.save();
       ctx.font = '20px FontAwesome';
-      ctx.fillText(String.fromCharCode(parseInt(FontAwesome.unicode['icon-' + this.status.orderItem.order.icon], 16)), cx - 7, cy + 5);
+      ctx.fillText(String.fromCharCode(parseInt(FontAwesome.unicode['fa-' + this.status.orderItem.order.icon], 16)), cx - 7, cy + 5);
       ctx.restore();
     }
 

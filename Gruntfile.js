@@ -81,7 +81,8 @@ module.exports = function (grunt) {
     clean: {
       public: [
         "<%= config.dir.public.scripts %>/vendors/**/*",
-        "<%= config.dir.public.styles %>/vendors/**/*"
+        "<%= config.dir.public.styles %>/vendors/**/*",
+        "<%= config.dir.public.fonts %>/vendors/**/*"
       ],
       components: [
         "<%= config.dir.components.root %>/angular/"
@@ -199,9 +200,9 @@ module.exports = function (grunt) {
       bowerFontAwesome: {
         files: [{
           expand: true,
-          cwd: "<%= config.dir.components.root %>/font-awesome/font/",
+          cwd: "<%= config.dir.components.root %>/font-awesome/fonts/",
           src: ["*"],
-          dest: "<%= config.dir.public.fonts %>/fontawesome/"
+          dest: "<%= config.dir.public.fonts %>/vendors/fontawesome/"
         }]
       },
       bowerQ: {

@@ -11,7 +11,7 @@
         <li class="order" ng-repeat="order in orders() | ordersAvailable:selection.zone" ng-class="{selected: isOrderSelected(order)}">
           <div class="media" ng-click="selectOrder(order)">
             <div class="pull-left media-object">
-              <span ng-class="'icon-' + order.icon"></span>
+              <span ng-class="'fa fa-' + order.icon"></span>
             </div>
             <div class="media-body">
               <h4 class="media-heading">{{order.name}}</h4>
@@ -37,7 +37,7 @@
 
       <ul class="list-unstyled">
         <li ng-repeat="orderItem in newMission.getAllOrders()">
-          <span ng-class="'icon-' + orderItem.order.icon"></span>
+          <span ng-class="'fa fa-' + orderItem.order.icon"></span>
           {{ orderItem.order.name }} ({{ orderItem.targetPlace().x() }} x {{ orderItem.targetPlace().y() }})
         </li>
         <li ng-hide="newMission.getAllOrders().length">No orders yet...</li>
@@ -50,7 +50,7 @@
           <div class="media">
             <a class="pull-left" href="#">
               <img class="media-object" ng-src="{{s.avatar}}" alt="{{ s.name }}'s face" ng-if="s.avatar">
-              <span ng-class="'media-object icon-3x icon-' + (s.gender ? 'male' : 'female')" ng-if="!s.avatar"></span>
+              <span ng-class="'media-object fa fa-3x fa-' + (s.gender ? 'male' : 'female')" ng-if="!s.avatar"></span>
             </a>
             <div class="media-body">
               <h4 class="media-heading">{{ s.name }}</h4>
