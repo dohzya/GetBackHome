@@ -12,13 +12,11 @@ window.app.directive('gbhSelectable', function () {
       var triggersOnSelect = null;
 
       function select(item) {
-        console.log("select", item);
         $scope.gbhSelectable.push(item);
         onSelect();
       }
 
       function unselect(item) {
-        console.log("unselect", item);
         var arr = [];
         var i, selectedItem;
         for (i = 0; i < $scope.gbhSelectable.length; i++) {
@@ -42,7 +40,7 @@ window.app.directive('gbhSelectable', function () {
       function isSelected(item) {
         var i;
         for (i = 0; i < $scope.gbhSelectable.length; i++) {
-          if ($scope.gbhSelectable[i] == item) {
+          if ($scope.gbhSelectable[i] === item) {
             return true;
           }
         }
@@ -63,13 +61,14 @@ window.app.directive('gbhSelectable', function () {
         select: select,
         unselect: unselect,
         toggle: toggle,
+        isSelected: isSelected,
         onSelect: onSelect
       };
     }]
   };
 });
 
-window.app.directive('gbhSelectableItem', function () {
+window.app.directive("gbhSelectableItem", function () {
   "use strict";
 
   return {
@@ -77,8 +76,12 @@ window.app.directive('gbhSelectableItem', function () {
     restrict: "A",
     scope: true,
     link: function ($scope, $element, $attrs, gbhSelectable) {
+      var item = $scope.$eval($attrs.gbhSelectableItem);
+
       $element.on("click", function () {
-        gbhSelectable.toggle($scope.$eval($attrs.gbhSelectableItem));
+        $scope.$apply(function () {
+          $scope.$gbhSelected = gbhSelectable.toggle(item);
+        });
       });
     }
   };
