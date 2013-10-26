@@ -20,6 +20,10 @@ app.factory("Groups", ["Survivors", "Memories", "Map", "Logs", "Util", function 
     _.forEach(_.range(nb), function () {
       var index = Util.random(this.survivors.length);
       var survivor = this.survivors[index];
+      env.addLog(
+        "{0} est mort" + (survivor.isMale() ? "" : "e") + " :-(",
+        survivor.name
+      );
       this.remove(survivor);
     }, this);
   };

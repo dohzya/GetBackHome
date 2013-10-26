@@ -41,7 +41,7 @@ app.service("Engine", ["$rootScope", "Util", "Events", "Places", "Groups", "Env"
       damage
     );
     env.horde().removeZombies(killZombies);
-    env.group.removeSurvivors(killSurvivors);
+    env.group.killSurvivors(killSurvivors, env);
     env.place.addDefense(-damage / 100);
   }
 
