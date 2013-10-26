@@ -29,30 +29,24 @@ app.factory("Groups", ["Survivors", "Memories", "Map", "Logs", "Util", function 
   };
 
   Group.prototype.defense = function () {
-    var defense = 0, i, survivor;
-    for (i in this.survivors) {
-      survivor = this.survivors[i];
-      defense += survivor.defense();
-    }
-    return defense;
+    return _.reduce(
+      _.map(this.survivors, function (s) {return s.defense(); }),
+      function (c, i) { return c + i; }
+    );
   };
 
   Group.prototype.attack = function () {
-    var attack = 0, i, survivor;
-    for (i in this.survivors) {
-      survivor = this.survivors[i];
-      attack += survivor.attack();
-    }
-    return attack;
+    return _.reduce(
+      _.map(this.survivors, function (s) {return s.attack(); }),
+      function (c, i) { return c + i; }
+    );
   };
 
   Group.prototype.tooling = function () {
-    var attack = 0, i, survivor;
-    for (i in this.survivors) {
-      survivor = this.survivors[i];
-      attack += survivor.tooling;
-    }
-    return attack;
+    return _.reduce(
+      _.map(this.survivors, function (s) {return s.tooling(); }),
+      function (c, i) { return c + i; }
+    );
   };
 
   Group.prototype.length = function () {
