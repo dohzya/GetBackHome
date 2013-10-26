@@ -70,10 +70,11 @@ app.service("Engine", ["$rootScope", "Util", "Events", "Places", "Groups", "Env"
 
   // Global
   $rootScope.engine.turnNb = 0;
-  $rootScope.engine.mainGroup = $rootScope.currentPlayer().bases[0].group;
+  $rootScope.engine.mainBase = $rootScope.currentPlayer().getPrimaryBase();
+  $rootScope.engine.mainGroup = $rootScope.engine.mainBase.group;
+  $rootScope.engine.mainPlace = $rootScope.engine.mainBase.place;
 
   // When everything is ready, start the engine!
-  $rootScope.engine.mainPlace = $rootScope.currentPlayer().bases[0].place;
   turnForPlaces();
 
   // Export
