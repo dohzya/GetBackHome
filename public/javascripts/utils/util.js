@@ -29,6 +29,10 @@ app.factory("Util", ["Rc4Random", function (Rc4Random) {
     return round(nb, 2);
   }
 
+  function perc(nb) {
+    return round(nb * 100);
+  }
+
   return {
     random: Rc4Random.random,
     minmax: minmax,
@@ -38,6 +42,7 @@ app.factory("Util", ["Rc4Random", function (Rc4Random) {
     positive: positive,
     positiveFloor: positiveFloor,
     round: round,
-    to2digits: to2digits
+    to2digits: to2digits,
+    perc: perc
   };
 }]);

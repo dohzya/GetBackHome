@@ -15,9 +15,11 @@ window.app.factory("Env", ["Util", function (Util) {
   };
 
   Env.prototype.ratio = function () {
-    var r1 = Util.min0(this.group.attack() + this.place.attack() - this.horde().defense());
-    var r2 = Util.min0(this.horde().attack() - this.place.defense() - this.group.defense());
-    return Util.minmax(r1 / r2);
+    var survivors = (this.group.attack() + this.place.attack()) / this.horde().defense();
+    var zombies = this.horde().attack() / (this.place.defense() + this.group.defense());
+    survivors = Util.minmax(survivors / 3);
+    zombies = Util.minmax(zombies / 3);
+    return {survivors: survivors, zombies: zombies};
   };
 
   function create(args) {

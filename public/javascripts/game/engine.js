@@ -14,16 +14,17 @@ app.service("Engine", ["$rootScope", "Util", "Events", "Places", "Groups", "Env"
   }
 
   function addZombies(place) {
-    var newZombies = Util.random(10, 100);
-    place.horde.addZombies(newZombies);
+    if (Util.random() > 0.8) {
+      place.horde.addZombies(Util.random(0, 5));
+    }
   }
 
   function addSurvivors(env) {
-    if (Util.random() > 0.8) {
-      var newSurvivors = Math.round(Util.random(1, 6) / 2);
+    if (Util.random() > 0.9) {
+      var newSurvivors = Math.round(Util.random(1, 2));
       env.group.add(Survivors.createSeveral(newSurvivors));
       env.addLog(
-        "Survivors joined us ({0} new survivors, {1} survivors remaining)",
+        "Survivors joined us ({0} new S, {1} S remaining)",
         newSurvivors,
         env.group.length()
       );
@@ -34,24 +35,21 @@ app.service("Engine", ["$rootScope", "Util", "Events", "Places", "Groups", "Env"
     var ratio = env.ratio();
     var killZombies = 0;
     var killSurvivors = 0;
-    var damage = 0;
     env.addLog(
-      "Zombie Attack ! (survivors: {0}, zombies: {1}, ratio: {2})",
+      "Zombie Attack ! (S: {0}, Z: {1}, R: {2}% vs {3}%)",
       env.group.length(),
       env.horde().length(),
-      ratio
+      Util.perc(ratio.survivors),
+      Util.perc(ratio.zombies)
     );
-    killZombies = Math.round(env.horde().length() * Util.random(ratio * 50, ratio * 100) / 100);
-    killSurvivors = Math.round(env.group.length()  *  Util.random((1 - ratio) * 50, (1 - ratio) * 100) / 100);
-    damage = Util.positiveFloor(env.place.defense() * 100  *  Util.random((1 - ratio) * 50, (1 - ratio) * 100) / 100);
+    killZombies = Math.round(env.horde().length() * Util.random(ratio.survivors * 50, ratio.survivors * 100) / 100);
+    killSurvivors = Math.round(env.group.length() * Util.random(ratio.zombies * 50, ratio.zombies * 100) / 100);
     env.horde().removeZombies(killZombies);
     env.group.killSurvivors(killSurvivors, env);
-    env.place.addDefense(-damage / 100);
     env.addLog(
-      "Attaque zombie (zombies killed: {0}, survivors killed: {1}, damage: {2}, {3} survivors remaining)",
+      "Attaque zombie (Z killed: {0}, S killed: {1}, {2} S remaining)",
       killZombies,
       killSurvivors,
-      damage,
       env.group.length()
     );
   }
