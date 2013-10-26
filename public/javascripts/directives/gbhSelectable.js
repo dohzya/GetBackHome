@@ -4,28 +4,22 @@ window.app.directive('gbhSelectable', function () {
   return {
     restrict: "A",
     scope: true,
-    link: function ($scope, $element, $attrs, ctrl) {
-      $scope.gbhSelectable = $scope.$eval($attrs.gbhSelectable);
-      ctrl.onSelect($scope.$eval($attrs.onSelect));
+    link: function () {
+
     },
     controller: ["$scope", "$attrs", function ($scope, $attrs) {
-      var triggersOnSelect = null;
+      var selectedItems = $scope.$eval($attrs.gbhSelectable);
+      var onSelectHandler = $scope.$eval($attrs.gbhSelectableOnSelect);
+      var onUnSelectHandler = $scope.$eval($attrs.gbhSelectableOnUnselect);
 
       function select(item) {
-        $scope.gbhSelectable.push(item);
-        onSelect();
+        selectedItems.push(item);
+        onSelect(item);
       }
 
       function unselect(item) {
-        var arr = [];
-        var i, selectedItem;
-        for (i = 0; i < $scope.gbhSelectable.length; i++) {
-          selectedItem = $scope.gbhSelectable[i];
-          if (selectedItem !== item) {
-            arr.push(selectedItem);
-          }
-        }
-        $scope.gbhSelectable = arr;
+        selectedItems.splice(selectedItems.indexOf(item), 1);
+        onUnselect(item);
       }
 
       function toggle(item) {
@@ -38,22 +32,18 @@ window.app.directive('gbhSelectable', function () {
       }
       
       function isSelected(item) {
-        var i;
-        for (i = 0; i < $scope.gbhSelectable.length; i++) {
-          if ($scope.gbhSelectable[i] === item) {
-            return true;
-          }
-        }
-        return false;
+        return selectedItems.indexOf(item) >= 0;
       }
 
-      function onSelect(func) {
-        if (func) {
-          triggersOnSelect = func;
-        } else {
-          if (triggersOnSelect) {
-            triggersOnSelect($scope.gbhSelectable);
-          }
+      function onSelect(item) {
+        if (onSelectHandler) {
+          onSelectHandler(item);
+        }
+      }
+
+      function onUnselect(item) {
+        if (onUnSelectHandler) {
+          onUnSelectHandler(item);
         }
       }
 
@@ -61,8 +51,7 @@ window.app.directive('gbhSelectable', function () {
         select: select,
         unselect: unselect,
         toggle: toggle,
-        isSelected: isSelected,
-        onSelect: onSelect
+        isSelected: isSelected
       };
     }]
   };

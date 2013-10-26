@@ -86,7 +86,7 @@
 
       <hr/>
 
-      <button type="button" class="btn btn-block btn-primary" ng-click="sendMission()" ng-disabled="!newMission.hasOrders()">Go go go!</button>
+      <button type="button" class="btn btn-block btn-primary" ng-click="sendMission()" ng-disabled="!newMission.hasOrders() || !selection.survivors.length">Go go go!</button>
 
     </div>
   </div>
