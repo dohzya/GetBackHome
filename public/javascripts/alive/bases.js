@@ -1,4 +1,4 @@
-window.app.factory("Bases", [function () {
+window.app.factory("Bases", ["Groups", function (Groups) {
   "use strict";
 
   function Base(args) {
@@ -9,6 +9,20 @@ window.app.factory("Bases", [function () {
 
   Base.prototype.visit = function (turnNb) {
     this.group.visitPlace(turnNb, this.place);
+  };
+
+  Base.prototype.extractSurvivors = function (survivors) {
+    survivors = _.isArray(survivors) ? survivors : Array.prototype.slice.call(arguments);
+
+    _.forEach(survivors, function (survivor) {
+      if (this.group.contains(survivor)) {
+        this.group.remove(survivor);
+      }
+    }, this);
+
+    return Groups.create({
+      survivors: survivors
+    });
   };
 
   return {

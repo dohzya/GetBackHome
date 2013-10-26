@@ -20,13 +20,12 @@ app.controller("NewMissionCtrl", ["$scope", "$rootScope", "Events", "Selection",
   });
 
   $scope.isOrderSelected = function (order) {
-    return $scope.selection.order && $scope.selection.order.order.id === order.id;
+    return Selection.isOrderSelected(order);
   };
 
   $scope.addOrder = $scope.doAction(function () {
     if (!$rootScope.newMission) {
       $rootScope.newMission = Missions.create({
-        group: $rootScope.engine.mainGroup,
         fromBase: $scope.selection.base,
         toBase: $scope.selection.base
       });
@@ -42,9 +41,11 @@ app.controller("NewMissionCtrl", ["$scope", "$rootScope", "Events", "Selection",
   });
 
   $scope.sendMission = $scope.doAction(function () {
+    $rootScope.newMission.group = $rootScope.newMission.fromBase.extractSurvivors($scope.selection.survivors);
     $rootScope.currentPlayer().missions.push($rootScope.newMission);
     $rootScope.newMission = undefined;
     $scope.selection.zone = undefined;
+    $scope.selection.survivors = [];
     $rootScope.$broadcast(Events.gui.draw);
   });
 

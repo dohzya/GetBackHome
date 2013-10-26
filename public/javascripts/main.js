@@ -50,7 +50,8 @@ var app = angular
     $rootScope.newMission = undefined;
 
     $rootScope.selection = {
-      base: $rootScope.currentPlayer().getPrimaryBase()
+      base: $rootScope.currentPlayer().getPrimaryBase(),
+      survivors: []
     };
   }])
   .filter("ordersAvailable", function () {

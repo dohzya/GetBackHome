@@ -57,7 +57,15 @@ app.factory("Groups", ["Survivors", "Memories", "Map", "Logs", function (Survivo
 
   Group.prototype.addLog = function () {
     return this.memory.addLog.apply(this.memory, arguments);
-  }
+  };
+
+  Group.prototype.add = function (survivor) {
+    this.survivors.push(survivor);
+  };
+
+  Group.prototype.remove = function (survivor) {
+    this.survivors = _.without(this.survivors, survivor);
+  };
 
   Group.prototype.addSurvivors = function (nb) {
     var newSurvivors = Survivors.createSeveral(nb), i;
@@ -81,8 +89,12 @@ app.factory("Groups", ["Survivors", "Memories", "Map", "Logs", function (Survivo
   Group.prototype.merge = function (group) {
     _.each(group.survivors, function (survivor) {
       this.survivors.push(survivor);
-    }, this)
+    }, this);
     this.memory.merge(group.memory);
+  };
+
+  Group.prototype.contains = function (survivor) {
+    return _.contains(this.survivors, survivor);
   };
 
   function create(args) {

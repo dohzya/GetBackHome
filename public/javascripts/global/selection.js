@@ -19,10 +19,15 @@ app.factory('Selection', ['$rootScope', function ($rootScope) {
     return $rootScope.newMission || $rootScope.selection.mission;
   }
 
+  function isOrderSelected(order) {
+    return $rootScope.selection.order && $rootScope.selection.order.order.id === order.id;
+  };
+
   return {
     clearPath: clearPath,
     selectPath: selectPath,
     isInPath: isInPath,
-    getMission: getMission
+    getMission: getMission,
+    isOrderSelected: isOrderSelected
   };
 }]);

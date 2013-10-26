@@ -45,8 +45,8 @@
 
       <hr/>
 
-      <ul class="list-unstyled survivors">
-        <li class="survivor" ng-repeat="s in selection.base.group.survivors">
+      <ul class="list-unstyled survivors" gbh-selectable="selection.survivors">
+        <li class="survivor" ng-repeat="s in selection.base.group.survivors" gbh-selectable-item="s">
           <div class="media">
             <a class="pull-left" href="#">
               <img class="media-object" ng-src="{{s.avatar}}" alt="{{ s.name }}'s face" ng-if="s.avatar">
