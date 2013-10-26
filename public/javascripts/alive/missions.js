@@ -195,7 +195,7 @@ app.factory("Missions", ["$rootScope", "$log", "Env", "Orders", function ($rootS
         // And we are done here
         this.status = "finished";
         console.log("Mission finished", this);
-        Mission.remove(this);
+        Mission.finish(this);
         return false;
       }
       // Let's add a bonus order to move to our final destination
@@ -221,6 +221,15 @@ app.factory("Missions", ["$rootScope", "$log", "Env", "Orders", function ($rootS
     });
   };
 
+  Mission.finish = function (mission) {
+    mission.currentEnv().addLog(
+      "Mission finished ({0} survivors returned)",
+      mission.group.length()
+    );
+    $rootScope.engine.mainGroup.merge(mission.group);
+    Mission.remove(mission);
+  };
+
   Mission.create = function (args) {
     return new Mission(args);
   };
@@ -229,6 +238,7 @@ app.factory("Missions", ["$rootScope", "$log", "Env", "Orders", function ($rootS
     create: Mission.create,
     createOrderListItem: OrderListItem.create,
     each: Mission.each,
+    finish: Mission.finish,
     remove: Mission.remove
   };
 
