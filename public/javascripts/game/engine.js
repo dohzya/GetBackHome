@@ -41,11 +41,8 @@ app.service("Engine", ["$rootScope", "Util", "Events", "Places", "Groups", "Env"
   function turnForPlace(place) {
     var env;
     place.endTurn($rootScope.engine.turnNb);
-    _.each(place.groups, function (group) {
-      env = Env.create({
-        place: place,
-        group: group
-      });
+    _.each(place.missions, function (mission) {
+      env = mission.currentEnv();
       consumeFood(env);
       addZombies(env);
       addSurvivors(env);
