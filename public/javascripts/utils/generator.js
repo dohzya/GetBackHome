@@ -28,13 +28,15 @@ app.service("UTGenerator", ["UTPerlinSimplex", "Rc4Random", "Hordes", function (
       for (yy = minY; yy < maxY; yy++) {
         x = xx - 10;
         y = yy - 10;
-        infection = parseInt(Math.abs(infectionGen(x, y) * 100), 10);
+        infection = parseInt(Math.abs(infectionGen(x, y) * 10), 10);
         height = parseInt((type1Gen(x, y) * 1000), 10) - 50;
         type2Int = parseInt((type2Gen(x, y) * 1000), 10);
         attack = attackGen(x, y);
         attack = attack * attack;  // lower the value (but keeping 1 possible)
+        attack = attack * 10;
         defense = defenseGen(x, y);
         defense = defense * defense;  // lower the value (but keeping 1 possible)
+        defense = defense * 10;
         food = parseInt((foodGen(x, y) * 100), 10);
         if (height < 24) {
           if (type2Int > 950) {

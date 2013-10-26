@@ -70,20 +70,21 @@ app.service("Orders", ["$log", "Util", "Times", function ($log, Util, Times) {
       }),
       run: function (env) {
         var ratio = env.ratio();
-        env.addLog(
-          "Purification ! (survivors: {0}, zombies: {1}, ratio: {2})",
-          env.group.length(),
-          env.horde().length(),
-          ratio
-        );
         var killZombies = 0;
         var killSurvivors = 0;
-        killZombies = Math.round(env.horde().length() * Util.random(ratio * 50, ratio * 100) / 100);
-        killSurvivors = Math.round(env.group.length() * Util.random((1 - ratio) * 50, (1 - ratio) * 100) / 100);
+        env.addLog(
+          "Purification ! (S: {0}, Z: {1}, R: {2}% vs {3}%)",
+          env.group.length(),
+          env.horde().length(),
+          Util.perc(ratio.survivors),
+          Util.perc(ratio.zombies)
+        );
+        killZombies = Math.round(env.horde().length() * Util.random(ratio.survivors * 50, ratio.survivors * 100) / 100);
+        killSurvivors = Math.round(env.group.length() * Util.random(ratio.zombies * 50, ratio.zombies * 100) / 100);
         env.horde().killZombies(killZombies);
         env.group.killSurvivors(killSurvivors, env);
         env.addLog(
-          "Purification done ({0} zombies killed, {1} survivors killed, {2} survivors remaining)",
+          "Purification done ({0} Z killed, {1} S killed, {2} S remaining)",
           killZombies,
           killSurvivors,
           env.group.length()
