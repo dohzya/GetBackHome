@@ -71,7 +71,14 @@ app.factory("Groups", ["Survivors", "Memories", "Map", function (Survivors, Memo
   Group.prototype.getMaxEndurance = function () {
     // TODO : calculate it from survivors
     return 20;
-  }
+  };
+
+  Group.prototype.merge = function (group) {
+    _.each(group.survivors, function (survivor) {
+      this.survivors.push(survivor);
+    }, this)
+    this.memory.merge(group.memory);
+  };
 
   function create(args) {
     if (typeof args === "number") {
