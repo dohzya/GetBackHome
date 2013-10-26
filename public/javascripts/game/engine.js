@@ -22,6 +22,7 @@ app.service("Engine", ["$rootScope", "Util", "Events", "Places", "Groups", "Env"
     if (Util.random() > 0.8) {
       var newSurvivors = Math.round(Util.random(1, 6) / 2);
       env.group.addSurvivors += newSurvivors;
+      env.addLog("Survivors joined us ({0} new survivors)", newSurvivors);
     }
   }
 
@@ -33,6 +34,12 @@ app.service("Engine", ["$rootScope", "Util", "Events", "Places", "Groups", "Env"
     killZombies = Util.positiveFloor(env.horde().length() * Util.random(ratio * 50, ratio * 100) / 100);
     killSurvivors = Util.positiveFloor(env.group.length()  *  Util.random((1 - ratio) * 50, (1 - ratio) * 100) / 100);
     damage = Util.positiveFloor(env.place.defense() * 100  *  Util.random((1 - ratio) * 50, (1 - ratio) * 100) / 100);
+    env.addLog(
+      "Attaque zombie (zombies killed: {0}, survivors killed: {1}, damage: {2})",
+      killZombies,
+      killSurvivors,
+      damage
+    );
     env.horde().removeZombies(killZombies);
     env.group.removeSurvivors(killSurvivors);
     env.place.addDefense(-damage / 100);

@@ -5,7 +5,6 @@ window.app.factory("Players", [function () {
   var current;
 
   function Player() {
-    this.logs = [];
     this.stats = [];
     this.buttons = [];
     this.missions = [];

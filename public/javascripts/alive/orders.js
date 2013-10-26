@@ -47,6 +47,7 @@ app.service("Orders", ["$log", "Util", "Times", function ($log, Util, Times) {
         standard: 2
       }),
       run: function (env) {
+        env.addLog("Arrived at destination");
       },
       finish: function () {
         return true;
@@ -75,6 +76,11 @@ app.service("Orders", ["$log", "Util", "Times", function ($log, Util, Times) {
         killSurvivors = Util.positiveFloor(env.group.length() * Util.random((1 - ratio) * 50, (1 - ratio) * 100) / 100);
         env.horde().killZombies(killZombies);
         env.group.killSurvivors(killSurvivors);
+        env.addLog(
+          "Purification done ({0} zombies killed, {0} survivors killed)",
+          killZombies,
+          killSurvivors
+        );
       },
       finish: function () {
         return true;
@@ -94,6 +100,7 @@ app.service("Orders", ["$log", "Util", "Times", function ($log, Util, Times) {
         var max = Math.min(tooling, 1 - env.place.defense()) * 100;
         var fortifying = Util.random(max / 2, max) / 100;
         env.place.addDefense(fortifying);
+        env.addLog("Fortication done ({0})", fortifying);
       },
       finish: function () {
         return true;

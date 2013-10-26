@@ -4,7 +4,7 @@
   <div class="gbh-title">Messages</div>
   <div class="gbh-visible-contents">
     <div class="gbh-contents">
-      <div class="gbh-content" data-id="{{log.id}}" data-ng-repeat="log in logs">{{log.msg}}</div>
+      <div class="gbh-content" data-id="{{message.id}}" data-ng-repeat="message in engine.mainGroup.messages">turn {{message.ts}} :: {{message.format()}}</div>
     </div>
   </div>
 </div>
