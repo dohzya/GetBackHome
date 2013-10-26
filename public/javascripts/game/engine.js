@@ -1,4 +1,4 @@
-app.service("Engine", ["$rootScope", "Util", "Events", "Places", "Groups", "Env", function ($rootScope, Util, Events, Places, Groups, Env) {
+app.service("Engine", ["$rootScope", "Util", "Events", "Places", "Groups", "Env", "Survivors", function ($rootScope, Util, Events, Places, Groups, Env, Survivors) {
   "use strict";
 
   var self = this;
@@ -21,7 +21,7 @@ app.service("Engine", ["$rootScope", "Util", "Events", "Places", "Groups", "Env"
   function addSurvivors(env) {
     if (Util.random() > 0.8) {
       var newSurvivors = Math.round(Util.random(1, 6) / 2);
-      env.group.addSurvivors += newSurvivors;
+      env.group.add(Survivors.createSeveral(newSurvivors));
       env.addLog("Survivors joined us ({0} new survivors)", newSurvivors);
     }
   }

@@ -63,8 +63,11 @@ app.factory("Groups", ["Survivors", "Memories", "Map", "Logs", "Util", function 
     return this.memory.addLog.apply(this.memory, arguments);
   };
 
-  Group.prototype.add = function (survivor) {
-    this.survivors.push(survivor);
+  Group.prototype.add = function (survivors) {
+    survivors = _.isArray(survivors) ? survivors : Array.prototype.slice.call(arguments);
+    _.forEach(survivors, function (survivor) {
+      this.survivors.push(survivor);
+    }, this);
   };
 
   Group.prototype.remove = function (survivor) {
