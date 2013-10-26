@@ -1,4 +1,4 @@
-app.factory("Groups", ["Survivors", "Memories", "Map", "Logs", function (Survivors, Memories, Map, Logs) {
+app.factory("Groups", ["Survivors", "Memories", "Map", "Logs", "Util", function (Survivors, Memories, Map, Logs, Util) {
   "use strict";
 
   function Group(args) {
@@ -16,12 +16,12 @@ app.factory("Groups", ["Survivors", "Memories", "Map", "Logs", function (Survivo
     });
   };
 
-  Group.prototype.killSurvivors = function (nb) {
-    var survivors = [], i;
-    for (i = 0; i < this.survivors.length - nb; i++) {
-      survivors.push(this.survivors[i]);
-    }
-    this.survivors = survivors;
+  Group.prototype.killSurvivors = function (nb, env) {
+    _.forEach(_.range(nb), function () {
+      var index = Util.random(this.survivors.length);
+      var survivor = this.survivors[index];
+      this.remove(survivor);
+    }, this);
   };
 
   Group.prototype.defense = function () {
@@ -67,28 +67,14 @@ app.factory("Groups", ["Survivors", "Memories", "Map", "Logs", function (Survivo
     this.survivors = _.without(this.survivors, survivor);
   };
 
-  Group.prototype.addSurvivors = function (nb) {
-    var newSurvivors = Survivors.createSeveral(nb), i;
-    for (i in newSurvivors) {
-      this.survivors.push(newSurvivors[i]);
-    }
-  };
-
-  Group.prototype.removeSurvivors = function (nb) {
-    var i;
-    for (i = 0; i < nb; i++) {
-      this.survivors.pop();
-    }
-  };
-
   Group.prototype.getMaxEndurance = function () {
     // TODO : calculate it from survivors
     return 20;
   };
 
   Group.prototype.merge = function (group) {
-    _.each(group.survivors, function (survivor) {
-      this.survivors.push(survivor);
+    _.forEach(group.survivors, function (survivor) {
+      this.add(survivor);
     }, this);
     this.memory.merge(group.memory);
   };
