@@ -104,7 +104,7 @@ app.service("Orders", ["$log", "Util", "Times", function ($log, Util, Times) {
         standard: 2
       }),
       run: function (env) {
-        var tooling = env.group.tooling() / 10;
+        var tooling = 20; // TODO : interpolate it from group
         var max = Math.min(tooling, 1 - env.place.defense()) * 100;
         var fortifying = Util.random(max / 2, max) / 100;
         env.place.addDefense(fortifying);

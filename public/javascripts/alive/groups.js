@@ -42,13 +42,6 @@ app.factory("Groups", ["Survivors", "Memories", "Map", "Logs", "Util", function 
     );
   };
 
-  Group.prototype.tooling = function () {
-    return _.reduce(
-      _.map(this.survivors, function (s) {return s.tooling(); }),
-      function (c, i) { return c + i; }
-    );
-  };
-
   Group.prototype.length = function () {
     return this.survivors.length;
   };
