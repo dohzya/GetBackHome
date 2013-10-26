@@ -41,8 +41,8 @@ app.service("Engine", ["$rootScope", "Util", "Events", "Places", "Groups", "Env"
       env.horde().length(),
       ratio
     );
-    killZombies = Util.positiveFloor(env.horde().length() * Util.random(ratio * 50, ratio * 100) / 100);
-    killSurvivors = Util.positiveFloor(env.group.length()  *  Util.random((1 - ratio) * 50, (1 - ratio) * 100) / 100);
+    killZombies = Math.round(env.horde().length() * Util.random(ratio * 50, ratio * 100) / 100);
+    killSurvivors = Math.round(env.group.length()  *  Util.random((1 - ratio) * 50, (1 - ratio) * 100) / 100);
     damage = Util.positiveFloor(env.place.defense() * 100  *  Util.random((1 - ratio) * 50, (1 - ratio) * 100) / 100);
     env.horde().removeZombies(killZombies);
     env.group.killSurvivors(killSurvivors, env);

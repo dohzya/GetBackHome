@@ -78,8 +78,8 @@ app.service("Orders", ["$log", "Util", "Times", function ($log, Util, Times) {
         );
         var killZombies = 0;
         var killSurvivors = 0;
-        killZombies = Util.positiveFloor(env.horde().length() * Util.random(ratio * 50, ratio * 100) / 100);
-        killSurvivors = Util.positiveFloor(env.group.length() * Util.random((1 - ratio) * 50, (1 - ratio) * 100) / 100);
+        killZombies = Math.round(env.horde().length() * Util.random(ratio * 50, ratio * 100) / 100);
+        killSurvivors = Math.round(env.group.length() * Util.random((1 - ratio) * 50, (1 - ratio) * 100) / 100);
         env.horde().killZombies(killZombies);
         env.group.killSurvivors(killSurvivors, env);
         env.addLog(
