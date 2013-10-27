@@ -1,33 +1,52 @@
 app.factory('Selection', ['$rootScope', function ($rootScope) {
   'use strict';
 
-  function selectPath(newPath) {
-    $rootScope.selection.path = newPath;
+  var selection = {
+    base: $rootScope.currentPlayer().getPrimaryBase(),
+    survivors: [],
+    mission: undefined,
+    order: undefined,
+    zone: undefined,
+    path: []
+  };
+
+  function clearSurvivors() {
+    selection.survivors = [];
   }
 
   function clearPath() {
-    selectPath(undefined);
+    selection.path = [];
+  }
+
+  function clearZone() {
+    selection.zone = undefined;
+  }
+
+  function clearOrder() {
+    selection.order = undefined;
   }
 
   function isInPath(place) {
-    return _.any($rootScope.selection.path, function (p) {
+    return _.any(selection.path, function (p) {
       return place === p;
     });
   }
 
   function getMission() {
-    return $rootScope.newMission || $rootScope.selection.mission;
+    return $rootScope.newMission || selection.mission;
   }
 
   function isOrderSelected(order) {
-    return $rootScope.selection.order && $rootScope.selection.order.order.id === order.id;
+    return selection.order && selection.order.order.id === order.id;
   };
 
-  return {
+  return _.extend(selection, {
+    clearSurvivors: clearSurvivors,
     clearPath: clearPath,
-    selectPath: selectPath,
+    clearZone: clearZone,
     isInPath: isInPath,
+    clearOrder: clearOrder,
     getMission: getMission,
     isOrderSelected: isOrderSelected
-  };
+  });
 }]);

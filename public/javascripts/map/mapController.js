@@ -164,8 +164,8 @@ app.controller("MapCtrl", ["$scope", "$rootScope", "Events", "Selection", "Sprit
       var fromPlace = $rootScope.newMission && $rootScope.newMission.hasOrders() ? _.last($rootScope.newMission.getAllOrders()).targetPlace() : $rootScope.selection.base.place;
       var path = fromPlace.pathTo(zone.place);
 
-      Selection.selectPath(path);
-      $scope.selection.zone = zone;
+      Selection.path = path;
+      Selection.zone = zone;
 
       $rootScope.$broadcast(Events.gui.zones.selected);
     });

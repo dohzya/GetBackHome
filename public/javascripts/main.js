@@ -31,15 +31,8 @@ var app = angular
   .config(["$locationProvider", function ($locationProvider) {
     $locationProvider.html5Mode(true).hashPrefix("!");
   }])
-  .run(["$rootScope", "$log", "Players", "Util", "Orders", "Groups", "Places", "Bases", "Survivors", function ($rootScope, $log, Players, Util, Orders, Groups, Places, Bases, Survivors) {
-    $rootScope.$log = $log;
-
-    $rootScope.engine = {};
-    $rootScope.game = {};
-    $rootScope.gui = {};
-
-    $rootScope.orders = Orders.all;
-
+  .run(["$rootScope", "Players", "Groups", "Places", "Bases", "Survivors", function ($rootScope, Players, Groups, Places, Bases, Survivors) {
+    // Hack to init a default player
     var base = Bases.create({
       place: Places.at(7, 3),
       isPrimary: true,
@@ -47,12 +40,18 @@ var app = angular
     });
     Players.init(base);
     $rootScope.currentPlayer = Players.current;
+  }])
+  .run(["$rootScope", "$log", "Orders", "Selection", function ($rootScope, $log, Orders, Selection) {
+    $rootScope.$log = $log;
+
+    $rootScope.engine = {};
+    $rootScope.game = {};
+    $rootScope.gui = {};
+
+    $rootScope.orders = Orders.all;
     $rootScope.newMission = undefined;
 
-    $rootScope.selection = {
-      base: $rootScope.currentPlayer().getPrimaryBase(),
-      survivors: []
-    };
+    $rootScope.selection = Selection;
   }])
   .filter("ordersAvailable", function () {
     return function (orders, zone) {

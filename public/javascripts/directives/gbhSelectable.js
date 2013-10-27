@@ -8,7 +8,14 @@ window.app.directive('gbhSelectable', function () {
 
     },
     controller: ["$scope", "$attrs", function ($scope, $attrs) {
-      var selectedItems = $scope.$eval($attrs.gbhSelectable);
+      var selectedItems;
+
+      $scope.$watch($attrs.gbhSelectable, function(newValue, oldValue) {
+        if (newValue !== selectedItems) {
+          selectedItems = newValue;
+        }
+      }, true);
+
       var onSelectHandler = $scope.$eval($attrs.gbhSelectableOnSelect);
       var onUnSelectHandler = $scope.$eval($attrs.gbhSelectableOnUnselect);
 
