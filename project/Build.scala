@@ -13,8 +13,8 @@ object ApplicationBuild extends Build {
   )
 
   val sonatypeRepos = Seq(
-    "Sonatype Snapshots" at "http://oss.sonatype.org/content/repositories/releases/",
-    "Sonatype Snapshots" at "http://oss.sonatype.org/content/repositories/snapshots/"
+    "Sonatype releases" at "http://oss.sonatype.org/content/repositories/releases/",
+    "Sonatype snapshots" at "http://oss.sonatype.org/content/repositories/snapshots/"
   )
 
 
