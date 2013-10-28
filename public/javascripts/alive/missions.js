@@ -202,6 +202,12 @@ app.factory("Missions", ["$rootScope", "$log", "Env", "Orders", function ($rootS
       }
     }
 
+    if (this.group.length() == 0) {
+      // everybody's dead
+      Mission.fail(this);
+      return false;
+    }
+
     if (this.place) {
       // Here we are
       this.group.visitPlace(ts, this.place);
@@ -225,6 +231,18 @@ app.factory("Missions", ["$rootScope", "$log", "Env", "Orders", function ($rootS
       mission.group.length()
     );
     $rootScope.engine.mainGroup.merge(mission.group);
+    Mission.remove(mission);
+  };
+
+  Mission.fail = function (mission) {
+    mission.currentEnv().addLog("Mission failed (no more survivors)");
+    if (window.DEBUG_BGH) {
+      console.log("================================================");
+      _.forEach(mission.group.memory.logs.messages, function (message) {
+        console.log(message.format())
+      });
+      console.log("================================================");
+    }
     Mission.remove(mission);
   };
 
