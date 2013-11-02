@@ -16,14 +16,14 @@ app.factory("Zombies", [function () {
     return this.fighting.attack;
   };
 
-  function create(args) {
+  Zombie.create = function (args) {
     return new Zombie(args);
-  }
+  };
 
-  function createSeveral(nb) {
+  Zombie.createSeveral = function (nb) {
     var zombies = [], i;
     for (i = 0; i < nb; i++) {
-      zombies.push(create({
+      zombies.push(Zombie.create({
         fighting: {
           attack: 5,
           defense: 5
@@ -34,11 +34,11 @@ app.factory("Zombies", [function () {
       }));
     }
     return zombies;
-  }
+  };
 
   return {
-    create: create,
-    createSeveral: createSeveral
+    create: Zombie.create,
+    createSeveral: Zombie.createSeveral
   };
 
 }]);

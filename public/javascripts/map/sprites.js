@@ -39,9 +39,9 @@ app.factory("Sprites", ["$q", function ($q) {
     ctx.drawImage(this.img, this.x, this.y, this.height, this.width, x, y, dx, dy);
   };
 
-  function create(img, x, y, width, height) {
+  Sprite.create = function (img, x, y, width, height) {
     return new Sprite(img, x, y, width, height);
-  }
+  };
 
   function loadPNG() {
     var deferred = Q.defer();
@@ -92,7 +92,7 @@ app.factory("Sprites", ["$q", function ($q) {
   }
 
   return {
-    create: create,
+    create: Sprite.create,
     isLoaded: function () { return promisedTiles; },
     get: get,
     getTiles: getTiles

@@ -77,17 +77,17 @@ app.factory("Groups", ["Survivors", "Memories", "Map", "Logs", "Util", function 
     return _.contains(this.survivors, survivor);
   };
 
-  function create(args) {
+  Group.create = function(args) {
     if (typeof args === "number") {
-      return create({
+      return Group.create({
         survivors: Survivors.createSeveral(args)
       });
     }
     return new Group(args);
-  }
+  };
 
   return {
-    create: create
+    create: Group.create
   };
 
 }]);

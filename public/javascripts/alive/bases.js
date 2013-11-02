@@ -25,7 +25,11 @@ window.app.factory("Bases", ["Groups", function (Groups) {
     });
   };
 
+  Base.create = function (args) {
+    return new Base(args);
+  };
+
   return {
-    create: function (args) { return new Base(args); }
+    create: Base.create
   };
 }]);

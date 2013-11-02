@@ -48,17 +48,17 @@ app.factory("Hordes", ["Zombies", function (Zombies) {
     }
   };
 
-  function create(args) {
+  Horde.create = function (args) {
     if (typeof args === "number") {
-      return create({
+      return Horde.create({
         zombies: Zombies.createSeveral(args)
       });
     }
     return new Horde(args);
-  }
+  };
 
   return {
-    create: create
+    create: Horde.create
   };
 
 }]);

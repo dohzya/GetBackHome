@@ -44,12 +44,12 @@ window.app.factory("MemoryItems", [function () {
     return parseInt(Math.min(999.99, l) / 10, 10);
   };
 
-  function create(ts, place) {
+  MemoryItem.create = function (ts, place) {
     return new MemoryItem(ts, place);
-  }
+  };
 
   return {
-    create: create
+    create: MemoryItem.create
   };
 
 }]);

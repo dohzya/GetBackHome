@@ -18,9 +18,9 @@ app.service("Orders", ["$log", "Util", "Times", function ($log, Util, Times) {
     this.finish = args.finish;
   }
 
-  function create(args) {
+  Order.create = function (args) {
     return new Order(args);
-  }
+  };
 
   var inputTypes = {
     home: {
@@ -118,12 +118,12 @@ app.service("Orders", ["$log", "Util", "Times", function ($log, Util, Times) {
 
   var orders = {};
   _.each(rawOrders, function (order) {
-    orders[order.id] = create(order);
+    orders[order.id] = Order.create(order);
   });
 
   // Export
   return {
-    create: create,
+    create: Order.create,
     all: function () { return orders; },
     get: function (idOrder) { return orders[idOrder] }
   };

@@ -93,14 +93,14 @@ app.factory("Survivors", [function () {
     }
   };
 
-  function create(args) {
+  Survivor.create = function (args) {
     return new Survivor(args);
-  }
+  };
 
   var boyNames = ["James", "John", "Robert", "Michael", "William", "David", "Richard", "Charles", "Joseph", "Thomas", "Christopher", "Daniel", "Paul", "Mark", "Donald"];
   var girlNames = ["Mary", "Patricia", "Linda", "Barbara", "Elizabeth", "Jennifer", "Maria", "Susan", "Margaret", "Dorothy", "Lisa", "Nancy", "Karen", "Betty", "Helen"];
 
-  function createSeveral(nb) {
+  Survivor.createSeveral = function (nb) {
     var survivors = [], i;
     for (i = 0; i < nb; i++) {
       var gender = _.random(1) === 1;
@@ -121,11 +121,11 @@ app.factory("Survivors", [function () {
       }));
     }
     return survivors;
-  }
+  };
 
   return {
-    create: create,
-    createSeveral: createSeveral
+    create: Survivor.create,
+    createSeveral: Survivor.createSeveral
   };
 
 }]);

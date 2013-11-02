@@ -70,7 +70,7 @@ window.app.factory("Memories", ["Places", "Logs", function (Places, Logs) {
   }
 
   Memory.prototype.clone = function () {
-    var memory = create();
+    var memory = Memory.create();
     var key, item;
     for (key in this.items) {
       if (this.items.hasOwnProperty(key)) {
@@ -81,12 +81,12 @@ window.app.factory("Memories", ["Places", "Logs", function (Places, Logs) {
     return memory;
   };
 
-  function create() {
+  Memory.create = function () {
     return new Memory();
-  }
+  };
 
   return {
-    create: create
+    create: Memory.create
   };
 
 }]);

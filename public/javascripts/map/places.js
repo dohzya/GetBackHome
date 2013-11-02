@@ -4,7 +4,7 @@ window.app.factory("Places", ["Config", "MemoryItems", "UTGenerator", "Players",
   var Hexjs = window.Hexjs;
 
   var places = UTGenerator.generate("001", 0, 20, 0, 20, function (json) {
-    return create(json);
+    return Place.create(json);
   });
 
   function tileAccessor(place) {
@@ -100,9 +100,9 @@ window.app.factory("Places", ["Config", "MemoryItems", "UTGenerator", "Players",
     return groups;
   };
 
-  function create(args) {
+  Place.create = function (args) {
     return new Place(args);
-  }
+  };
 
   function at(x, y) {
     return Hexjs.find(places, x, y, tileAccessor);
@@ -148,7 +148,7 @@ window.app.factory("Places", ["Config", "MemoryItems", "UTGenerator", "Players",
   }
 
   return {
-    create: create,
+    create: Place.create,
     all: function () { return places; },
     at: at,
     forEach: forEach,

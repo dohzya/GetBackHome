@@ -22,12 +22,12 @@ window.app.factory("Env", ["Util", function (Util) {
     return {survivors: survivors, zombies: zombies};
   };
 
-  function create(args) {
+  Env.create = function (args) {
     return new Env(args);
-  }
+  };
 
   return {
-    create: create
+    create: Env.create
   };
 
 }]);

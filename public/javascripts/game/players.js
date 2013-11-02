@@ -23,12 +23,12 @@ window.app.factory("Players", [function () {
     });
   };
 
-  function create() {
+  Player.create = function () {
     return new Player();
-  }
+  };
 
   function init(base) {
-    var currentPlayer = create();
+    var currentPlayer = Player.create();
     currentPlayer.bases.push(base);
     players.push(currentPlayer);
     current = currentPlayer;
@@ -36,7 +36,7 @@ window.app.factory("Players", [function () {
 
   return {
     init: init,
-    create: create,
+    create: Player.create,
     all: function () { return players; },
     current : function () { return current; }
   };

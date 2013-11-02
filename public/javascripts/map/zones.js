@@ -201,15 +201,15 @@ window.app.factory("Zones", ["$log", "$rootScope", "Util", "FontAwesome", "Selec
     this.selected = false;
   };
 
-  function create(place) {
+  Zone.create = function (place) {
     return new Zone(place);
-  }
+  };
 
   var zones = [];
 
   Sprites.isLoaded().then(function () {
     zones = _.map(Places.all(), function (place) {
-      return create(place);
+      return Zone.create(place);
     });
   });
 
@@ -226,7 +226,7 @@ window.app.factory("Zones", ["$log", "$rootScope", "Util", "FontAwesome", "Selec
   }
 
   return {
-    create: create,
+    create: Zone.create,
     all: function () { return zones; },
     at: at,
     interpolate: interpolate,

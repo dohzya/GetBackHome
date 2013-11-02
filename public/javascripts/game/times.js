@@ -11,12 +11,12 @@ app.factory("Times", ["Util", function (Util) {
     return Math.round(Util.random(this.min, this.standard * r) / 100);
   };
 
-  function create(args) {
+  Time.create = function (args) {
     return new Time(args);
-  }
+  };
 
   return {
-    create: create
+    create: Time.create
   };
 
 }]);
