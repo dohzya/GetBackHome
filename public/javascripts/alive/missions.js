@@ -236,13 +236,6 @@ app.factory("Missions", ["$rootScope", "$log", "Env", "Orders", function ($rootS
 
   Mission.fail = function (mission) {
     mission.currentEnv().addLog("Mission failed (no more survivors)");
-    if (window.DEBUG_BGH) {
-      console.log("================================================");
-      _.forEach(mission.group.memory.logs.messages, function (message) {
-        console.log(message.format())
-      });
-      console.log("================================================");
-    }
     Mission.remove(mission);
   };
 

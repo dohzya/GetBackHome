@@ -35,6 +35,9 @@ window.app.factory("Logs", ["$rootScope", function ($rootScope) {
     var args = Array.prototype.splice.call(arguments, 0);
     var message = Message.create(msg, args.slice(1, args.length));
     this.messages.push(message);
+    if (window.DEBUG_GBH) {
+      console.log(message.ts + " :: " + message.format());
+    }
     this[message.id] = message;
   };
 
