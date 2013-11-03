@@ -3,10 +3,6 @@ window.app.factory("Places", ["Config", "MemoryItems", "UTGenerator", "Players",
 
   var Hexjs = window.Hexjs;
 
-  var places = UTGenerator.generate("001", 0, 20, 0, 20, function (json) {
-    return Place.create(json);
-  });
-
   function tileAccessor(place) {
     return place.tile;
   }
@@ -73,7 +69,7 @@ window.app.factory("Places", ["Config", "MemoryItems", "UTGenerator", "Players",
     return this.tile.distanceTo(place.tile);
   };
 
-  Place.prototype.costTo = function (place) {
+  Place.prototype.costTo = function () {
     return 10;
   };
 
@@ -103,6 +99,10 @@ window.app.factory("Places", ["Config", "MemoryItems", "UTGenerator", "Players",
   Place.create = function (args) {
     return new Place(args);
   };
+
+  var places = UTGenerator.generate("001", 0, 20, 0, 20, function (json) {
+    return Place.create(json);
+  });
 
   function at(x, y) {
     return Hexjs.find(places, x, y, tileAccessor);

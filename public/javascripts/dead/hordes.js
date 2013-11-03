@@ -1,4 +1,5 @@
 app.factory("Hordes", ["Zombies", function (Zombies) {
+  "use strict";
 
   function Horde(args) {
     this.zombies = args.zombies;
@@ -13,20 +14,18 @@ app.factory("Hordes", ["Zombies", function (Zombies) {
   };
 
   Horde.prototype.defense = function () {
-    var defense = 0, i, zombie;
-    for (i in this.zombies) {
-      zombie = this.zombies[i];
+    var defense = 0;
+    _.forEach(this.zombies, function (zombie) {
       defense += zombie.defense();
-    }
+    });
     return defense;
   };
 
   Horde.prototype.attack = function () {
-    var attack = 0, i, zombie;
-    for (i in this.zombies) {
-      zombie = this.zombies[i];
+    var attack = 0;
+    _.forEach(this.zombies, function (zombie) {
       attack += zombie.attack();
-    }
+    });
     return attack;
   };
 
@@ -35,10 +34,10 @@ app.factory("Hordes", ["Zombies", function (Zombies) {
   };
 
   Horde.prototype.addZombies = function (nb) {
-    var newZombies = Zombies.createSeveral(nb), i;
-    for (i in newZombies) {
-      this.zombies.push(newZombies[i]);
-    }
+    var newZombies = Zombies.createSeveral(nb);
+    _.forEach(newZombies, function (zombie) {
+      this.zombies.push(zombie);
+    }, this);
   };
 
   Horde.prototype.removeZombies = function (nb) {

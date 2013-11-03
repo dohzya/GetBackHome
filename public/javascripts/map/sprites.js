@@ -46,16 +46,15 @@ app.factory("Sprites", ["$q", function ($q) {
   function loadPNG() {
     var deferred = Q.defer();
     var img = new Image();
-    var k, v, x, y, width, height;
     img.onload = function () {
-      for (k in png.tiles) {
-        v = png.tiles[k];
+      _.forEach(png.tiles, function (v, k) {
+        var x, y, width, height;
         x = v[0];
         y = v[1];
         width = v[2];
         height = v[3];
-        tiles[k] = create(img, x, y, width, height);
-      }
+        tiles[k] = Sprite.create(img, x, y, width, height);
+      });
       deferred.resolve();
     };
     img.src = png.src;
@@ -68,7 +67,7 @@ app.factory("Sprites", ["$q", function ($q) {
     _.each(svg, function (s, index) {
       s.img = new Image();
       s.img.onload = function () {
-        tiles[s.name] = create(s.img, 0, 0, s.width, s.height);
+        tiles[s.name] = Sprite.create(s.img, 0, 0, s.width, s.height);
 
         if (index == svg.length - 1) {
           deferred.resolve(tiles);

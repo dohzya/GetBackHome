@@ -152,7 +152,7 @@ window.app.factory("Zones", ["$log", "$rootScope", "Util", "FontAwesome", "Selec
     }
 
     if (this.status.base) {
-      ctx.fillRect (cx - 5, cy - 5, 11, 11);
+      ctx.fillRect(cx - 5, cy - 5, 11, 11);
     }
   };
 

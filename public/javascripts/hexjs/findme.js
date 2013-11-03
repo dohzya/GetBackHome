@@ -1,34 +1,35 @@
-(function(window) {
+(function (window) {
+  "use strict";
 
   var _ = window._ || {
-    isNumber: function(value) {
+    isNumber: function (value) {
       return typeof value === "number" || toString.call(value) === "[object Number]";
     },
-    forEach: function() {
+    forEach: function () {
 
     },
-    extend: function() {
+    extend: function () {
 
     }
   }
 
   function HayStack(compare) {
     this.needles = [];
-    this.compare = compare || function (a, b) { return a === b ? 0 : (a < b ? -1 : 1); }; 
+    this.compare = compare || function (a, b) { return a === b ? 0 : (a < b ? -1 : 1); };
   }
 
   // O( 1 )
-  HayStack.prototype.length = function() {
+  HayStack.prototype.length = function () {
     return this.needles.length;
   }
 
   // O( 1 )
-  HayStack.prototype.isEmpty = function() {
+  HayStack.prototype.isEmpty = function () {
     return this.length() === 0;
   }
 
   // O( log(n) )
-  HayStack.prototype.indexOf = function(needle, start, end) {
+  HayStack.prototype.indexOf = function (needle, start, end) {
     start = start || 0;
     end = end || this.length();
     var pivot = parseInt(start + (end - start) / 2, 10);
@@ -43,19 +44,19 @@
   }
 
   // O( n + log(n) )
-  HayStack.prototype.add = function(needle) {
+  HayStack.prototype.add = function (needle) {
     this.needles.splice(this.indexOf(needle) + 1, 0, needle);
     return this;
   }
 
   // O( n + log(n) )
-  HayStack.prototype.remove = function(needle) {
+  HayStack.prototype.remove = function (needle) {
     this.needles.splice(this.indexOf(needle), 1);
     return this;
   }
 
   // O( 2n + 2 log(n) )
-  HayStack.prototype.update = function(needle, update, opts) {
+  HayStack.prototype.update = function (needle, update, opts) {
     this.remove(needle);
     update(needle, opts);
     this.add(needle);
@@ -63,17 +64,17 @@
   }
 
   // O( 1 )
-  HayStack.prototype.pop = function() {
+  HayStack.prototype.pop = function () {
     return this.needles.pop();
   }
 
   // O( 1 )
-  HayStack.prototype.shift = function() {
+  HayStack.prototype.shift = function () {
     return this.needles.shift();
   }
 
   // O( 1 )
-  HayStack.prototype.get = function(index) {
+  HayStack.prototype.get = function (index) {
     return this.needles[index];
   }
 
@@ -87,12 +88,12 @@
   };
 
   FindMe.util = {
-    clean: function(listToClean, propertyToDelete) {
-      _.forEach(listToClean, function(item) {
+    clean: function (listToClean, propertyToDelete) {
+      _.forEach(listToClean, function (item) {
         delete item[propertyToDelete];
       })
     },
-    reversePath: function(fromNode, findmeProperty) {
+    reversePath: function (fromNode, findmeProperty) {
       var path = [], currentNode = fromNode;
 
       while (currentNode[findmeProperty].parent) {
@@ -108,8 +109,8 @@
   // "item.neighbors(opts)" method returning all nodes near one node
   // "item.costTo(item, opts)" method returning the cost to move through the node
 
-  FindMe.astar = function(start, end, opts) {
-    var heuristic = opts.heuristic || function() { return 1; },
+  FindMe.astar = function (start, end, opts) {
+    var heuristic = opts.heuristic || function () { return 1; },
       weight = opts.weight || 1,
       names = _.extend({}, defaultNames, opts.names),
       //openList = [start],
@@ -137,7 +138,7 @@
         return path;
       }
 
-      _.forEach(node[names.neighbors](opts), function(neighbor) {
+      _.forEach(node[names.neighbors](opts), function (neighbor) {
         neighbor[names.findme] = neighbor[names.findme] || {};
         // Get the cost to move to a neighbor node
         cost = node[names.costTo](neighbor, opts);
@@ -185,4 +186,4 @@
 
   window.FindMe = FindMe;
 
-})(window)
+}(window));

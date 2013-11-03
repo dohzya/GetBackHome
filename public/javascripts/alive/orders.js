@@ -1,4 +1,4 @@
-app.service("Orders", ["$log", "Util", "Times", function ($log, Util, Times) {
+app.service("Orders", ["Util", "Times", function (Util, Times) {
   "use strict";
 
   function Order(args) {

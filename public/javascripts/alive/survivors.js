@@ -77,11 +77,11 @@ app.factory("Survivors", [function () {
   Survivor.prototype.levelToString = function () {
     if (this.level < 10) {
       return 'Amateur';
-    } else if (this.level < 20) {
-      return 'Quite good';
-    } else {
-      return 'Zombie killer';
     }
+    if (this.level < 20) {
+      return 'Quite good';
+    }
+    return 'Zombie killer';
   };
 
   Survivor.prototype.addXp = function (xp) {
@@ -97,15 +97,22 @@ app.factory("Survivors", [function () {
     return new Survivor(args);
   };
 
-  var boyNames = ["James", "John", "Robert", "Michael", "William", "David", "Richard", "Charles", "Joseph", "Thomas", "Christopher", "Daniel", "Paul", "Mark", "Donald"];
-  var girlNames = ["Mary", "Patricia", "Linda", "Barbara", "Elizabeth", "Jennifer", "Maria", "Susan", "Margaret", "Dorothy", "Lisa", "Nancy", "Karen", "Betty", "Helen"];
+  var boyNames = [
+    "James", "John", "Robert", "Michael", "William", "David", "Richard",
+    "Charles", "Joseph", "Thomas", "Christopher", "Daniel", "Paul", "Mark",
+    "Donald"
+  ];
+  var girlNames = [
+    "Mary", "Patricia", "Linda", "Barbara", "Elizabeth", "Jennifer", "Maria",
+    "Susan", "Margaret", "Dorothy", "Lisa", "Nancy", "Karen", "Betty", "Helen"
+  ];
 
   Survivor.createSeveral = function (nb) {
-    var survivors = [], i;
+    var survivors = [], i, gender;
     for (i = 0; i < nb; i++) {
-      var gender = _.random(1) === 1;
-      survivors.push(create({
-        name: gender ? boyNames[_.random(boyNames.length-1)] : girlNames[_.random(girlNames.length-1)],
+      gender = _.random(1) === 1;
+      survivors.push(Survivor.create({
+        name: gender ? boyNames[_.random(boyNames.length - 1)] : girlNames[_.random(girlNames.length - 1)],
         avatar: "",
         age: _.random(10, 60),
         gender: gender,

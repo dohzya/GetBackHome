@@ -3,7 +3,7 @@ app.service("Map", ["Places", function (Places) {
 
   var Hexjs = window.Hexjs;
 
-  function tileAccessor (place) {
+  function tileAccessor(place) {
     return place.tile;
   }
 

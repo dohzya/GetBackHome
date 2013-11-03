@@ -27,14 +27,14 @@
   };
 
   // Generic functions
-  function checkZ (x, y, z) {
+  function checkZ(x, y, z) {
     if (z === null || z === undefined) {
       z = -(x + y);
     }
     return z;
   }
 
-  function axialToCube (q, r) {
+  function axialToCube(q, r) {
     return {
       x: r,
       y: q,
@@ -42,18 +42,18 @@
     };
   }
 
-  function cubeToAxial (x, y) {
+  function cubeToAxial(x, y) {
     return {
       q: y,
       r: x
     };
   }
 
-  function distance (tile1, tile2) {
+  function distance(tile1, tile2) {
     return Math.max(Math.abs(tile1.x - tile2.x), Math.abs(tile1.y - tile2.y), Math.abs(tile1.z - tile2.z));
   }
 
-  function cubeNeighbors (x, y, z) {
+  function cubeNeighbors(x, y, z) {
     z = checkZ(x, y, z);
 
     return [
@@ -66,7 +66,7 @@
     ];
   }
 
-  function axialNeighbors (q, r) {
+  function axialNeighbors(q, r) {
     return [
       {q: q + 1, r: r    },
       {q: q + 1, r: r - 1},
@@ -77,7 +77,7 @@
     ];
   }
 
-  function roundCube (x, y, z) {
+  function roundCube(x, y, z) {
     z = checkZ(x, y, z);
 
     var rx = Math.round(x);
@@ -89,13 +89,11 @@
     var zErr = Math.abs(rz - z);
 
     if (xErr > yErr && xErr > zErr) {
-      rx = -ry-rz;
-    }
-    else if (yErr > zErr) {
-      ry = -rx-rz;
-    }
-    else {
-      rz = -rx-ry;
+      rx = -ry - rz;
+    } else if (yErr > zErr) {
+      ry = -rx - rz;
+    } else {
+      rz = -rx - ry;
     }
 
     return {
@@ -105,17 +103,17 @@
     };
   }
 
-  function tileToPixel (tile) {
+  function tileToPixel(tile) {
     return {
       x: Math.sqrt(3) * (tile.q + tile.r / 2) * Hexjs.size,
-      y: 3/2 * tile.r * Hexjs.size
+      y: 3 / 2 * tile.r * Hexjs.size
     };
   }
 
-  function pixelToAxial (px, py) {
+  function pixelToAxial(px, py) {
     return {
-      q: (1/3 * Math.sqrt(3) * px - 1/3 * py) / Hexjs.size,
-      r: 2/3 * py / Hexjs.size
+      q: (1 / 3 * Math.sqrt(3) * px - 1 / 3 * py) / Hexjs.size,
+      r: 2 / 3 * py / Hexjs.size
     };
   }
 
@@ -128,8 +126,9 @@
   function buildPoints (px, py) {
     var points = [];
     var angle;
+    var i;
 
-    for (var i = 0; i < 6; ++i) {
+    for (i = 0; i < 6; ++i) {
       angle = 2 * Math.PI / 6 * (i + 0.5);
       points.push({x: px + Hexjs.size * Math.cos(angle), y: py + Hexjs.size * Math.sin(angle)});
     }
@@ -153,12 +152,12 @@
     });
   }
 
-  function interpolate (tiles, px, py, accessor) {
+  function interpolate(tiles, px, py, accessor) {
     var coords = pixelToCube(px, py);
     return Hexjs.find(tiles, coords.x, coords.y, accessor);
   }
 
-  function interpolateNeighbors (tiles, px, py, accessor) {
+  function interpolateNeighbors(tiles, px, py, accessor) {
     return _.filter(_.map(cubeNeighbors(px, py), function (neighbor) {
       return Hexjs.interpolate(tiles, neighbor.x, neighbor.y, accessor);
     }), function (tile) {
@@ -167,7 +166,7 @@
   }
 
   // Definition of an hexagonal tile
-  function Tile (coordsX, coordsY, coordsZ) {
+  function Tile(coordsX, coordsY, coordsZ) {
     // Cube coordinates
     coordsZ = checkZ(coordsX, coordsY, coordsZ);
     this.x = coordsX;
@@ -251,7 +250,7 @@
     interpolate: interpolate,
     interpolateNeighbors: interpolateNeighbors,
     tile: function (x, y, z) {
-      return new Tile(x, y , z);
+      return new Tile(x, y, z);
     }
   };
 

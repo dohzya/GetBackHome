@@ -4,9 +4,13 @@ window.app.factory("Logs", ["$rootScope", function ($rootScope) {
   function formatMessage(msg, args) {
     return msg.replace(/\{(\d+)\}/g, function (_, n) {
       var arg = args[parseInt(n, 10)];
-      if (arg == undefined) { arg = ""; }
-      else if (typeof arg == "object") { arg = JSON.stringify(arg); }
-      else if (typeof arg == "number") { arg = parseInt(arg * 100, 10) / 100; }
+      if (arg == undefined) {
+        arg = "";
+      } else if (typeof arg == "object") {
+        arg = JSON.stringify(arg);
+      } else if (typeof arg == "number") {
+        arg = parseInt(arg * 100, 10) / 100;
+      }
       return arg.toString();
     });
   }

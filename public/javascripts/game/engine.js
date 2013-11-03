@@ -1,4 +1,4 @@
-app.service("Engine", ["$rootScope", "Util", "Events", "Places", "Groups", "Env", "Survivors", function ($rootScope, Util, Events, Places, Groups, Env, Survivors) {
+app.service("Engine", ["$rootScope", "Util", "Events", "Places", "Survivors", function ($rootScope, Util, Events, Places, Survivors) {
   "use strict";
 
   var self = this;

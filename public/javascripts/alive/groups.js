@@ -1,4 +1,4 @@
-app.factory("Groups", ["Survivors", "Memories", "Map", "Logs", "Util", function (Survivors, Memories, Map, Logs, Util) {
+app.factory("Groups", ["Survivors", "Memories", "Map", "Util", function (Survivors, Memories, Map, Util) {
   "use strict";
 
   function Group(args) {
@@ -30,14 +30,14 @@ app.factory("Groups", ["Survivors", "Memories", "Map", "Logs", "Util", function 
 
   Group.prototype.defense = function () {
     return _.reduce(
-      _.map(this.survivors, function (s) {return s.defense(); }),
+      _.map(this.survivors, function (s) { return s.defense(); }),
       function (c, i) { return c + i; }
     );
   };
 
   Group.prototype.attack = function () {
     return _.reduce(
-      _.map(this.survivors, function (s) {return s.attack(); }),
+      _.map(this.survivors, function (s) { return s.attack(); }),
       function (c, i) { return c + i; }
     );
   };
@@ -77,7 +77,7 @@ app.factory("Groups", ["Survivors", "Memories", "Map", "Logs", "Util", function 
     return _.contains(this.survivors, survivor);
   };
 
-  Group.create = function(args) {
+  Group.create = function (args) {
     if (typeof args === "number") {
       return Group.create({
         survivors: Survivors.createSeveral(args)

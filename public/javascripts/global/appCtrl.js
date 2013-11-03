@@ -11,7 +11,7 @@ app.controller("AppCtrl", ["$rootScope", "$scope", "Events", "Engine", function 
         inAction = false;
       }
     };
-  }
+  };
 
   $scope.nextTurn = $scope.doAction(function () { Engine.turn(); });
 

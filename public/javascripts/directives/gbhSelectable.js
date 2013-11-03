@@ -4,13 +4,10 @@ window.app.directive('gbhSelectable', function () {
   return {
     restrict: "A",
     scope: true,
-    link: function () {
-
-    },
     controller: ["$scope", "$attrs", function ($scope, $attrs) {
       var selectedItems;
 
-      $scope.$watch($attrs.gbhSelectable, function(newValue, oldValue) {
+      $scope.$watch($attrs.gbhSelectable, function (newValue) {
         if (newValue !== selectedItems) {
           selectedItems = newValue;
         }
@@ -18,29 +15,6 @@ window.app.directive('gbhSelectable', function () {
 
       var onSelectHandler = $scope.$eval($attrs.gbhSelectableOnSelect);
       var onUnSelectHandler = $scope.$eval($attrs.gbhSelectableOnUnselect);
-
-      function select(item) {
-        selectedItems.push(item);
-        onSelect(item);
-      }
-
-      function unselect(item) {
-        selectedItems.splice(selectedItems.indexOf(item), 1);
-        onUnselect(item);
-      }
-
-      function toggle(item) {
-        if (isSelected(item)) {
-          unselect(item);
-          return false;
-        }
-        select(item);
-        return true;
-      }
-      
-      function isSelected(item) {
-        return selectedItems.indexOf(item) >= 0;
-      }
 
       function onSelect(item) {
         if (onSelectHandler) {
@@ -52,6 +26,29 @@ window.app.directive('gbhSelectable', function () {
         if (onUnSelectHandler) {
           onUnSelectHandler(item);
         }
+      }
+
+      function select(item) {
+        selectedItems.push(item);
+        onSelect(item);
+      }
+
+      function unselect(item) {
+        selectedItems.splice(selectedItems.indexOf(item), 1);
+        onUnselect(item);
+      }
+
+      function isSelected(item) {
+        return selectedItems.indexOf(item) >= 0;
+      }
+
+      function toggle(item) {
+        if (isSelected(item)) {
+          unselect(item);
+          return false;
+        }
+        select(item);
+        return true;
       }
 
       return {

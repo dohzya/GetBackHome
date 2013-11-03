@@ -67,11 +67,11 @@ window.app.factory("Memories", ["Places", "Logs", function (Places, Logs) {
         func(item);
       }
     }
-  }
+  };
 
   Memory.prototype.clone = function () {
     var memory = Memory.create();
-    var key, item;
+    var key;
     for (key in this.items) {
       if (this.items.hasOwnProperty(key)) {
         memory.items[key] = this.items[key];
