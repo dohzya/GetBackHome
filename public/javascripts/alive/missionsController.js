@@ -1,5 +1,15 @@
-app.controller("NewMissionCtrl", ["$scope", "$rootScope", "Events", "Selection", "Engine", "Missions", function ($scope, $rootScope, Events, Selection, Engine, Missions) {
+app.controller("MissionsCtrl", ["$scope", "$rootScope", "Events", "Selection", "Engine", "Missions", function ($scope, $rootScope, Events, Selection, Engine, Missions) {
   "use strict";
+
+  $scope.startNewMission = function () {
+    Selection.startNewMission();
+    $rootScope.$broadcast(Events.gui.draw);
+  };
+
+  $scope.selectMission = function (mission) {
+    Selection.selectMission(mission);
+    $rootScope.$broadcast(Events.gui.draw);
+  }
 
   $scope.selectOrder = function (order) {
     var orderItem = Missions.createOrderListItem({order: order, data: {}});
@@ -16,17 +26,8 @@ app.controller("NewMissionCtrl", ["$scope", "$rootScope", "Events", "Selection",
   };
 
   $scope.addOrder = function () {
-    if (!$rootScope.newMission) {
-      $rootScope.newMission = Missions.create({
-        fromBase: Selection.base,
-        toBase: Selection.base
-      });
-    }
-
     Selection.order.path = Selection.path;
-
-    $rootScope.newMission.orders.add(Selection.order);
-
+    Selection.mission.orders.add(Selection.order);
     Selection.clearOrder();
     Selection.clearPath();
 
@@ -34,10 +35,10 @@ app.controller("NewMissionCtrl", ["$scope", "$rootScope", "Events", "Selection",
   };
 
   $scope.sendMission = function () {
-    $rootScope.newMission.group = $rootScope.newMission.fromBase.extractSurvivors(Selection.survivors);
-    $rootScope.currentPlayer().missions.push($rootScope.newMission);
+    Selection.mission.group = Selection.mission.fromBase.extractSurvivors(Selection.survivors);
+    $rootScope.currentPlayer().missions.push(Selection.mission);
 
-    $rootScope.newMission = undefined;
+    Selection.clearMission();
     Selection.clearZone();
     Selection.clearSurvivors();
 

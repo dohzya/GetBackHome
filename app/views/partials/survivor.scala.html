@@ -1,0 +1,35 @@
+@(survivorName: String)
+
+<div class="media">
+  <a class="pull-left" href="#">
+    <img class="media-object" ng-src="{{@{survivorName}.avatar}}" alt="{{ @{survivorName}.name }}'s face" ng-if="@{survivorName}.avatar">
+    <span ng-class="'media-object fa fa-3x fa-' + (@{survivorName}.gender ? 'male' : 'female')" ng-if="!@{survivorName}.avatar"></span>
+  </a>
+  <div class="media-body">
+    <h4 class="media-heading">{{ @{survivorName}.name }}</h4>
+    <p>{{ @{survivorName}.levelToString() }}</p>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-xs-6">
+    <div class="progress progress-xs">
+      <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="{{ 100 * @{survivorName}.percentHealth() }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ 100 * @{survivorName}.percentHealth() }}%;">
+        <span class="sr-only">Health {{ 100 * @{survivorName}.percentHealth() }}%</span>
+      </div>
+    </div>
+
+    <div class="progress progress-xs">
+      <div class="progress-bar" role="progressbar" aria-valuenow="{{ 100 * @{survivorName}.percentHunger() }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ 100 * @{survivorName}.percentHunger() }}%;">
+        <span class="sr-only">Hunger {{ 100 * @{survivorName}.percentHunger() }}%</span>
+      </div>
+    </div>
+
+    <div class="progress progress-xs">
+      <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="{{ 100 * @{survivorName}.percentMental() }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ 100 * @{survivorName}.percentMental() }}%;">
+        <span class="sr-only">Mental {{ 100 * @{survivorName}.percentMental() }}%</span>
+      </div>
+    </div>
+  </div>
+  <div class="col-xs-6"></div>
+</div>

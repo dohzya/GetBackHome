@@ -143,6 +143,10 @@ app.factory("Missions", ["$rootScope", "$log", "Env", "Orders", function ($rootS
     return _.any(this.getAllOrders(), predicate, context);
   };
 
+  Mission.prototype.isCancelable = function () {
+    return this.orders.currentOrderItem && this.place === this.toBase.place;
+  };  
+
   Mission.prototype.currentPlace = function () {
     return this.orders.currentPlace();
   };

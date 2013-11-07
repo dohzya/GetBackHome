@@ -4,19 +4,30 @@
   <div class="gbh-title">Ordres</div>
   <div class="gbh-visible-contents">
     <div class="gbh-contents">
-      <div class="gbh-content" data-id="{{mission.id}}" data-ng-repeat="mission in currentPlayer().missions">
-        <span>{{mission.order.name}}</span>
-        (<span>{{mission.status}}</span>)
-        <div class="btn btn-default btn-small" ng-click="cancelOrder({{mission.id}})">
-          <span>Annuler</span> (<span>1 tour</span>)
-        </div>
-        <div class="btn btn-default btn-small" ng-click="sendBackup({{mission.id}})">
-          <span>Envoyer du renfort</span> (<span>1 tour</span>)
-        </div>
-        <div>(
+      <ul class="gbh-content">
+        <li data-id="{{mission.id}}" data-ng-repeat="mission in currentPlayer().missions">
+          
+          Mission #{{mission.id}} ({{mission.status}})
+          <button type="button" class="btn btn-default btn-small" ng-click="selectMission(mission)">Display</button>
+          <button type="button" class="btn btn-default btn-small" ng-if="mission.isCancelable()" ng-click="mission.cancel()">Annuler</button>
           <span>survivants : {{mission.group.Length()}}</span>,
           <span>tours restants : {{mission.EstimatedTimeToComplete()}}</span>
-        )</div>
+        </li>
+      </ul>
+
+      <div ng-if="selection.mission && !selection.isNewMission">
+        <ul class="list-unstyled">
+          <li ng-repeat="orderItem in selection.mission.getAllOrders()">
+            <span ng-class="'fa fa-' + orderItem.order.icon"></span>
+            {{ orderItem.order.name }} ({{ orderItem.targetPlace().x() }} x {{ orderItem.targetPlace().y() }})
+          </li>
+        </ul>
+
+        <ul class="list-unstyled survivors">
+          <li class="survivor" ng-repeat="s in selection.mission.group.survivors">
+            @views.html.partials.survivor("s")
+          </li>
+        </ul>
       </div>
     </div>
   </div>

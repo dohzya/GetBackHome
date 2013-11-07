@@ -1,12 +1,16 @@
 @()
 
-<div id="ghb-frame-actions" class="gbh-frame gbh-frame-actions">
+<div id="ghb-frame-actions" class="gbh-frame gbh-frame-actions" ng-if="!selection.isNewMission">
+  <button type="button" class="btn btn-block btn-primary" ng-click="startNewMission()">Start new mission</button>
+</div>
+
+<div id="ghb-frame-actions" class="gbh-frame gbh-frame-actions" ng-if="selection.isNewMission">
   <div class="gbh-title">New mission</div>
 
   <div class="gbh-visible-contents">
-    <div ng-hide="selection.zone">Pick a place, fucking bastard!</div>
+    <div ng-hide="selection.path && selection.path.length">Pick a place before selecting an order.</div>
 
-    <div ng-show="selection.zone">
+    <div ng-show="selection.path && selection.path.length">
       <ul>
         <li class="order" ng-repeat="order in orders() | ordersAvailable:selection.zone" ng-class="{selected: isOrderSelected(order)}">
           <div class="media" ng-click="selectOrder(order)">
@@ -32,62 +36,28 @@
 
           <button type="button" class="btn btn-block btn-primary" ng-click="addOrder()">Add order</button>
       </div>
-
-      <hr/>
-
-      <ul class="list-unstyled">
-        <li ng-repeat="orderItem in newMission.getAllOrders()">
-          <span ng-class="'fa fa-' + orderItem.order.icon"></span>
-          {{ orderItem.order.name }} ({{ orderItem.targetPlace().x() }} x {{ orderItem.targetPlace().y() }})
-        </li>
-        <li ng-hide="newMission.getAllOrders().length">No orders yet...</li>
-      </ul>
-
-      <hr/>
-
-      <ul class="list-unstyled survivors" gbh-selectable="selection.survivors">
-        <li class="survivor" ng-repeat="s in selection.base.group.survivors" gbh-selectable-item="s" ng-class="{selected: $gbhSelected}">
-          <div class="media">
-            <a class="pull-left" href="#">
-              <img class="media-object" ng-src="{{s.avatar}}" alt="{{ s.name }}'s face" ng-if="s.avatar">
-              <span ng-class="'media-object fa fa-3x fa-' + (s.gender ? 'male' : 'female')" ng-if="!s.avatar"></span>
-            </a>
-            <div class="media-body">
-              <h4 class="media-heading">{{ s.name }}</h4>
-              <p>{{ s.levelToString() }}</p>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="col-xs-6">
-              <div class="progress progress-xs">
-                <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="{{ 100 * s.percentHealth() }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ 100 * s.percentHealth() }}%;">
-                  <span class="sr-only">Health {{ 100 * s.percentHealth() }}%</span>
-                </div>
-              </div>
-
-              <div class="progress progress-xs">
-                <div class="progress-bar" role="progressbar" aria-valuenow="{{ 100 * s.percentHunger() }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ 100 * s.percentHunger() }}%;">
-                  <span class="sr-only">Hunger {{ 100 * s.percentHunger() }}%</span>
-                </div>
-              </div>
-
-              <div class="progress progress-xs">
-                <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="{{ 100 * s.percentMental() }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ 100 * s.percentMental() }}%;">
-                  <span class="sr-only">Mental {{ 100 * s.percentMental() }}%</span>
-                </div>
-              </div>
-            </div>
-            <div class="col-xs-6"></div>
-          </div>
-          
-        </li>
-      </ul>
-
-      <hr/>
-
-      <button type="button" class="btn btn-block btn-primary" ng-click="sendMission()" ng-disabled="!newMission.hasOrders() || !selection.survivors.length">Go go go!</button>
-
     </div>
+
+    <hr/>
+
+    <ul class="list-unstyled">
+      <li ng-repeat="orderItem in selection.mission.getAllOrders()">
+        <span ng-class="'fa fa-' + orderItem.order.icon"></span>
+        {{ orderItem.order.name }} ({{ orderItem.targetPlace().x() }} x {{ orderItem.targetPlace().y() }})
+      </li>
+      <li ng-hide="selection.mission.getAllOrders().length">No orders yet...</li>
+    </ul>
+
+    <hr/>
+
+    <ul class="list-unstyled survivors" gbh-selectable="selection.survivors">
+      <li class="survivor" ng-repeat="s in selection.base.group.survivors" gbh-selectable-item="s" ng-class="{selected: $gbhSelected}">
+        @views.html.partials.survivor("s")
+      </li>
+    </ul>
+
+    <hr/>
+
+    <button type="button" class="btn btn-block btn-primary" ng-click="sendMission()" ng-disabled="!selection.mission.hasOrders() || !selection.survivors.length">Go go go!</button>
   </div>
 </div>
