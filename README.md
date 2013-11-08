@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/dohzya/GetBackHome.png?label=ready)](https://waffle.io/dohzya/GetBackHome)  
 # Welcome on Get Back Home #
 
 Based on the awesome bootstrap https://github.com/jege/jege-play
