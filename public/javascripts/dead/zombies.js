@@ -3,7 +3,7 @@ app.factory("Zombies", [function () {
 
   function Zombie(args) {
     this.fighting = args.fighting;
-    this.affut = args.affut;
+    this.lookout = args.lookout;
     this.excitation = args.excitation;
     this.state = args.state;
   }
@@ -28,7 +28,7 @@ app.factory("Zombies", [function () {
           attack: 5,
           defense: 5
         },
-        affut: 0.5,
+        lookout: 0.5,
         excitation: 0.5,
         state: 0.5
       }));

@@ -11,7 +11,7 @@ window.app.factory("MemoryItems", [function () {
   function getInfosForZombie(zombie) {
     return {
       fighting: getInfosForFighting(zombie.fighting),
-      affut: zombie.affut,
+      lookout: zombie.lookout,
       excitation: zombie.excitation,
       state: zombie.state
     };
