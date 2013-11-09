@@ -52,7 +52,7 @@ app.service("UTGenerator", ["UTPerlinSimplex", "Rc4Random", "Hordes", function (
           if (type2Int < 100) {
             t2 = "city";
           } else if (type2Int < 300) {
-            t2 = "forrest";
+            t2 = "forest";
           } else if (type2Int < 500) {
             t2 = "field";
           } else {
@@ -63,7 +63,7 @@ app.service("UTGenerator", ["UTPerlinSimplex", "Rc4Random", "Hordes", function (
           if (type2Int < 100) {
             t2 = "city";
           } else if (type2Int < 600) {
-            t2 = "forrest";
+            t2 = "forest";
           } else if (height > 800) {
             t2 = "mountains";
           } else {
