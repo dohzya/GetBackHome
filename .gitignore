@@ -22,6 +22,7 @@ dist
 conf/local.conf
 .DS_Store
 
+doc
 /public/javascripts/vendors
 /public/javascripts/app.*.min.js
 /public/stylesheets/fonts

@@ -13,5 +13,10 @@ GET     /views/*url                 controllers.Application.notFound(url)
 # Assets
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
 
+# JavaScript Documentation
+GET     /doc                        controllers.Application.docRedirect
+GET     /doc/                       controllers.Application.docIndex
+GET     /doc/*file                  controllers.Application.doc(file)
+
 # Fallback
 GET     /*url                       controllers.Application.main(url)

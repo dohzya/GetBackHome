@@ -60,6 +60,7 @@ module.exports = function (grunt) {
 
   grunt.registerTask("default", [
     "build",
+    "jsdoc:dist",
     "watch"
   ]);
 
@@ -353,6 +354,15 @@ module.exports = function (grunt) {
       }
     },
 
+    jsdoc : {
+      dist : {
+        src: ['<%= config.dir.public.scripts %>/!(vendors)/**/*.js'],
+        options: {
+          destination: 'doc'
+        }
+      }
+    },
+
     watch: {
       options: {
         livereload: false,
@@ -361,6 +371,10 @@ module.exports = function (grunt) {
       less: {
         files: ["<%= config.dir.public.styles %>/less/*.less", "<%= config.dir.public.styles %>/less/**/*.less"],
         tasks: ["less:raw"]
+      },
+      jsdoc: {
+        files: ["<%= config.dir.public.scripts %>/!(vendors)/**/*.js"],
+        tasks: ["jsdoc:dist"]
       },
       public: {
         options: {

@@ -23,6 +23,7 @@
     "grunt-shell": "0.2.2",
     "grunt-karma": "~0.4.4",
     "grunt-parallel": "~0.2.0",
+    "grunt-jsdoc": "~0.4.0",
     "matchdep": "~0.1.1",
     "bower": "~0.9.2",
     "path": "~0.4.9",
