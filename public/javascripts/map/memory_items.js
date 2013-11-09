@@ -20,7 +20,7 @@ window.app.factory("MemoryItems", [function () {
   function getInfosForHorde(horde) {
     return {
       zombies: _.map(horde.zombies, function (zombie) {
-        getInfosForZombie(zombie);
+        return getInfosForZombie(zombie);
       })
     };
   }
@@ -30,7 +30,8 @@ window.app.factory("MemoryItems", [function () {
       fighting: getInfosForFighting(place.fighting),
       food: place.food,
       // TODO saveInfosForGroup
-      horde: getInfosForHorde(place.horde)
+      horde: getInfosForHorde(place.horde),
+      structure: place.structure
     };
   }
 
