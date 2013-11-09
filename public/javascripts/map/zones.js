@@ -5,7 +5,7 @@ window.app.factory("Zones", ["$log", "$rootScope", "Util", "FontAwesome", "Selec
   var Hexjs = window.Hexjs;
 
   function Zone(place) {
-    var type1, type2;
+    var biome, structure;
 
     this.place = place;
     this.status = {};
@@ -17,24 +17,24 @@ window.app.factory("Zones", ["$log", "$rootScope", "Util", "FontAwesome", "Selec
       }
     }, this);
 
-    type1 = this.types()[0];
-    type2 = this.types()[1];
-    if (type1 === "water") {
+    biome = this.types()[0];
+    structure = this.types()[1];
+    if (biome === "water") {
       this.color = "127, 169, 181";
-    } else if (type1 === "swamp") {
+    } else if (biome === "swamp") {
       this.color = "105, 74, 68";
-    } else if (type1 === "plain") {
+    } else if (biome === "plain") {
       this.color = "127, 168, 79";
-    } else if (type1 === "mountainous") {
+    } else if (biome === "mountainous") {
       this.color = "127, 127, 127";
     } else {
       this.color = "0, 0, 0";
     }
 
-    if (type2) {
-      this.image = Sprites.get(type2);
+    if (structure) {
+      this.image = Sprites.get(structure);
     } else {
-      this.image = Sprites.get(type1);
+      this.image = Sprites.get(biome);
     }
     if (!this.image) { this.image = Sprites.get("grass"); }
   }

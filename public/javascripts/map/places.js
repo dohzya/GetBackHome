@@ -13,7 +13,9 @@ window.app.factory("Places", ["Config", "MemoryItems", "UTGenerator", "Players",
     this.height = args.height;
     this.horde = args.horde;
     this.tile = Hexjs.tile(args.pos[0], args.pos[1]);
-    this.types = args.types;
+    this.types = args.types; // DEPRECATED
+    this.biome = args.types[0];
+    this.structure = args.types[1];
     this.memory = {};
     this.missions = [];
   }
@@ -50,14 +52,6 @@ window.app.factory("Places", ["Config", "MemoryItems", "UTGenerator", "Players",
 
   Place.prototype.attack = function () {
     return this.fighting.attack;
-  };
-
-  Place.prototype.biome = function () {
-    return this.types[0];
-  };
-
-  Place.prototype.type2 = function () {  // FUUUUUUUUU
-    return this.types[1];
   };
 
   Place.prototype.infection = function () {
