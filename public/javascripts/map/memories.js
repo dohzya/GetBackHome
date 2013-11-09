@@ -35,7 +35,7 @@ window.app.factory("Memories", ["Places", "Logs", function (Places, Logs) {
   };
 
   Memory.prototype.itemForPlace = function (place) {
-    return this.item(placeToKey(place));
+    return (place ? this.item(placeToKey(place)) : null);
   };
 
   Memory.prototype.merge = function (memory, func) {
