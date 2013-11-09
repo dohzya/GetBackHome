@@ -8,7 +8,7 @@
     "font-awesome": "~4.0.0",
     "modernizr": "~2.6.2",
     "lodash": "~2.2.0",
-    "angular-latest": "1.2.0-rc.3",
+    "angular-latest": "1.2.0",
     "restangular": "~1.1.0",
     "angular-http-auth": "https://github.com/witoldsz/angular-http-auth.git",
     "angular-ui-utils": "0.0.4",
