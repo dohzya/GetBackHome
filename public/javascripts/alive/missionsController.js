@@ -12,13 +12,13 @@ app.controller("MissionsCtrl", ["$scope", "$rootScope", "Events", "Selection", "
   }
 
   $scope.selectOrder = function (order) {
-    var orderItem = Missions.createOrderListItem({order: order, data: {}});
+    var action = Missions.createAction({order: order});
 
-    _.each(orderItem.order.inputs, function (input) {
-      orderItem.data[input.name] = input.type.default;
+    _.each(order.inputs, function (input) {
+      action.data[input.name] = input.type.default;
     });
 
-    Selection.order = orderItem;
+    Selection.order = action;
   };
 
   $scope.isOrderSelected = function (order) {
@@ -26,8 +26,8 @@ app.controller("MissionsCtrl", ["$scope", "$rootScope", "Events", "Selection", "
   };
 
   $scope.addOrder = function () {
-    Selection.order.path = Selection.path;
-    Selection.mission.orders.add(Selection.order);
+    Selection.order.place = _.last(Selection.path);
+    Selection.mission.addAction(Selection.order);
     Selection.clearOrder();
     Selection.clearPath();
 

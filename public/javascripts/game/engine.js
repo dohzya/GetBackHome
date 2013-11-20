@@ -71,13 +71,28 @@ app.service("Engine", ["$rootScope", "Util", "Events", "Places", "Survivors", fu
     $rootScope.currentPlayer().visitBases($rootScope.engine.turnNb);
   }
 
+  function turnForMission() {
+    var player = $rootScope.currentPlayer(), activeMissions;
+    function missions() {
+      return _.filter(player.missions, function (mission) {
+        var res = mission && mission.canAct();
+        return res;
+      });
+    }
+    function missionTurn(mission) {
+      mission.turn($rootScope.engine.turnNb);
+    }
+    activeMissions = missions();
+    while (!_.isEmpty(activeMissions)) {
+      _.forEach(activeMissions, missionTurn);
+      // re-fetch missions because some could be finished (or aborted)
+      activeMissions = missions();
+    }
+    _.forEach(player.missions, function (mission) { mission.endTurn(); });
+  }
+
   function turn() {
-    var player = $rootScope.currentPlayer();
-    _.forEach(player.missions, function (mission) {
-      if (mission) {  // TODO fix this creepy line
-        mission.turn($rootScope.engine.turnNb);
-      }
-    });
+    turnForMission();
     turnForPlaces();
     $rootScope.engine.turnNb++;
     $rootScope.$broadcast(Events.gui.draw);

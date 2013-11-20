@@ -4,7 +4,6 @@ app.factory("Groups", ["Survivors", "Memories", "Map", "Util", function (Survivo
   function Group(args) {
     this.survivors = args.survivors;
     this.memory = Memories.create();
-    this.endurance = 0;
     this.messages = this.memory.logs.messages;
   }
 
@@ -75,6 +74,10 @@ app.factory("Groups", ["Survivors", "Memories", "Map", "Util", function (Survivo
 
   Group.prototype.contains = function (survivor) {
     return _.contains(this.survivors, survivor);
+  };
+
+  Group.prototype.endurance = function () {
+    return 1;
   };
 
   Group.create = function (args) {

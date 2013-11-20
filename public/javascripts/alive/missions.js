@@ -3,152 +3,91 @@ app.factory("Missions", ["$rootScope", "$log", "Env", "Orders", function ($rootS
 
   var missionId = 0;
 
-  function OrderListItem(args) {
-    this.estimatedPath = args.path;
-    this.path = args.path;
+  function Action(args) {
     this.order = args.order;
-    this.data = args.data;
-    this.finished = false;
+    this.place = args.place;
+    this.data = {};
+    this.next = null;
   }
-
-  OrderListItem.prototype.nextPlace = function (currentPlace) {
-    var currentIndex = _.indexOf(this.path, currentPlace);
-    if (currentIndex > -1 && currentIndex < this.path.length) {
-      return this.path[currentIndex + 1];
-    }
-    return this.path[0];
+  Action.prototype.setNext = function (next) {
+    this.next = next;
   };
-
-  OrderListItem.prototype.targetPlace = function () {
-    return _.last(this.path);
+  Action.prototype.targetPlace = function () {
+    return this.place;
   };
-
-  OrderListItem.prototype.run = function (env) {
-    this.order.run(env);
-    this.finished = true;
-  };
-
-  OrderListItem.prototype.isFinished = function () {
-    return this.finished;
-  };
-
-  OrderListItem.create = function (args) {
-    return new OrderListItem(args);
-  };
-
-  var OrderListId = 0;
-  function OrderList() {
-    this.id = OrderListId++;
-    this.orders = [];
-    this.currentOrderIndex = 0;
-    this.currentPathIndex = 0;
-  }
-
-  OrderList.prototype.add = function (args) {
-    if (args instanceof OrderListItem) {
-      this.orders.push(args);
-    } else {
-      this.add(new OrderListItem(args));
-    }
-  };
-
-  OrderList.prototype.currentOrderItem = function () {
-    return _.find(this.orders, function (orderItem) {
-      return !orderItem.isFinished();
-    });
-  };
-
-  OrderList.prototype.currentOrder = function () {
-    var orderItem = this.currentOrderItem();
-    if (orderItem) {
-      if (this.currentPathIndex == orderItem.path.length - 1) {
-        return orderItem.order;
-      }
-      return null;  // we might return a Walking order instead?
-    }
-    return null;
-  };
-
-  OrderList.prototype.currentPlace = function () {
-    var orderItem = this.currentOrderItem();
-    if (orderItem) {
-      return orderItem.path[this.currentPathIndex];
-    }
-    return null;
-  };
-
-  OrderList.prototype.current = function () {
-    console.log("current:", this);
-    var place = this.currentPlace();
-    if (place) {
-      return {
-        place: place,
-        order: this.currentOrder()
-      };
-    }
-    return null;
-  };
-
-  OrderList.prototype.next = function () {
-    this.currentPathIndex++;
-    if (!this.currentPlace()) {
-      this.currentOrderIndex++;
-      this.currentPath = 0;
-    }
-    return this.current();
-  };
-
-  OrderList.prototype.forEach = function (predicate, context) {
-    _.forEach(this.orders, predicate, context);
-  };
-
-  OrderList.prototype.isEmpty = function () {
-    return this.orders.length == 0;
+  Action.create = function (args) {
+    return new Action(args);
   };
 
   function Mission(args) {
     this.id = missionId++;
     this.status = "walking";
-    this.orders = new OrderList();
+    this.action = null;
     this.group = args.group;
     this.fromBase = args.fromBase;
     this.toBase = args.toBase;
     this.place = this.fromBase.place;
+    this.consumedForAction = 0;
+    this.consumedForTurn = 0;
   }
 
-  Mission.prototype.addOrder = function (path, order) {
-    this.orders.add({
-      path: path,
-      order: order
-    });
+  Mission.prototype.addAction = function (action) {
+    var last;
+    if (last) {
+      last = this.action;
+      while (last.next) {
+        last = last.next;
+      }
+    } else {
+      this.action = action;
+    }
   };
 
   Mission.prototype.getAllOrders = function () {
-    return this.orders.orders;
+    var actions = [];
+    this.forEachOrders(function (action) {
+      actions.push(action);
+    });
+    return actions;
   };
 
   Mission.prototype.hasOrders = function () {
-    return !this.orders.isEmpty();
+    return !!this.action;
   };
 
   Mission.prototype.forEachOrders = function (predicate, context) {
-    return this.orders.forEach(predicate, context);
+    var action = this.action, res = null;
+    while (action) {
+      res = predicate.call(context, action);
+      if (res === false) break;
+      action = action.next;
+    }
   };
 
   Mission.prototype.allOrders = function (predicate, context) {
-    return _.all(this.getAllOrders(), predicate, context);
+    var res = true;
+    this.forEachOrders(function (action) {
+      res = res && predicate.call(context, action);
+      return res;
+    });
+    return res;
   };
 
   Mission.prototype.anyOrders = function (predicate, context) {
-    return _.any(this.getAllOrders(), predicate, context);
+    var res = false;
+    this.forEachOrders(function (action) {
+      res = res || predicate.call(context, action);
+      return !res;
+    });
+    return res;
   };
 
   Mission.prototype.isCancelable = function () {
-    return this.orders.currentOrderItem && this.place === this.toBase.place;
-  };  
+    return this.place === this.toBase.place;
+  };
 
   Mission.prototype.currentPlace = function () {
-    return this.orders.currentPlace();
+    return this.place;
   };
 
   Mission.prototype.estimatedTime = function () {
@@ -157,7 +96,6 @@ app.factory("Missions", ["$rootScope", "$log", "Env", "Orders", function ($rootS
 
   Mission.prototype.currentEnv = function (place) {
     if (place && place != this.place) {
-      console.log("MISSION AT THE WRONG PLACE!!", this, place);
     }
     return Env.create({
       group: this.group,
@@ -169,54 +107,73 @@ app.factory("Missions", ["$rootScope", "$log", "Env", "Orders", function ($rootS
     return 2;
   };
 
+  Mission.prototype.endTurn = function (ts) {
+    this.consumedForTurn = 0;
+  };
+  Mission.prototype.canAct = function () {
+    return this.consumedForTurn < this.group.endurance();
+  }
+  Mission.prototype.orderCost = function () {
+    return 1;
+  };
+  Mission.prototype.moveCost = function (place1, place2) {
+    return 1;
+  };
+  Mission.prototype.nextPlace = function (place1, place2) {
+    return _.first(place1.pathTo(place2));
+  };
   Mission.prototype.turn = function (ts) {
-    if (this.place) {
-      // We are not in the place anymore
-      this.place.removeMission(this);
-    }
-
-    var orderItem = this.orders.currentOrderItem();
-
-    if (!orderItem) {
-      // No more order? Let's see if we are at destination
+    var
+      result = {},
+      nextPlace,
+      cost;
+    this.consumedForTurn++;
+    this.consumedForAction++;
+    if (!this.action) {
       if (this.place === this.toBase.place) {
         // And we are done here
+        this.place.removeMission(this);
         this.status = "finished";
         Mission.finish(this);
         return false;
       }
-      // Let's add a bonus order to move to our final destination
-      this.addOrder(this.place.pathTo(this.toBase.place), Orders.get("move"));
-      orderItem = this.orders.currentOrderItem();
+      this.action = Action.create({
+        order: Orders.get("move"),
+        place: this.toBase.place
+      });
     }
-
-    if (orderItem) {
-      // Something to do!
-      if (this.place === orderItem.targetPlace()) {
-        // We are in position, let's rock
-        this.status = "running";
-        orderItem.run(this.currentEnv());
+    if (this.place == this.action.place) {
+      // We are in position, let's rock
+      this.status = "acting";
+      this.action.order.run(this.currentEnv());
+      // Have we finished?
+      cost = this.orderCost();
+      if (this.consumedForAction >= cost) {
+        this.action = this.action.next;
+        this.consumedForAction = 0;
+      }
+    } else {
+      // Moving to the target place
+      this.status = "walking";
+      // Have we finished?
+      nextPlace = this.nextPlace(this.place, this.action.place);
+      cost = this.moveCost(this.place, this.action.place);
+      if (this.consumedForAction >= cost) {
+        this.place.removeMission(this);
+        this.place = nextPlace;
+        this.place.addMission(this);
+        this.action.consumedForAction = 0;
       } else {
-        // We need to move to our target point
-        this.status = "walking";
-        var nextPlace = orderItem.nextPlace(this.place);
-        if (nextPlace) {
-          this.place = nextPlace;
-        }
       }
     }
-
-    if (this.group.length() == 0) {
+    if (_.isEmpty(this.group)) {
       // everybody's dead
+      this.place.removeMission(this);
       Mission.fail(this);
       return false;
     }
-
-    if (this.place) {
-      // Here we are
-      this.group.visitPlace(ts, this.place);
-      this.place.addMission(this);
-    }
+    this.group.visitPlace(ts, this.place);
+    return true;
   };
 
   Mission.each = function (func) {
@@ -249,7 +206,7 @@ app.factory("Missions", ["$rootScope", "$log", "Env", "Orders", function ($rootS
 
   return {
     create: Mission.create,
-    createOrderListItem: OrderListItem.create,
+    createAction: Action.create,
     each: Mission.each,
     finish: Mission.finish,
     remove: Mission.remove
