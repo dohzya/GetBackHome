@@ -2,20 +2,7 @@
   "name": "GetBackHome",
   "version": "0.0.1",
   "dependencies": {
-    "q": "0.9.7",
-    "jquery": "~1.10.0",
-    "bootstrap": "v3.0.0",
-    "font-awesome": "~4.0.0",
-    "modernizr": "~2.6.2",
-    "lodash": "~2.2.0",
-    "angular-latest": "1.2.0",
-    "restangular": "~1.1.0",
-    "angular-http-auth": "https://github.com/witoldsz/angular-http-auth.git",
-    "angular-ui-utils": "0.0.4",
-    "angular-ui-router": "0.2.0",
-    "nnnick-chartjs": "latest"
-  },
-  "resolutions": {
-    "lodash": "~2.2.0"
+    "jquery": "2.1.1",
+    "font-awesome": "4.2.0"
   }
 }
