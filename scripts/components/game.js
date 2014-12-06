@@ -7,12 +7,16 @@
 //   }
 // }
 
-const React = require('react');
+import * as React from 'react';
+import Map from '../map/map.js';
 
 export const Game = React.createClass({
   render: function() {
     return (
-      <h1 className="game">Get Back Home</h1>
+      <div>
+        <h1 className="game">Get Back Home</h1>
+        <Map tiles={this.props.world.tiles} />
+      </div>
     );
   }
 });

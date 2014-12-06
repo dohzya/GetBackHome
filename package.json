@@ -12,7 +12,9 @@
     "node": ">= 0.8.4"
   },
   "dependencies": {
-    "react": "0.12.1"
+    "react": "0.12.1",
+    "immutable": "3.3.0",
+    "lodash-node": "2.4.1"
   },
   "devDependencies": {
     "through2": "0.6.3",
