@@ -3,8 +3,6 @@ import Tile from './tile.js';
 import Generator from './generator/generator.js';
 import HexJs from '../hexjs/hexjs.js';
 
-const tileAccessor = (zone)=> zone.hexTile;
-
 export default class World {
   constructor (args) {
     args = args || {};
@@ -16,34 +14,39 @@ export default class World {
   }
 
   at (x, y) {
-    return HexJs.utils.findTile(this.zones, x, y, tileAccessor);
+    return HexJs.utils.findTile(this.tiles, x, y);
   }
 
-  neighbors (zone) {
-    return HexJs.utils.neighbors(this.zones, zone.x, zone.y, tileAccessor);
+  neighbors (tile) {
+    return HexJs.utils.neighbors(this.tiles, zone.x, zone.y);
   }
 
   hex_round (pos) {
-    var x = Math.ceil(pos[0]);
-    var y = Math.ceil(pos[1]);
+    const x = Math.ceil(pos[0]);
+    const y = Math.ceil(pos[1]);
     return at(x, y);
   }
 
   tileEqual (tile1, tile2) {
-    return tile1.x == tile2.x && tile1.y == tile2.y;
+    return tile1.x === tile2.x && tile1.y === tile2.y && tile1.z === tile2.z;
   }
 
-  cubeNeighbors (zone) {
-    return HexJs.utils.cubeNeighbors(zone.x(), zone.y(), zone.z());
+  cubeNeighbors (tile) {
+    return HexJs.utils.cubeNeighbors(tile.x, tile.y, tile.z);
   }
 
-  inNeighborhood (zone1, zone2) {
-    var _neighbors = cubeNeighbors(zone1), i;
+  inNeighborhood (tile1, tile2) {
+    const _neighbors = cubeNeighbors(tile1);
+    let i;
     for (i = 0; i < _neighbors.length; i++) {
-      if (this.tileEqual(_neighbors[i], zone2.tile)) {
+      if (this.tileEqual(_neighbors[i], tile2)) {
         return true;
       }
     }
     return false;
+  }
+
+  interpolate(px, py) {
+    return HexJs.utils.interpolate(this.tiles, px, py);
   }
 }

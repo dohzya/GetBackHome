@@ -1,0 +1,27 @@
+// Media Queries
+
+// 0 -> 640px
+@mq-small-min: 0em;
+@mq-small-max: 40em;
+// 641px -> 1024px
+@mq-medium-min: 40.063em;
+@mq-medium-max: "64em";
+// 1025px -> 1440px
+@mq-large-min: 64.063em;
+@mq-large-max: 90em;
+// 1441px -> infinity
+@mq-xlarge-min: 90.063em;
+
+@mq-screen: "screen";
+
+@mq-small-up: ~"@{mq-screen}";
+@mq-small-only: ~"@{mq-screen} and (max-width: @{mq-small-max})";
+
+@mq-medium-up: ~"@{mq-screen} and (min-width:@{mq-medium-min})";
+@mq-medium-only: ~"@{mq-screen} and (min-width:@{mq-medium-min}) and (max-width:@{mq-medium-max})";
+
+@mq-large-up: ~"@{mq-screen} and (min-width:@{mq-large-min})";
+@mq-large-only: ~"@{mq-screen} and (min-width:@{mq-large-min}) and (max-width:@{mq-large-max})";
+
+@mq-xlarge-up: ~"@{mq-screen} and (min-width:@{mq-xlarge-min})";
+@mq-xlarge-only: ~"@{mq-screen} and (min-width:@{mq-xlarge-min})";

@@ -1,6 +1,3 @@
-import HexJs from '../hexjs/hexjs.js';
-import World from './world.js';
-
 export default class Zone {
   constructor (args) {
     args = args || {};
@@ -11,7 +8,6 @@ export default class Zone {
     this.structure = args.structure;
     this.memory = {};
     this.missions = [];
-    this.hexTile = HexJs.tile(this.x, this.y, 0);
   }
 
   memoryItem (ts) {
@@ -41,22 +37,6 @@ export default class Zone {
     return parseInt(Math.min(999.99, l) / 10, 10);
   }
 
-  distanceTo (zone) {
-    return this.hexTile.distanceTo(zone.hexTile);
-  }
-
-  costTo () {
-    return 10;
-  }
-
-  neighbors () {
-    return World.neighbors(this);
-  }
-
-  pathTo (destination) {
-    return HexJs.findWith.astar(this, destination, Config.hexjs);
-  }
-
   addMission (mission) {
     this.missions = _.union(this.missions, [mission]);
   }
@@ -67,8 +47,8 @@ export default class Zone {
 
   groups () {
     var groups = [];
-    this.missions.forEach(function (mission) { groups.push(mission.group); });
-    Players.bases.forEach(function (base) { groups.push(base.group); });
+    this.missions.forEach((mission)=> groups.push(mission.group));
+    Players.bases.forEach((base)=> groups.push(base.group));
     return groups;
   }
 }

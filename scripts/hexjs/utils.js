@@ -1,4 +1,5 @@
 import * as assign from 'lodash-node/modern/objects/assign';
+import Config from './config.js';
 
 function isNumber(value) {
   return typeof value === "number" || toString.call(value) === "[object Number]";
@@ -13,11 +14,13 @@ function identity(value) {
 }
 
 function find(array, callback) {
+  let result;
   array.forEach(function (elem) {
     if (callback(elem)) {
-      return elem;
+      result = elem;
     }
   });
+  return result;
 }
 
 function checkZ(x, y, z) {
@@ -96,43 +99,42 @@ function roundCube(x, y, z) {
   };
 }
 
-function tileToPixel(tile, size) {
+function tileToPixel(tile) {
   return {
-    x: Math.sqrt(3) * (tile.q + tile.r / 2) * size,
-    y: 3 / 2 * tile.r * size
+    x: Math.sqrt(3) * (tile.q + tile.r / 2) * Config.size(),
+    y: 3 / 2 * tile.r * Config.size()
   };
 }
 
-function pixelToAxial(px, py, size) {
+function pixelToAxial(px, py) {
   return {
-    q: (1 / 3 * Math.sqrt(3) * px - 1 / 3 * py) / size,
-    r: 2 / 3 * py / size
+    q: (1 / 3 * Math.sqrt(3) * px - 1 / 3 * py) / Config.size(),
+    r: 2 / 3 * py / Config.size()
   };
 }
 
-function pixelToCube (px, py, size) {
-  var axial = pixelToAxial(px, py, size);
+function pixelToCube (px, py) {
+  var axial = pixelToAxial(px, py);
   var cube = axialToCube(axial.q, axial.r);
   return roundCube(cube.x, cube.y, cube.z);
 }
 
-function buildPoints (px, py, size) {
+function buildPoints (px, py) {
   var points = [];
   var angle;
   var i;
 
   for (i = 0; i < 6; ++i) {
     angle = 2 * Math.PI / 6 * (i + 0.5);
-    points.push({x: px + size * Math.cos(angle), y: py + size * Math.sin(angle)});
+    points.push({x: px + Config.size() * Math.cos(angle), y: py + Config.size() * Math.sin(angle)});
   }
 
   return points;
 }
 
 function findTile (tiles, x, y, accessor) {
-  accessor = accessor || identity;
   return find(tiles, function (tile) {
-    tile = accessor(tile);
+    if (accessor) tile = accessor(tile);
     return (tile.x === x && tile.y === y);
   });
 }
@@ -146,7 +148,7 @@ function neighbors (tiles, x, y, accessor) {
 }
 
 function interpolate(tiles, px, py, accessor) {
-  var coords = pixelToCube(px, py);
+  const coords = pixelToCube(px, py);
   return findTile(tiles, coords.x, coords.y, accessor);
 }
 

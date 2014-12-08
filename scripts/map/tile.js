@@ -1,23 +1,31 @@
 import HexJs from '../hexjs/hexjs.js';
+import HexTile from '../hexjs/tile.js';
 import Utils from '../utils/utils.js';
+import World from './world.js';
 
-export default class Tile {
+export default class Tile extends HexTile {
   constructor (args) {
     args = args || {};
     this.zone = args.zone;
     this.status = {};
+
+    super(this.zone.x, this.zone.y, this.zone.z || 0);
   }
 
-  x () {
-    return this.zone.x;
+  distanceTo (tile) {
+    return this.distanceTo(tile);
   }
 
-  y () {
-    return this.zone.y;
+  costTo () {
+    return 10;
   }
 
-  z () {
-    return this.zone.z;
+  neighbors () {
+    return World.neighbors(this);
+  }
+
+  pathTo (destination) {
+    return HexJs.findWith.astar(this, destination, Config.hexjs);
   }
 
   memory () {
@@ -64,7 +72,7 @@ export default class Tile {
   }
 
   drawBackground (ctx, x, y, memory) {
-    var points = HexJs.utils.buildPoints(this.zone.hexTile.center.x - x, this.zone.hexTile.center.y - y, HexJs.size());
+    var points = HexJs.utils.buildPoints(this.center.x - x, this.center.y - y, HexJs.size());
     var style;
     var point, i;
     if (memory || true) {
@@ -95,8 +103,8 @@ export default class Tile {
       // do not display any image
       Util.noop();
     } else if (this.image) {
-      var cx = this.zone.hexTile.center.x - x - HexJs.width / 2;
-      var cy = this.zone.hexTile.center.y - y - HexJs.height / 2;
+      var cx = this.center.x - x - HexJs.width / 2;
+      var cy = this.center.y - y - HexJs.height / 2;
       var oldGlobalAlpha = ctx.globalAlpha;
       ctx.globalAlpha = this.alphaYouth(memory);
       this.image.draw(ctx, cx, cy, HexJs.width, HexJs.height);
@@ -107,8 +115,8 @@ export default class Tile {
   }
 
   drawSymbol (ctx, x, y) {
-    var cx = this.zone.hexTile.center.x - x;
-    var cy = this.zone.hexTile.center.y - y;
+    var cx = this.center.x - x;
+    var cy = this.center.y - y;
     ctx.fillStyle = "#FF0000";
 
     if (this.status.orderItem) {
@@ -124,7 +132,7 @@ export default class Tile {
   }
 
   drawBorder (ctx, x, y) {
-    var points = HexJs.utils.buildPoints(this.zone.hexTile.center.x - x, this.zone.hexTile.center.y - y, HexJs.size());
+    var points = HexJs.utils.buildPoints(this.center.x - x, this.center.y - y, HexJs.size());
     ctx.strokeStyle = "#000000";
     ctx.beginPath();
     var point = points[0];
@@ -140,8 +148,8 @@ export default class Tile {
   }
 
   drawCoordinates (ctx, x, y) {
-    var cx = this.zone.hexTile.center.x - x - HexJs.config.width / 2;
-    var cy = this.zone.hexTile.center.y - y - HexJs.config.height / 2;
+    var cx = this.center.x - x - HexJs.config.width / 2;
+    var cy = this.center.y - y - HexJs.config.height / 2;
     ctx.fillStyle = "#000000";
     ctx.fillText(this.zone.x, cx + HexJs.config.width - 15, cy + HexJs.config.height / 4 + 10);
     ctx.fillText(this.zone.y, cx + 10, cy + HexJs.config.height / 4 + 10);
