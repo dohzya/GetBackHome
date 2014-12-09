@@ -131,7 +131,7 @@ export default React.createClass({
 
   onStart: function (e) {
     this.handlePointerEvent(e);
-    this.whenSelected = {
+    this.startPosition = {
       drawer: {
         x: this.x,
         y: this.y
@@ -141,12 +141,15 @@ export default React.createClass({
         y: e.globalY
       }
     };
+
+    console.log(JSON.stringify(this.startPosition));
+    console.log(JSON.stringify(this.bounding));
   },
 
   onMove: function (e) {
-    if (this.whenSelected) {
+    if (this.startPosition) {
       this.handlePointerEvent(e);
-      const underMouse = this.whenSelected;
+      const underMouse = this.startPosition;
       const d = underMouse.drawer;
       const c = underMouse.cursor;
       const dx = e.globalX - c.x;
@@ -159,7 +162,7 @@ export default React.createClass({
 
   onEnd: function (e) {
     this.handlePointerEvent(e);
-    this.whenSelected = null;
+    this.startPosition = null;
   },
 
   onTap: function (e) {

@@ -8,6 +8,7 @@
 // }
 
 import * as React from 'react/addons';
+import Aside from './aside.js';
 import Map from '../map/map.js';
 import CustomEventsMixin from '../mixins/customEventsMixin.js';
 
@@ -50,9 +51,9 @@ export const Game = React.createClass({
 
     return (
       <div className={classes}>
-        <aside className="left">Left</aside>
         <Map world={this.props.world} />
-        <aside className="right">Right</aside>
+        <Aside position="left">Left</Aside>
+        <Aside position="right">Right</Aside>
       </div>
     );
   }

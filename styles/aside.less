@@ -1,3 +1,49 @@
-aside.left, aside.right {
+.aside {
+  position: fixed;
   background-color: white;
+
+  &.is-right {
+    top: 0;
+    bottom: 0;
+    left: 100%;
+    width: 80%;
+  }
+
+  &.is-left {
+    top: 0;
+    bottom: 0;
+    right: 100%;
+    width: 80%;
+  }
+
+  &.is-top {
+    left: 0;
+    right: 0;
+    bottom: 100%;
+    height: 80%;
+  }
+
+  &.is-bottom {
+    left: 0;
+    right: 0;
+    top: 100%;
+    height: 80%;
+  }
+}
+
+.aside-grap {
+  position: absolute;
+  background-color: red;
+}
+
+.aside.is-right .aside-grap,
+.aside.is-left .aside-grap {
+  top: 0;
+  bottom: 0;
+}
+
+.aside.is-top .aside-grap,
+.aside.is-bottom .aside-grap {
+  left: 0;
+  right: 0;
 }
