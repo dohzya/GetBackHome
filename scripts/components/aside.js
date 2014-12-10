@@ -42,6 +42,7 @@ export default React.createClass({
     window.addEventListener('resize', this.handleResize);
 
     this.hammer = new Hammer(this.getDOMNode());
+    this.hammer.get('pan').set({direction: this.is.vertical ? Hammer.DIRECTION_VERTICAL : Hammer.DIRECTION_HORIZONTAL });
 
     this.hammer.on('panstart', this.onStart);
     this.hammer.on('panend', this.onEnd);

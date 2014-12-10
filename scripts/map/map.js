@@ -36,6 +36,7 @@ export default React.createClass({
     this.selected = [];
 
     this.hammer = new Hammer(this.getDOMNode());
+    this.hammer.get('pan').set({ direction: Hammer.DIRECTION_ALL });
 
     this.hammer.on('panstart', this.onStart);
     this.hammer.on('panend', this.onEnd);
