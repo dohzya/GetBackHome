@@ -4,6 +4,9 @@ import * as assign from 'lodash-node/modern/objects/assign';
 import * as contains from 'lodash-node/modern/collections/contains';
 
 import Rc4Random from '../map/generator/rc4Random.js';
+import Is from './is.js';
+import Css from './css.js';
+import Animate from './animate.js';
 
 function min0(nb) {
   return Math.max(0.00001, nb);
@@ -41,6 +44,11 @@ function perc(nb) {
 }
 
 export default {
+  // Merging all other utils
+  is: Is,
+  css: Css,
+  animate: Animate,
+
   // Lodash stuff
   extend: assign,
   contains: contains,

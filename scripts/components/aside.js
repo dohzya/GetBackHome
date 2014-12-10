@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as Hammer from 'hammerjs';
+import Utils from '../utils/utils.js';
 
 export default React.createClass({
 
@@ -16,10 +17,11 @@ export default React.createClass({
     return {
       position: 'right',
       grap: 25,
-      velocity: 1,
+      velocity: 0.65,
       duration: 500,
       size: '80%',
-      zZndex: 1
+      zZndex: 1,
+      opacity: 250
     }
   },
 
@@ -42,7 +44,7 @@ export default React.createClass({
     window.addEventListener('resize', this.handleResize);
 
     this.hammer = new Hammer(this.getDOMNode());
-    this.hammer.get('pan').set({direction: this.is.vertical ? Hammer.DIRECTION_VERTICAL : Hammer.DIRECTION_HORIZONTAL });
+    this.hammer.get('pan').set({ direction: Hammer.DIRECTION_ALL });
 
     this.hammer.on('panstart', this.onStart);
     this.hammer.on('panend', this.onEnd);
@@ -55,6 +57,14 @@ export default React.createClass({
 
   handleResize: function () {
     this.bounding = this.aside.getBoundingClientRect();
+
+    if (this.state.moving) {
+      this.cancel();
+    }
+  },
+
+  getOpacity: function () {
+    return Math.min(1, Math.max(Math.abs(this.state.translateX), Math.abs(this.state.translateY)) / this.props.opacity);
   },
 
   getTranslateX: function (e, start) {
@@ -84,6 +94,7 @@ export default React.createClass({
   },
 
   onStart: function (e) {
+    const wasOpened = this.state.open;
     const translate = {x: 0, y: 0};
 
     if (this.is.vertical) {
@@ -95,7 +106,7 @@ export default React.createClass({
     // Remove open stating and switching back to moving state
     // setting starting translate based on current status
     this.setState({open: false, moving: true, translateX: translate.x, translateY: translate.y}, function () {
-      this.kickoff = {translate};
+      this.kickoff = {translate, wasOpened};
     }.bind(this));
   },
 
@@ -113,33 +124,33 @@ export default React.createClass({
     let openIt = false;
 
     if (this.is.top) {
-      if (this.state.open && e.velocityY > this.props.velocity) {
+      if (this.kickoff.wasOpened && e.velocityY > this.props.velocity) {
         openIt = false;
-      } else if (!this.state.open && e.velocityY < -this.props.velocity) {
+      } else if (!this.kickoff.wasOpened && e.velocityY < -this.props.velocity) {
         openIt = true;
       } else {
         openIt = e.center.y > this.bounding.height / 2;
       }
     } else if (this.is.bottom) {
-      if (this.state.open && e.velocityY < -this.props.velocity) {
+      if (this.kickoff.wasOpened && e.velocityY < -this.props.velocity) {
         openIt = false;
-      } else if (!this.state.open && e.velocityY > this.props.velocity) {
+      } else if (!this.kickoff.wasOpened && e.velocityY > this.props.velocity) {
         openIt = true;
       } else {
         openIt = e.center.y < (window.innerHeight - this.bounding.height / 2);
       }
     } else if (this.is.left) {
-      if (this.state.open && e.velocityX > this.props.velocity) {
+      if (this.kickoff.wasOpened && e.velocityX > this.props.velocity) {
         openIt = false;
-      } else if (!this.state.open && e.velocityX < -this.props.velocity) {
+      } else if (!this.kickoff.wasOpened && e.velocityX < -this.props.velocity) {
         openIt = true;
       } else {
         openIt = e.center.x > this.bounding.width / 2;
       }
     } else {
-      if (this.state.open && e.velocityX < -this.props.velocity) {
+      if (this.kickoff.wasOpened && e.velocityX < -this.props.velocity) {
         openIt = false;
-      } else if (!this.state.open && e.velocityX > this.props.velocity) {
+      } else if (!this.kickoff.wasOpened && e.velocityX > this.props.velocity) {
         openIt = true;
       } else {
         openIt = e.center.x < (window.innerWidth - this.bounding.width / 2);
@@ -163,14 +174,19 @@ export default React.createClass({
       data.finalTranslate = this.getFinalX(opening);
     }
 
-    const properties = {translateX: 0, translateY: 0, translateZ: 0};
     const nextState = {translateX: 0, translateY: 0, translateZ: 0};
-    properties[data.keyTranslate] = [data.finalTranslate, data.currentTranslate];
     nextState[data.keyTranslate] = data.finalTranslate;
 
-    Velocity(this.aside, properties, {
+    Utils.animate.range({
+      start: data.currentTranslate,
+      end: data.finalTranslate,
       duration: this.props.duration * Math.abs(data.currentTranslate - data.finalTranslate) / window.innerWidth,
-      complete: function () {
+      callback: function (translate) {
+        nextState[data.keyTranslate] = translate;
+        this.setState(nextState);
+      }.bind(this),
+      done: function () {
+        nextState[data.keyTranslate] = 0;
         nextState.open = opening;
         nextState.moving = false;
         this.setState(nextState, onComplete);
@@ -189,6 +205,18 @@ export default React.createClass({
     if (this.state.open && !this.state.moving) {
       this.slide(false);
     }
+  },
+
+  cancel: function () {
+    this.kickoff = undefined;
+    Velocity(this.aside, {
+      opacity: [0, this.getOpacity()]
+    }, {
+      duration: 200,
+      complete: function () {
+        this.setState({open: false, moving: false, translateX: 0, translateY: 0, translateZ: 0});
+      }.bind(this)
+    });
   },
 
   render: function() {
@@ -219,11 +247,17 @@ export default React.createClass({
       else if (this.is.bottom) { styles.bottom = 0; styles.top = 'auto'; }
 
       styles.transform = null;
+      styles.opacity = 1;
     } else if (this.state.translateX || this.state.translateY) {
       styles.transform =
         'translateX('+this.state.translateX+'px) '+
         'translateY('+this.state.translateY+'px) '+
         'translateZ(0)';
+
+      styles.opacity = this.getOpacity();
+    } else {
+      styles.opacity = 0;
+      styles.transform = null;
     }
 
     const grapStyles = {};
@@ -238,9 +272,11 @@ export default React.createClass({
       else grapStyles.left = -this.props.grap;
     }
 
+    const maskStyles = {};
+
     return (
       <div>
-        <div className="aside-mask"></div>
+        <div className="aside-mask" style={maskStyles}></div>
         <aside className={classes} style={styles}>
           <div className="aside-grap" style={grapStyles}></div>
           <div className="aside-content">
