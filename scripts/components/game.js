@@ -27,17 +27,17 @@ export const Game = React.createClass({
   componentDidMount: function () {
     this.on('open', function (event, data) {
       if (event.detail === 'right') {
-        this.setState({aside: {right: true}});
+        this.refs.asideRight.open();
       } else if (event.detail === 'left') {
-        this.setState({aside: {left: true}});
+        this.refs.asideLeft.open();
       }
     }.bind(this));
 
     this.on('close', function (event, data) {
       if (event.detail === 'right') {
-        this.setState({aside: {right: false}});
+        this.refs.asideRight.close();
       } else if (event.detail === 'left') {
-        this.setState({aside: {left: false}});
+        this.refs.asideLeft.close();
       }
     }.bind(this));
   },
@@ -52,8 +52,8 @@ export const Game = React.createClass({
     return (
       <div className={classes}>
         <Map world={this.props.world} />
-        <Aside position="left">Left</Aside>
-        <Aside position="right">Right</Aside>
+        <Aside ref="asideLeft" position="left">Left</Aside>
+        <Aside ref="asideRight" position="right">Right</Aside>
       </div>
     );
   }
