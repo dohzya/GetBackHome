@@ -6,6 +6,7 @@ export default class Zone {
     this.z = args.z || 0;
     this.biome = args.biome;
     this.structure = args.structure;
+    if (this.structure) this.structure.zone = this;
     this.memory = {};
     this.missions = [];
   }

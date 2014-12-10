@@ -51,7 +51,7 @@ export const Game = React.createClass({
 
     return (
       <div className={classes}>
-        <Map world={this.props.world} />
+        <Map game={this.props.game} />
         <Aside ref="asideLeft" position="left">Left</Aside>
         <Aside ref="asideRight" position="right">Right</Aside>
       </div>

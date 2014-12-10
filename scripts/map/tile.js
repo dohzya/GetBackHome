@@ -103,21 +103,30 @@ export default class Tile extends HexTile {
       // do not display any image
       Util.noop();
     } else if (this.image) {
-      var cx = this.center.x - x - HexJs.width / 2;
-      var cy = this.center.y - y - HexJs.height / 2;
+      var cx = this.center.x - x - HexJs.config.width / 2;
+      var cy = this.center.y - y - HexJs.config.height / 2;
       var oldGlobalAlpha = ctx.globalAlpha;
       ctx.globalAlpha = this.alphaYouth(memory);
-      this.image.draw(ctx, cx, cy, HexJs.width, HexJs.height);
+      this.image.draw(ctx, cx, cy, HexJs.config.width, HexJs.config.height);
       ctx.globalAlpha = oldGlobalAlpha;
-    } else {
-      $log.error("No img for Zone (" + x + " x " + y + ")");
+    }
+  }
+
+  drawStructure (ctx, x, y, memory) {
+    if (memory && this.zone.structure) {
+      var cx = this.center.x - x;
+      var cy = this.center.y - y;
+      ctx.fillStyle = 'rgba('+this.zone.structure.color+', 0.7)';
+      ctx.beginPath();
+      ctx.arc(cx, cy, 10, 0, Math.PI*2,true);
+      ctx.fill();
     }
   }
 
   drawSymbol (ctx, x, y) {
     var cx = this.center.x - x;
     var cy = this.center.y - y;
-    ctx.fillStyle = "#FF0000";
+    ctx.fillStyle = '#FF0000';
 
     if (this.status.orderItem) {
       ctx.save();
@@ -161,6 +170,7 @@ export default class Tile extends HexTile {
     var memory = this.memory();
     this.drawBackground(ctx, x, y, memory);
     // this.drawImage(ctx, x, y, memory);
+    this.drawStructure(ctx, x, y, memory);
     // this.drawSymbol(ctx, x, y, memory);
     this.drawBorder(ctx, x, y, memory);
     this.drawCoordinates(ctx, x, y, memory);

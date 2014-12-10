@@ -8,9 +8,6 @@ export default class World {
     args = args || {};
     this.zones = args.zones || Generator.generate("001", 0, 20, 0, 20, (json)=> new Zone(json));
     this.tiles = this.zones.map(function (z) { return new Tile({zone: z}); });
-
-    console.log(this.zones);
-    console.log(this.tiles);
   }
 
   at (x, y) {

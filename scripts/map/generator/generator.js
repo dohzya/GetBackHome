@@ -4,6 +4,7 @@ import * as Immutable from 'immutable';
 import PerlinSimplex from './perlinSimplex.js';
 import Rc4Random from './rc4Random.js';
 import Biomes from '../biomes.js';
+import {Forest, Mountain, City} from '../structures.js';
 
 function initNoise(seed) {
   PerlinSimplex.noiseDetail();
@@ -42,14 +43,13 @@ function generate(seed, minX, maxX, minY, maxY, f) {
       defense = defense * defense;  // lower the value (but keeping 1 possible)
       defense = defense * 10;
       food = parseInt((foodGen(x, y) * 100), 10);
+      structure = null;
 
       if (height < 24) {
         biome = Biomes.water;
 
         if (type2Int > 950) {
-          t2 = "city";
-        } else {
-          t2 = null;
+          structure = new City();
         }
       } else if (height < 30) {
         biome = Biomes.desert;
@@ -57,9 +57,9 @@ function generate(seed, minX, maxX, minY, maxY, f) {
         biome = Biomes.plain;
 
         if (type2Int < 100) {
-          t2 = "city";
+          structure = new City();
         } else if (type2Int < 300) {
-          t2 = "forest";
+          structure = new Forest();
         } else if (type2Int < 500) {
           t2 = "field";
         } else {
@@ -69,11 +69,11 @@ function generate(seed, minX, maxX, minY, maxY, f) {
         biome = Biomes.mountainous;
 
         if (type2Int < 100) {
-          t2 = "city";
+          structure = new City();
         } else if (type2Int < 600) {
-          t2 = "forest";
+          structure = new Forest();
         } else if (height > 800) {
-          t2 = "mountains";
+          structure = new Mountain();
         } else {
           t2 = null;
         }

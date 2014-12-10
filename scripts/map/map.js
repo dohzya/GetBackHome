@@ -35,11 +35,6 @@ export default React.createClass({
     this.underMouse = null;
     this.selected = [];
 
-    // this.canvas.onclick = this.onTap;
-    // this.canvas.onmouseup = this.onStart;
-    // this.canvas.onmousedown = this.onEnd;
-    // this.canvas.onmousemove = this.onMove;
-
     this.hammer = new Hammer(this.getDOMNode());
 
     this.hammer.on('panstart', this.onStart);
@@ -86,7 +81,7 @@ export default React.createClass({
 
   draw: function () {
     this.drawBackground();
-    this.props.world.tiles.forEach(function (tile) {
+    this.props.game.world.tiles.forEach(function (tile) {
       if (tile.isContained(this.x, this.y, this.width, this.height)) {
         tile.draw(this.ctx, this.x, this.y);
       }
@@ -126,7 +121,7 @@ export default React.createClass({
   },
 
   getDrawable: function (x, y) {
-    return this.props.world.interpolate(x, y);
+    return this.props.game.world.interpolate(x, y);
   },
 
   onStart: function (e) {
@@ -141,9 +136,6 @@ export default React.createClass({
         y: e.globalY
       }
     };
-
-    console.log(JSON.stringify(this.startPosition));
-    console.log(JSON.stringify(this.bounding));
   },
 
   onMove: function (e) {
