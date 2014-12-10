@@ -5,7 +5,10 @@ var $    = require('./utils/$');
 var bigBrother = false;
 
 function browserify() {
-  var bundler;
+  var bundler,
+      options = $.watchify.args;
+
+  options.debug = true;
 
   function bundle() {
     return bundler.bundle()
@@ -16,11 +19,10 @@ function browserify() {
   }
 
   if (bigBrother) {
-    console.log('watchify');
-    bundler = $.watchify($.browserify($.paths.browserify.app, $.watchify.args));
+    bundler = $.watchify($.browserify($.paths.browserify.app, options));
     bundler.on('update', bundle);
   } else {
-    bundler = $.browserify($.paths.browserify.app);
+    bundler = $.browserify($.paths.browserify.app, options);
   }
 
   bundler.transform($.reactify);
