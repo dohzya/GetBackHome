@@ -1,3 +1,9 @@
+console.print = function (...args) {
+  args.forEach(function (arg) {
+    console.log(JSON.stringify(arg));
+  });
+};
+
 import * as React from 'react/addons';
 import * as Velocity from 'velocity-animate';
 
