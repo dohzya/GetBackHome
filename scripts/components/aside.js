@@ -108,7 +108,7 @@ export default React.createClass({
 
         if (nextMovingBorder < this.kickoff.limits.left) {
           nextTranslate = this.kickoff.limits.left - this.kickoff.limits[this.props.position];
-        } else if (nextMovingBorder + nextTranslate > this.kickoff.limits.right) {
+        } else if (nextMovingBorder > this.kickoff.limits.right) {
           nextTranslate = this.kickoff.limits.right - this.kickoff.limits[this.props.position];
         }
       }
@@ -132,7 +132,7 @@ export default React.createClass({
 
         if (nextMovingBorder < this.kickoff.limits.top) {
           nextTranslate = this.kickoff.limits.top - this.kickoff.limits[this.props.position];
-        } else if (nextMovingBorder + nextTranslate > this.kickoff.limits.bottom) {
+        } else if (nextMovingBorder > this.kickoff.limits.bottom) {
           nextTranslate = this.kickoff.limits.bottom - this.kickoff.limits[this.props.position];
         }
       }
@@ -178,8 +178,6 @@ export default React.createClass({
       limits.top = window.innerHeight - this.bounding.height;
       limits.bottom = window.innerHeight - this.props.overflow;
     }
-
-    console.log(this.props.position, limits);
 
     this.startMoving(function (translate) {
       this.kickoff = {translate, wasOpened, bounding, limits};
