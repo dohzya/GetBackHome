@@ -21,7 +21,8 @@ export default React.createClass({
       duration: 500,
       size: '80%',
       zZndex: 1,
-      opacity: 250
+      opacity: 250,
+      overflow: 0
     }
   },
 
@@ -39,6 +40,7 @@ export default React.createClass({
 
   componentDidMount: function () {
     this.aside = this.getDOMNode().querySelector('.aside');
+    this.mask = this.getDOMNode().querySelector('.aside-mask');
     this.bounding = this.aside.getBoundingClientRect();
 
     window.addEventListener('resize', this.handleResize);
@@ -49,6 +51,9 @@ export default React.createClass({
     this.hammer.on('panstart', this.onStart);
     this.hammer.on('panend', this.onEnd);
     this.hammer.on('panmove', this.onMove);
+
+    this.maskHammer = new Hammer(this.mask);
+    this.maskHammer.on('tap', this.close);
   },
 
   componentDidUnmount: function () {
@@ -64,16 +69,22 @@ export default React.createClass({
   },
 
   getOpacity: function () {
-    return Math.min(1, Math.max(Math.abs(this.state.translateX), Math.abs(this.state.translateY)) / this.props.opacity);
+    if (this.state.open) {
+      return 1;
+    } else if (this.state.moving) {
+      return Math.min(1, Math.max(Math.abs(this.state.translateX), Math.abs(this.state.translateY)) / this.props.opacity);
+    } else {
+      return 0;
+    }
   },
 
   getTranslateX: function (e, start) {
-    const nextTranslate = (start || (this.kickoff && this.kickoff.translate.x) || 0) + e.deltaX;
+    const nextTranslate = (start || (this.kickoff && this.kickoff.translate.x) || 0) + (e && e.deltaX || 0);
     return Math.sign(nextTranslate) * Math.min(Math.abs(nextTranslate), this.bounding.width);
   },
 
   getTranslateY: function (e, start) {
-    const nextTranslate = (start || (this.kickoff && this.kickoff.translate.y) || 0) + e.deltaY;
+    const nextTranslate = (start || (this.kickoff && this.kickoff.translate.y) || 0) + (e && e.deltaY || 0);
     return Math.sign(nextTranslate) * Math.min(Math.abs(nextTranslate), this.bounding.height);
   },
 
@@ -95,19 +106,10 @@ export default React.createClass({
 
   onStart: function (e) {
     const wasOpened = this.state.open;
-    const translate = {x: 0, y: 0};
 
-    if (this.is.vertical) {
-      translate.y = this.getTranslateY(e, this.getStartY());
-    } else {
-      translate.x = this.getTranslateX(e, this.getStartX());
-    }
-
-    // Remove open stating and switching back to moving state
-    // setting starting translate based on current status
-    this.setState({open: false, moving: true, translateX: translate.x, translateY: translate.y}, function () {
+    this.startMoving(function (translate) {
       this.kickoff = {translate, wasOpened};
-    }.bind(this));
+    }.bind(this), e);
   },
 
   onMove: function (e) {
@@ -195,18 +197,25 @@ export default React.createClass({
 
   },
 
+  // Fully open the aside from its current position
   open: function () {
     if (!this.state.open && !this.state.moving) {
-      this.slide(true);
+      this.startMoving(function () {
+        this.slide(true);
+      }.bind(this));
     }
   },
 
+  // Fully close the aside from its current position
   close: function () {
-    if (this.state.open && !this.state.moving) {
-      this.slide(false);
+    if (this.state.open) {
+      this.startMoving(function () {
+        this.slide(false);
+      }.bind(this));
     }
   },
 
+  // Cancel everything! Will fade out the aside and do no listen to the current pan if one
   cancel: function () {
     this.kickoff = undefined;
     Velocity(this.aside, {
@@ -217,6 +226,22 @@ export default React.createClass({
         this.setState({open: false, moving: false, translateX: 0, translateY: 0, translateZ: 0});
       }.bind(this)
     });
+  },
+
+  // Keep the aside at the same place but switch from this.state.open = true to false,
+  // calculating a new translateX or translateY to stay in place
+  startMoving: function (callback, e) {
+    const translate = {x: 0, y: 0};
+
+    if (this.is.vertical) {
+      translate.y = this.getTranslateY(e, this.getStartY());
+    } else {
+      translate.x = this.getTranslateX(e, this.getStartX());
+    }
+
+    this.setState({open: false, moving: true, translateX: translate.x, translateY: translate.y}, function () {
+      callback(translate);
+    }.bind(this));
   },
 
   render: function() {
@@ -231,7 +256,9 @@ export default React.createClass({
     });
 
     const styles = {
-      zIndex: this.props.zIndex
+      zIndex: this.props.zIndex,
+      opacity: this.getOpacity(),
+      transform: null
     };
 
     if (this.is.vertical) {
@@ -246,18 +273,12 @@ export default React.createClass({
       else if (this.is.top) { styles.top = 0; styles.bottom = 'auto'; }
       else if (this.is.bottom) { styles.bottom = 0; styles.top = 'auto'; }
 
-      styles.transform = null;
-      styles.opacity = 1;
     } else if (this.state.translateX || this.state.translateY) {
       styles.transform =
         'translateX('+this.state.translateX+'px) '+
         'translateY('+this.state.translateY+'px) '+
         'translateZ(0)';
 
-      styles.opacity = this.getOpacity();
-    } else {
-      styles.opacity = 0;
-      styles.transform = null;
     }
 
     const grapStyles = {};
@@ -272,7 +293,11 @@ export default React.createClass({
       else grapStyles.left = -this.props.grap;
     }
 
-    const maskStyles = {};
+    const maskStyles = { display: 'none', opacity: Math.min(0.6, this.getOpacity()) };
+
+    if (this.state.open || this.state.moving) {
+      maskStyles.display = 'block';
+    }
 
     return (
       <div>
