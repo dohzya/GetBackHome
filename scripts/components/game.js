@@ -8,24 +8,24 @@
 // }
 
 import * as React from 'react/addons';
+import CustomEventsMixin from '../mixins/customEventsMixin.js';
 import Aside from './aside.js';
 import Map from '../map/map.js';
-import CustomEventsMixin from '../mixins/customEventsMixin.js';
+import Selection from '../user/selection.js';
+
+const bottomSize = 150;
 
 export const Game = React.createClass({
   mixins: [CustomEventsMixin],
 
   getInitialState: function () {
     return {
-      aside: {
-        left: false,
-        right: false
-      }
+      selection: Selection
     }
   },
 
   componentDidMount: function () {
-    this.on('open', function (event, data) {
+    this.on('open', function (event) {
       if (event.detail === 'right') {
         this.refs.asideRight.open();
       } else if (event.detail === 'left') {
@@ -33,26 +33,32 @@ export const Game = React.createClass({
       }
     }.bind(this));
 
-    this.on('close', function (event, data) {
+    this.on('close', function (event) {
       if (event.detail === 'right') {
         this.refs.asideRight.close();
       } else if (event.detail === 'left') {
         this.refs.asideLeft.close();
       }
     }.bind(this));
+
+    this.on('select', function (event) {
+      switch (event.detail.type) {
+        case 'tile':
+          Selection.setTile(event.detail.value);
+          break;
+      }
+
+      this.setState({selection: Selection})
+    }.bind(this));
   },
 
   render: function() {
-    const classes = React.addons.classSet({
-      'container': true,
-      'with-left': this.state.aside.left,
-      'with-right': this.state.aside.right
-    });
-
     return (
-      <div className={classes}>
-        <Map game={this.props.game} />
-        <Aside ref="asideBottom" position="bottom" overflow={150} grap={0}>Bottom</Aside>
+      <div className="container">
+        <Map game={this.props.game} selection={this.state.selection} bottom={bottomSize} />
+        <Aside ref="asideBottom" position="bottom" overflow={bottomSize} grap={0}>
+          {this.state.selection.tile ? this.state.selection.tile.zone.biome.name : 'No zone'}
+        </Aside>
         <Aside ref="asideLeft" position="left">Left</Aside>
         <Aside ref="asideRight" position="right">Right</Aside>
       </div>

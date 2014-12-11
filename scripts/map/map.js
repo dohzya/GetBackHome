@@ -5,6 +5,12 @@ import CustomEventsMixin from '../mixins/customEventsMixin.js';
 export default React.createClass({
   mixins: [CustomEventsMixin],
 
+  getDefaultProps: function () {
+    return {
+      bottom: 0
+    };
+  },
+
   componentDidMount: function () {
     this.init();
     window.addEventListener('resize', this.handleResize);
@@ -29,9 +35,9 @@ export default React.createClass({
 
     const bounding = this.getDOMNode().getBoundingClientRect();
     this.lastWidth = bounding.width;
-    this.lastHeight = bounding.height;
-    this.x = -bounding.width / 2;
-    this.y = -bounding.height / 2;
+    this.lastHeight = (bounding.height - this.props.bottom);
+    this.x = -this.lastWidth / 2;
+    this.y = -this.lastHeight / 2;
     this.underMouse = null;
     this.selected = [];
 
@@ -49,7 +55,7 @@ export default React.createClass({
   handleResize: function (e) {
     const bounding = this.getDOMNode().getBoundingClientRect();
     this.width = this.canvas.width = bounding.width;
-    this.height = this.canvas.height = bounding.height;
+    this.height = this.canvas.height = (bounding.height - this.props.bottom);
     this.bounding = this.canvas.getBoundingClientRect();
 
     this.x = this.x + (this.lastWidth - this.width) / 2;
@@ -58,21 +64,6 @@ export default React.createClass({
     this.lastWidth = this.width;
     this.lastHeight = this.lastHeight;
     this.draw();
-  },
-
-  onAside: function () {
-    let width = 0;
-    const that = this;
-
-    function resizeLoop() {
-      if (width !== that.width) {
-        width = that.width;
-        that.handleResize();
-        setTimeout(resizeLoop, 50);
-      }
-    }
-
-    setTimeout(resizeLoop, 100);
   },
 
   drawBackground: function () {
@@ -163,8 +154,7 @@ export default React.createClass({
     this.underMouse = this.getDrawable(e.localX, e.localY);
     // TODO: select(this.underMouse);
     console.log(this.underMouse);
-    this.dispatch('open', 'right');
-    this.onAside();
+    this.dispatch('select', {type: 'tile', value: this.underMouse});
     this.draw();
   }
 });
