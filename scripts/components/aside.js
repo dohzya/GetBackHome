@@ -78,13 +78,31 @@ export default React.createClass({
     }
   },
 
-  getTranslateX: function (e, start) {
-    const nextTranslate = (start || (this.kickoff && this.kickoff.translate.x) || 0) + (e && e.deltaX || 0);
+  getTranslateX: function (e) {
+    let nextTranslate;
+
+    if (e) {
+      // We have an event -> we are moving
+      nextTranslate = (this.kickoff && this.kickoff.translate.x || 0) + (e.deltaX || 0);
+    } else {
+      // No event? Meaning we are on a final position (either closed or opened)
+      nextTranslate = this.getStartX();
+    }
+
     return Math.sign(nextTranslate) * Math.min(Math.abs(nextTranslate), this.bounding.width);
   },
 
-  getTranslateY: function (e, start) {
-    const nextTranslate = (start || (this.kickoff && this.kickoff.translate.y) || 0) + (e && e.deltaY || 0);
+  getTranslateY: function (e) {
+    let nextTranslate;
+
+    if (e) {
+      // We have an event -> we are moving
+      nextTranslate = (this.kickoff && this.kickoff.translate.y || 0) + (e.deltaY || 0);
+    } else {
+      // No event? Meaning we are on a final position (either closed or opened)
+      nextTranslate = this.getStartY();
+    }
+
     return Math.sign(nextTranslate) * Math.min(Math.abs(nextTranslate), this.bounding.height);
   },
 
@@ -109,7 +127,7 @@ export default React.createClass({
 
     this.startMoving(function (translate) {
       this.kickoff = {translate, wasOpened};
-    }.bind(this), e);
+    }.bind(this));
   },
 
   onMove: function (e) {
@@ -230,13 +248,13 @@ export default React.createClass({
 
   // Keep the aside at the same place but switch from this.state.open = true to false,
   // calculating a new translateX or translateY to stay in place
-  startMoving: function (callback, e) {
+  startMoving: function (callback) {
     const translate = {x: 0, y: 0};
 
     if (this.is.vertical) {
-      translate.y = this.getTranslateY(e, this.getStartY());
+      translate.y = this.getTranslateY();
     } else {
-      translate.x = this.getTranslateX(e, this.getStartX());
+      translate.x = this.getTranslateX();
     }
 
     this.setState({open: false, moving: true, translateX: translate.x, translateY: translate.y}, function () {
