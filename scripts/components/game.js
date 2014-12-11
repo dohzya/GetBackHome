@@ -52,6 +52,7 @@ export const Game = React.createClass({
     return (
       <div className={classes}>
         <Map game={this.props.game} />
+        <Aside ref="asideBottom" position="bottom" overflow={150} grap={0}>Bottom</Aside>
         <Aside ref="asideLeft" position="left">Left</Aside>
         <Aside ref="asideRight" position="right">Right</Aside>
       </div>
