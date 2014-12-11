@@ -56,7 +56,7 @@ export default React.createClass({
     this.maskHammer.on('tap', this.close);
   },
 
-  componentDidUnmount: function () {
+  componentWillUnmount: function () {
     window.removeEventListener('resize', this.handleResize);
   },
 
