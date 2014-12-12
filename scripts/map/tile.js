@@ -160,8 +160,8 @@ export default class Tile extends HexTile {
     var cx = this.center.x - x - HexJs.config.width / 2;
     var cy = this.center.y - y - HexJs.config.height / 2;
     ctx.fillStyle = "#000000";
-    ctx.fillText(this.zone.x, cx + HexJs.config.width - 15, cy + HexJs.config.height / 4 + 10);
-    ctx.fillText(this.zone.y, cx + 10, cy + HexJs.config.height / 4 + 10);
+    ctx.fillText(this.zone.x, cx + 10, cy + HexJs.config.height / 4 + 10);
+    ctx.fillText(this.zone.y, cx + HexJs.config.width - 15, cy + HexJs.config.height / 4 + 10);
     ctx.fillText(this.zone.z, cx + HexJs.config.width / 2 - 5, cy + HexJs.config.height - 10);
   }
 
