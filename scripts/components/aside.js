@@ -16,7 +16,7 @@ export default React.createClass({
   getDefaultProps: function () {
     return {
       position: 'right',
-      grap: 25,
+      grab: 25,
       velocity: 0.65,
       duration: 500,
       size: '80%',
@@ -386,16 +386,16 @@ export default React.createClass({
       }
     }
 
-    const grapStyles = {};
+    const grabStyles = {};
 
     if (this.is.vertical) {
-      grapStyles.height = this.props.grap;
-      if (this.is.bottom) grapStyles.top = -this.props.grap;
-      else grapStyles.bottom = -this.props.grap;
+      grabStyles.height = this.props.grab;
+      if (this.is.bottom) grabStyles.top = -this.props.grab;
+      else grabStyles.bottom = -this.props.grab;
     } else {
-      grapStyles.width = this.props.grap;
-      if (this.is.left) grapStyles.right = -this.props.grap;
-      else grapStyles.left = -this.props.grap;
+      grabStyles.width = this.props.grab;
+      if (this.is.left) grabStyles.right = -this.props.grab;
+      else grabStyles.left = -this.props.grab;
     }
 
     const maskStyles = { display: 'none', opacity: Math.min(0.6, this.getOpacity(true)) };
@@ -408,7 +408,7 @@ export default React.createClass({
       <div>
         <div className="aside-mask" style={maskStyles}></div>
         <aside className={classes} style={styles}>
-          <div className="aside-grap" style={grapStyles}></div>
+          <div className="aside-grab" style={grabStyles}></div>
           <div className="aside-content">
             {this.props.children}
           </div>
