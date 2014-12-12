@@ -68,7 +68,7 @@ export default React.createClass({
     const maskStyles = {}
 
     this.state.position.split(' ').forEach(function (p) {
-      styles[p] = 10;
+      styles[p] = 20;
       actionStyles[p] = 0;
     });
 
