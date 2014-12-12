@@ -10,6 +10,7 @@
 import * as React from 'react/addons';
 import CustomEventsMixin from '../mixins/customEventsMixin.js';
 import Aside from './aside.js';
+import TileDisplay from './tileDisplay.js';
 import Map from '../map/map.js';
 import Selection from '../user/selection.js';
 
@@ -53,11 +54,17 @@ export const Game = React.createClass({
   },
 
   render: function() {
+    let bottom;
+
+    if (this.state.selection.tile) {
+      bottom = <TileDisplay tile={this.state.selection.tile} />
+    }
+
     return (
       <div className="container">
         <Map game={this.props.game} selection={this.state.selection} bottom={bottomSize} />
         <Aside ref="asideBottom" position="bottom" overflow={bottomSize} grap={0}>
-          {this.state.selection.tile ? this.state.selection.tile.zone.biome.name : 'No zone'}
+          {bottom}
         </Aside>
         <Aside ref="asideLeft" position="left">Left</Aside>
         <Aside ref="asideRight" position="right">Right</Aside>
