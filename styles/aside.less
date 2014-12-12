@@ -38,6 +38,20 @@
   position: absolute;
 }
 
+.aside-content {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.aside.is-moving .aside-content {
+  overflow-y: hidden;
+}
+
 .aside.is-right .aside-grab,
 .aside.is-left .aside-grab {
   top: 0;

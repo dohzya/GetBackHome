@@ -8,6 +8,7 @@ export default React.createClass({
     return {
       open: false,
       moving: false,
+      scrolling: false,
       translateX: 0,
       translateY: 0
     }
@@ -58,10 +59,27 @@ export default React.createClass({
 
     window.addEventListener('resize', this.handleResize);
 
-    this.hammer = new Hammer(this.getDOMNode());
-    this.hammer.get('pan').set({ direction: Hammer.DIRECTION_ALL });
-    this.maskHammer = new Hammer(this.mask);
-    this.bindAll();
+    // Seriously, keep this verbose syntax or be ready to face a problem
+    // around vertical / horizontal movement on the canvas
+    // (yeah, it shouldn't be related, but somewhat, using .get('pan').set(...), it does)
+    this.hammer = new Hammer(this.getDOMNode(), {
+      recognizers: [
+        [Hammer.Pan, { direction: Hammer.DIRECTION_ALL }]
+      ]
+    });
+
+    this.hammer.on('panstart', this.onStart);
+    this.hammer.on('panend', this.onEnd);
+    this.hammer.on('pancancel', this.onEnd);
+    this.hammer.on('panmove', this.onMove);
+
+    this.maskHammer = new Hammer(this.mask, {
+      recognizers: [
+        [Hammer.Tap]
+      ]
+    });
+
+    this.maskHammer.on('tap', this.close);
 
     // We couldn't fully render the component during the 1st render because
     // we needed the DOM element to measure some dimensions. In order to solve
@@ -81,18 +99,14 @@ export default React.createClass({
     }
   },
 
-  bindAll: function () {
-    this.hammer.on('panstart', this.onStart);
-    this.hammer.on('panend', this.onEnd);
-    this.hammer.on('panmove', this.onMove);
-    this.maskHammer.on('tap', this.close);
+  enableHammer: function () {
+    this.hammer.set({ enable: true });
+    this.maskHammer.set({ enable: true });
   },
 
-  unbindAll: function () {
-    this.hammer.off('panstart');
-    this.hammer.off('panend');
-    this.hammer.off('panmove');
-    this.maskHammer.off('tap');
+  disableHammer: function () {
+    this.hammer.set({ enable: false });
+    this.maskHammer.set({ enable: false });
   },
 
   getOpacity: function (isMask) {
@@ -170,26 +184,38 @@ export default React.createClass({
   },
 
   onStart: function (e) {
-    const wasOpened = this.state.open;
-    const bounding = this.aside.getBoundingClientRect();
-    const limits = {top: 0, bottom: 0, left: 0, right: 0};
+    let scrolling;
 
-    if (this.is.right) {
-      limits.left = window.innerWidth - this.bounding.width;
-      limits.right = window.innerWidth - this.props.overflow;
-    } else if (this.is.left) {
-      limits.left = this.props.overflow;
-      limits.right = this.bounding.width;
-    } else if (this.is.top) {
-      limits.top = this.props.overflow;
-      limits.bottom = this.bounding.height;
-    } else if (this.is.bottom) {
-      limits.top = window.innerHeight - this.bounding.height;
-      limits.bottom = window.innerHeight - this.props.overflow;
+    if (this.is.vertical) {
+      scrolling = Math.abs(e.deltaX) > Math.abs(e.deltaY);
+    } else {
+      scrolling = Math.abs(e.deltaY) > Math.abs(e.deltaX);
     }
 
-    this.startMoving(function (translate) {
-      this.kickoff = {translate, wasOpened, bounding, limits};
+    this.setState({scrolling}, function () {
+      if (!scrolling) {
+        const wasOpened = this.state.open;
+        const bounding = this.aside.getBoundingClientRect();
+        const limits = {top: 0, bottom: 0, left: 0, right: 0};
+
+        if (this.is.right) {
+          limits.left = window.innerWidth - this.bounding.width;
+          limits.right = window.innerWidth - this.props.overflow;
+        } else if (this.is.left) {
+          limits.left = this.props.overflow;
+          limits.right = this.bounding.width;
+        } else if (this.is.top) {
+          limits.top = this.props.overflow;
+          limits.bottom = this.bounding.height;
+        } else if (this.is.bottom) {
+          limits.top = window.innerHeight - this.bounding.height;
+          limits.bottom = window.innerHeight - this.props.overflow;
+        }
+
+        this.startMoving(function (translate) {
+          this.kickoff = {translate, wasOpened, bounding, limits};
+        }.bind(this));
+      }
     }.bind(this));
   },
 
@@ -316,11 +342,11 @@ export default React.createClass({
   },
 
   block: function () {
-    this.unbindAll();
+    this.disableHammer();
   },
 
   unblock: function () {
-    this.bindAll();
+    this.enableHammer();
   },
 
   // Keep the aside at the same place but switch from this.state.open = true to false,

@@ -46,6 +46,7 @@ export default React.createClass({
 
     this.hammer.on('panstart', this.onStart);
     this.hammer.on('panend', this.onEnd);
+    this.hammer.on('pancancel', this.onEnd);
     this.hammer.on('panmove', this.onMove);
     this.hammer.on('tap', this.onTap);
 

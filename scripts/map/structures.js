@@ -1,4 +1,4 @@
-'use strict';
+import Group from '../alive/group.js';
 
 class Structure {
   constructor (name, zone) {
@@ -37,8 +37,9 @@ export class Field extends Structure {
 }
 
 export class Base extends Structure {
-  constructor (zone) {
-    super('base', zone);
+  constructor (args) {
+    super('base', args.zone);
     this.color = '192, 57, 43';
+    this.survivors = new Group({survivors: args.survivors});
   }
 }
