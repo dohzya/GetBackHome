@@ -60,13 +60,8 @@ export default React.createClass({
 
     this.hammer = new Hammer(this.getDOMNode());
     this.hammer.get('pan').set({ direction: Hammer.DIRECTION_ALL });
-
-    this.hammer.on('panstart', this.onStart);
-    this.hammer.on('panend', this.onEnd);
-    this.hammer.on('panmove', this.onMove);
-
     this.maskHammer = new Hammer(this.mask);
-    this.maskHammer.on('tap', this.close);
+    this.bindAll();
 
     // We couldn't fully render the component during the 1st render because
     // we needed the DOM element to measure some dimensions. In order to solve
@@ -84,6 +79,20 @@ export default React.createClass({
     if (this.state.moving) {
       this.cancel();
     }
+  },
+
+  bindAll: function () {
+    this.hammer.on('panstart', this.onStart);
+    this.hammer.on('panend', this.onEnd);
+    this.hammer.on('panmove', this.onMove);
+    this.maskHammer.on('tap', this.close);
+  },
+
+  unbindAll: function () {
+    this.hammer.off('panstart');
+    this.hammer.off('panend');
+    this.hammer.off('panmove');
+    this.maskHammer.off('tap');
   },
 
   getOpacity: function (isMask) {
@@ -306,6 +315,14 @@ export default React.createClass({
     });
   },
 
+  block: function () {
+    this.unbindAll();
+  },
+
+  unblock: function () {
+    this.bindAll();
+  },
+
   // Keep the aside at the same place but switch from this.state.open = true to false,
   // calculating a new translateX or translateY to stay in place
   startMoving: function (callback) {
@@ -368,7 +385,6 @@ export default React.createClass({
           'translateZ(0)';
       }
     }
-
 
     const grapStyles = {};
 
