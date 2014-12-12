@@ -1,0 +1,60 @@
+@button-action-size: 60px;
+
+.button-action {
+  .button-action-mask {
+    display: none;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: white;
+  }
+
+  .button-action-wrapper {
+    position: fixed;
+  }
+
+  .button-main {
+    width: @button-action-size;
+    height: @button-action-size;
+    border-radius: 50%;
+    background-color: red;
+    color: white;
+    border: none;
+  }
+
+  .actions {
+    display: none;
+    // opacity: 0;
+  }
+
+  .action {
+    position: absolute;
+    white-space: nowrap;
+  }
+
+  .action .button-secondary {
+    display: inline-blick;
+    width: @button-action-size;
+    height: @button-action-size;
+    border-radius: 50%;
+    background-color: green;
+    color: white;
+    border: none;
+  }
+
+  .action .label-action {
+    margin-right: 20px;
+    padding: 5px;
+    background: white;
+    border: 1px solid gray;
+    border-radius: 5px;
+  }
+
+  &.is-open {
+    .actions, .button-action-mask {
+      display: block;
+    }
+  }
+}

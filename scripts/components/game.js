@@ -11,10 +11,17 @@ import * as React from 'react/addons';
 import CustomEventsMixin from '../mixins/customEventsMixin.js';
 import Aside from './aside.js';
 import TileDisplay from './tileDisplay.js';
+import ButtonAction from './buttonAction.js';
 import Map from '../map/map.js';
 import Selection from '../user/selection.js';
 
 const bottomSize = 150;
+
+const actions = [
+  { label: 'Next turn', icon: 'T', callback: ()=> console.log('Next turn') },
+  { label: 'Create mission', icon: 'M', callback: ()=> console.log('Create mission') },
+  { label: 'Do something fun', icon: 'F', callback: ()=> console.log('So much fun') }
+];
 
 export const Game = React.createClass({
   mixins: [CustomEventsMixin],
@@ -51,6 +58,22 @@ export const Game = React.createClass({
 
       this.setState({selection: Selection})
     }.bind(this));
+
+    this.on('block', function (event) {
+      if (event.detail === 'asides') {
+        this.refs.asideLeft.block();
+        this.refs.asideRight.block();
+        this.refs.asideBottom.block();
+      }
+    }.bind(this));
+
+    this.on('unblock', function (event) {
+      if (event.detail === 'asides') {
+        this.refs.asideLeft.unblock();
+        this.refs.asideRight.unblock();
+        this.refs.asideBottom.unblock();
+      }
+    }.bind(this));
   },
 
   render: function() {
@@ -66,6 +89,7 @@ export const Game = React.createClass({
         <Aside ref="asideBottom" position="bottom" overflow={bottomSize} grap={0}>
           {bottom}
         </Aside>
+        <ButtonAction actions={actions} />
         <Aside ref="asideLeft" position="left">Left</Aside>
         <Aside ref="asideRight" position="right">Right</Aside>
       </div>

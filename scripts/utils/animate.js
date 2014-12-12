@@ -41,9 +41,9 @@ function range(args) {
     const progress = (timestamp - startedAt) / args.duration;
 
     if (progress > 1) {
-      args.done && args.done(args.end);
+      args.done && args.done(args.end, 1);
     } else {
-      args.callback(args.start + (progress * size));
+      args.callback(args.start + (progress * size), progress);
       raf(rangeTick);
     }
   }
