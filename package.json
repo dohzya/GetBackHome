@@ -18,7 +18,8 @@
     "lodash-node": "2.4.1",
     "hammerjs": "2.0.4",
     "velocity-animate": "1.1.0",
-    "abyssa": "6.6.0"
+    "abyssa": "6.6.0",
+    "signals": "1.0.0"
   },
   "devDependencies": {
     "through2": "0.6.3",

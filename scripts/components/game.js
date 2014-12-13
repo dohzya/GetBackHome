@@ -15,7 +15,8 @@ import SurvivorsDisplay from './survivorsDisplay.js';
 import ButtonAction from './buttonAction.js';
 import Map from '../map/map.js';
 import Selection from '../user/selection.js';
-import router from '../router.js';
+import Router from '../router.js';
+import Signals from '../signals.js';
 
 const bottomSize = 150;
 
@@ -61,33 +62,25 @@ export const Game = React.createClass({
       }
     }.bind(this));
 
-    router.transition.completed.add(function (s) {
-      const paramsDiff = router.paramsDiff();
+    Signals.aside.opened.add(function (e) {
+      this.refs[e.position+'Aside'].open();
+    }.bind(this));
 
-      if (paramsDiff.enter.right) {
-        this.refs.rightAside.open();
-      } else if (paramsDiff.exit.right) {
-        this.refs.rightAside.close();
-      }
-
-      if (paramsDiff.enter.bottom) {
-        this.refs.bottomAside.open();
-      } else if (paramsDiff.exit.bottom) {
-        this.refs.bottomAside.close();
-      }
+    Signals.aside.closed.add(function (e) {
+      this.refs[e.position+'Aside'].close();
     }.bind(this));
   },
 
   onOpenAside: function (aside) {
     const search = {};
     search[aside.props.position] = 'default';
-    router.search(search);
+    Router.search(search);
   },
 
   onCloseAside: function (aside) {
     const search = {};
     search[aside.props.position] = null;
-    router.search(search);
+    Router.search(search);
   },
 
   render: function() {
