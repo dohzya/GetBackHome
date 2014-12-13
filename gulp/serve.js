@@ -5,13 +5,14 @@ var browserSync = require('browser-sync');
 
 var prefix = '/api/v1';
 var prefixRegExp = new RegExp(prefix + '(.*)');
+var resourceRegExp = /\.[a-zA-Z]+$/;
 var middleware;
 
 // Add some random (configurable) latency to mocked server
 // so we can simulate more or less slow network
 function jitterResponse(res, content) {
   setTimeout(function () {
-    res.end(content, 'utf-8')
+    res.end(content, 'utf-8');
   }, $.utils.randomInt(0.8 * $.config.latency, 1.2 * $.config.latency));
 };
 
@@ -44,6 +45,18 @@ function parseParams(query) {
   }
 
   return params;
+}
+
+function handleHistoryApi(req, res, next) {
+  path = req._parsedUrl.pathname;
+  if ($.config.history && !resourceRegExp.test(path)) {
+    fs.readFile('./index.html', function (error, content) {
+      res.writeHead(200, {'Content-Type': 'text/html'});
+      res.end(content, 'utf-8');
+    });
+  } else {
+    next();
+  }
 }
 
 // Will create a middleware if $.config.mocked is true
@@ -79,7 +92,7 @@ if ($.config.mocked) {
               res.writeHead(200, {'Content-Type': 'application/json'});
               jitterResponse(res, content);
             }
-          })
+          });
         } else {
           // If JavaScript file, load it as node module
           // and then call it with both path and params as arguments
@@ -93,15 +106,12 @@ if ($.config.mocked) {
         }
       });
     } else {
-      // If not starting with prefix, do nothing
-      next();
+      handleHistoryApi(req, res, next);
     }
   };
 } else {
   // If not mocked, do nothing
-  middleware = function (req, res, next) {
-    next();
-  };
+  middleware = handleHistoryApi;
 };
 
 gulp.task('serve', function () {

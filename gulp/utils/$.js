@@ -46,6 +46,7 @@ module.exports.config = {
   scripts: ['browserify'],
   mocked: argv.mocked || argv.m,
   latency: argv.latency || 100,
+  history: true,
   port: parseInt(argv.port, 10) || 8000,
   sync: argv.sync === undefined || argv.sync !== 'false',
   live: argv.live === undefined || argv.live !== 'false',
