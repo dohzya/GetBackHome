@@ -1,6 +1,7 @@
 'use strict';
 
 import * as assign from 'lodash-node/modern/objects/assign';
+import * as clone from 'lodash-node/modern/objects/clone';
 import * as contains from 'lodash-node/modern/collections/contains';
 
 import Rc4Random from '../map/generator/rc4Random.js';
@@ -43,6 +44,10 @@ function perc(nb) {
   return round(nb * 100);
 }
 
+function limit(value, from, to) {
+  return Math.max(Math.min(value, from), to);
+}
+
 export default {
   // Merging all other utils
   is: Is,
@@ -51,6 +56,7 @@ export default {
 
   // Lodash stuff
   extend: assign,
+  clone: clone,
   contains: contains,
 
   // Personal stuff
@@ -63,5 +69,6 @@ export default {
   positiveFloor: positiveFloor,
   round: round,
   to2digits: to2digits,
-  perc: perc
+  perc: perc,
+  limit: limit
 };
