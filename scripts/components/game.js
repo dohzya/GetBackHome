@@ -15,6 +15,7 @@ import SurvivorsDisplay from './survivorsDisplay.js';
 import ButtonAction from './buttonAction.js';
 import Map from '../map/map.js';
 import Selection from '../user/selection.js';
+import router from '../router.js';
 
 const bottomSize = 150;
 
@@ -34,22 +35,6 @@ export const Game = React.createClass({
   },
 
   componentDidMount: function () {
-    this.on('open', function (event) {
-      if (event.detail === 'right') {
-        this.refs.asideRight.open();
-      } else if (event.detail === 'left') {
-        this.refs.asideLeft.open();
-      }
-    }.bind(this));
-
-    this.on('close', function (event) {
-      if (event.detail === 'right') {
-        this.refs.asideRight.close();
-      } else if (event.detail === 'left') {
-        this.refs.asideLeft.close();
-      }
-    }.bind(this));
-
     this.on('select', function (event) {
       switch (event.detail.type) {
         case 'tile':
@@ -62,19 +47,47 @@ export const Game = React.createClass({
 
     this.on('block', function (event) {
       if (event.detail === 'asides') {
-        this.refs.asideLeft.block();
-        this.refs.asideRight.block();
-        this.refs.asideBottom.block();
+        this.refs.leftAside.block();
+        this.refs.rightAside.block();
+        this.refs.bottomAside.block();
       }
     }.bind(this));
 
     this.on('unblock', function (event) {
       if (event.detail === 'asides') {
-        this.refs.asideLeft.unblock();
-        this.refs.asideRight.unblock();
-        this.refs.asideBottom.unblock();
+        this.refs.leftAside.unblock();
+        this.refs.rightAside.unblock();
+        this.refs.bottomAside.unblock();
       }
     }.bind(this));
+
+    router.transition.completed.add(function (s) {
+      const paramsDiff = router.paramsDiff();
+
+      if (paramsDiff.enter.right) {
+        this.refs.rightAside.open();
+      } else if (paramsDiff.exit.right) {
+        this.refs.rightAside.close();
+      }
+
+      if (paramsDiff.enter.bottom) {
+        this.refs.bottomAside.open();
+      } else if (paramsDiff.exit.bottom) {
+        this.refs.bottomAside.close();
+      }
+    }.bind(this));
+  },
+
+  onOpenAside: function (aside) {
+    const search = {};
+    search[aside.props.position] = 'default';
+    router.search(search);
+  },
+
+  onCloseAside: function (aside) {
+    const search = {};
+    search[aside.props.position] = null;
+    router.search(search);
   },
 
   render: function() {
@@ -88,15 +101,19 @@ export const Game = React.createClass({
       <div className="container">
         <Map game={this.props.game} selection={this.state.selection} bottom={bottomSize} />
 
-        <Aside ref="asideBottom" position="bottom" overflow={bottomSize} grap={0}>
+        <Aside ref="bottomAside" position="bottom" overflow={bottomSize} grap={0} onOpen={this.onOpenAside} onClose={this.onCloseAside}>
+          <a href="/">Home</a>
+          <a href="/base">Base</a>
           {bottom}
         </Aside>
 
         <ButtonAction actions={actions} />
 
-        <Aside ref="asideLeft" position="left">Left</Aside>
+        <Aside ref="leftAside" position="left">
+          Left
+        </Aside>
 
-        <Aside ref="asideRight" position="right">
+        <Aside ref="rightAside" position="right" onOpen={this.onOpenAside} onClose={this.onCloseAside}>
           <SurvivorsDisplay survivors={this.props.game.player.primaryBase.survivors}/>
         </Aside>
       </div>

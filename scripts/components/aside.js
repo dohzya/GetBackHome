@@ -3,7 +3,6 @@ import * as Hammer from 'hammerjs';
 import Utils from '../utils/utils.js';
 
 export default React.createClass({
-
   getInitialState: function () {
     return {
       open: false,
@@ -276,7 +275,7 @@ export default React.createClass({
     this.slide(openIt);
   },
 
-  slide: function (opening, onComplete) {
+  slide: function (opening) {
     const data = {};
 
     if (this.is.vertical) {
@@ -304,7 +303,13 @@ export default React.createClass({
         nextState[data.keyTranslate] = 0;
         nextState.open = opening;
         nextState.moving = false;
-        this.setState(nextState, onComplete);
+        this.setState(nextState, function () {
+          if (this.props.onOpen && this.state.open) {
+            this.props.onOpen(this);
+          } else if (this.props.onClose && !this.state.open) {
+            this.props.onClose(this);
+          }
+        }.bind(this));
       }.bind(this)
     });
 
