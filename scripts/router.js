@@ -4,13 +4,30 @@ import Signals from './signals.js';
 
 const router = Router().configure({
   enableLogs: false,
-  urlSync: true,
+  urlSync: 'hash',
   hashPrefix: '!'
 });
 
 const home = State('', {});
 
 const base = State('base', {});
+
+let lastMain = '/base';
+
+const main = State('', {
+  enter: function () {
+    Signals.aside.opened.dispatch({position: 'left'});
+    this.update();
+  },
+  update: function () {
+    lastMain = router.path();
+    console.log('lastMain', lastMain);
+  },
+  exit: function () {
+    Signals.aside.closed.dispatch({position: 'left'});
+  },
+  base: base
+});
 
 const root = State('?right&bottom', {
   enter: function () {
@@ -32,8 +49,12 @@ const root = State('?right&bottom', {
     }
   },
   home: home,
-  base: base
+  main: main
 });
+
+router.goToLastMain = function () {
+  router.state(lastMain);
+};
 
 router.updateCurrentParams = function (newParams) {
   const state = router.currentState();

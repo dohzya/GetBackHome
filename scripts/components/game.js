@@ -83,6 +83,14 @@ export const Game = React.createClass({
     Router.search(search);
   },
 
+  onOpenMainAside: function (aside) {
+    Router.goToLastMain();
+  },
+
+  onCloseMainAside: function (aside) {
+    Router.state('/');
+  },
+
   render: function() {
     let bottom;
 
@@ -102,7 +110,7 @@ export const Game = React.createClass({
 
         <ButtonAction actions={actions} />
 
-        <Aside ref="leftAside" position="left">
+        <Aside ref="leftAside" position="left" onOpen={this.onOpenMainAside} onClose={this.onCloseMainAside}>
           Left
         </Aside>
 
