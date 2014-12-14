@@ -47,18 +47,6 @@ function parseParams(query) {
   return params;
 }
 
-function handleHistoryApi(req, res, next) {
-  path = req._parsedUrl.pathname;
-  if ($.config.history && !resourceRegExp.test(path)) {
-    fs.readFile('./index.html', function (error, content) {
-      res.writeHead(200, {'Content-Type': 'text/html'});
-      res.end(content, 'utf-8');
-    });
-  } else {
-    next();
-  }
-}
-
 // Will create a middleware if $.config.mocked is true
 // If so, it will intercept all requests starting with a prefix
 // (here '/api/v1') and return mocked data. It will first try
@@ -106,12 +94,14 @@ if ($.config.mocked) {
         }
       });
     } else {
-      handleHistoryApi(req, res, next);
+      next();
     }
   };
 } else {
   // If not mocked, do nothing
-  middleware = handleHistoryApi;
+  middleware = function (req, res, next) {
+    next();
+  };
 };
 
 gulp.task('serve', function () {
