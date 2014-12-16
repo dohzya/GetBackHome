@@ -1,5 +1,6 @@
 import * as assign from 'lodash-node/modern/objects/assign';
 import Config from './config.js';
+import Tile from './tile.js';
 
 function isNumber(value) {
   return typeof value === "number" || toString.call(value) === "[object Number]";
@@ -11,16 +12,6 @@ function isFunction(value) {
 
 function identity(value) {
   return value;
-}
-
-function find(array, callback) {
-  let result;
-  array.forEach(function (elem) {
-    if (callback(elem)) {
-      result = elem;
-    }
-  });
-  return result;
 }
 
 function checkZ(x, y, z) {
@@ -113,8 +104,8 @@ function pixelToAxial(px, py) {
   };
 }
 
-function pixelToCube (px, py) {
-  var axial = pixelToAxial(px, py);
+function pixelToCube (px, py, pz) {
+  var axial = pixelToAxial(px, py, pz);
   var cube = axialToCube(axial.q, axial.r);
   return roundCube(cube.x, cube.y, cube.z);
 }
@@ -132,29 +123,22 @@ function buildPoints (px, py) {
   return points;
 }
 
-function findTile (tiles, x, y, accessor) {
-  return find(tiles, function (tile) {
-    if (accessor) tile = accessor(tile);
-    return (tile.x === x && tile.y === y);
-  });
-}
-
-function neighbors (tiles, x, y, accessor) {
-  return cubeNeighbors(x, y).map(function (neighbor) {
-    return findTile(tiles, neighbor.x, neighbor.y, accessor);
+function neighbors(tileAt, x, y, z) {
+  return cubeNeighbors(x, y, z).map(function (neighbor) {
+    return tileAt(neighbor.x, neighbor.y, neighbor.z);
   }).filter(function (tile) {
     return !!tile;
   });
 }
 
-function interpolate(tiles, px, py, accessor) {
+function interpolate(tileAt, px, py) {
   const coords = pixelToCube(px, py);
-  return findTile(tiles, coords.x, coords.y, accessor);
+  return tileAt(coords.x, coords.y);
 }
 
-function interpolateNeighbors(tiles, px, py, accessor) {
+function interpolateNeighbors(tileAt, px, py) {
   return cubeNeighbors(px, py).map(function (neighbor) {
-    return interpolate(tiles, neighbor.x, neighbor.y, accessor);
+    return interpolate(tileAt, neighbor.x, neighbor.y);
   }).filter(function (tile) {
     return !!tile;
   });
@@ -164,7 +148,6 @@ export default {
   isNumber: isNumber,
   isFunction: isFunction,
   identity: identity,
-  find: find,
   extend: assign,
   checkZ: checkZ,
   axialToCube: axialToCube,
@@ -177,7 +160,6 @@ export default {
   tileToPixel: tileToPixel,
   pixelToAxial: pixelToAxial,
   pixelToCube: pixelToCube,
-  findTile: findTile,
   neighbors: neighbors,
   interpolate: interpolate,
   interpolateNeighbors: interpolateNeighbors

@@ -1,19 +1,22 @@
 import HexJs from '../hexjs/hexjs.js';
 import HexTile from '../hexjs/tile.js';
 import Utils from '../utils/utils.js';
-import World from './world.js';
+import Config from '../utils/config.js';
+import Selection from '../user/selection.js';
 
 export default class Tile extends HexTile {
   constructor (args) {
     args = args || {};
     this.zone = args.zone;
+    this.world = args.world;
+    this.zone.tile = this;
     this.status = {};
 
     super(this.zone.x, this.zone.y, this.zone.z || 0);
   }
 
   distanceTo (tile) {
-    return this.distanceTo(tile);
+    return HexJs.utils.distance(this, tile);
   }
 
   costTo () {
@@ -21,7 +24,7 @@ export default class Tile extends HexTile {
   }
 
   neighbors () {
-    return World.neighbors(this);
+    return this.world.neighbors(this);
   }
 
   pathTo (destination) {
@@ -66,7 +69,7 @@ export default class Tile extends HexTile {
     this.status = Utils.extend(this.status, {
       selected: false, //Selection.isInPath(this.zone),
       highlighted: !!this.zone.missions.length,
-      inPath: inPath,
+      inPath: inPath || Selection.path.indexOf(this) >= 0,
       orderItem: order
     });
   }

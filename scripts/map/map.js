@@ -1,6 +1,7 @@
 import * as React from 'react/addons';
 import * as Hammer from 'hammerjs';
 import CustomEventsMixin from '../mixins/customEventsMixin.js';
+import Selection from '../user/selection.js';
 
 export default React.createClass({
   mixins: [CustomEventsMixin],
@@ -154,7 +155,9 @@ export default React.createClass({
     this.handlePointerEvent(e);
     this.underMouse = this.getDrawable(e.localX, e.localY);
     // TODO: select(this.underMouse);
-    console.log(this.underMouse);
+    Selection.setTile(this.underMouse);
+    Selection.setPath(this.props.game.world.tileAt(0, 0).pathTo(this.underMouse));
+
     this.dispatch('select', {type: 'tile', value: this.underMouse});
     this.draw();
   }

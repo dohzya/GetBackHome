@@ -17,7 +17,7 @@ import Survivor from './alive/survivor.js';
 
 const game = {};
 
-game.world = new World();
+game.world = World;
 game.player = new Player();
 
 const survivors = [];

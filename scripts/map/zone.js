@@ -11,6 +11,10 @@ export default class Zone {
     this.missions = [];
   }
 
+  equals (zone) {
+    return this.x === zone.x && this.y === zone.y && this.z === zone.z;
+  }
+
   memoryItem (ts) {
     return this.memory[ts];
   }

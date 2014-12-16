@@ -1,6 +1,7 @@
 'use strict';
 
 import HayStack from './hayStack.js';
+import Utils from './utils.js';
 
 const defaultNames = {
   findme: "findme",

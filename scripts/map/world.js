@@ -3,25 +3,54 @@ import Tile from './tile.js';
 import Generator from './generator/generator.js';
 import HexJs from '../hexjs/hexjs.js';
 
-export default class World {
+class World {
   constructor (args) {
     args = args || {};
+    this.zonesIndex = [];
     this.zones = args.zones || Generator.generate("001", 0, 20, 0, 20, (json)=> new Zone(json));
-    this.tiles = this.zones.map(function (z) { return new Tile({zone: z}); });
+    this.zones.forEach(function (zone) {
+      if (!this.zonesIndex[zone.x]) {
+        this.zonesIndex[zone.x] = [];
+      }
+      this.zonesIndex[zone.x][zone.y] = zone;
+    }.bind(this));
+
+    this.tilesIndex = [];
+    this.tiles = this.zones.map(function (zone) {
+      if (!this.tilesIndex[zone.x]) {
+        this.tilesIndex[zone.x] = [];
+      }
+      this.tilesIndex[zone.x][zone.y] = new Tile({zone, world: this});
+
+      return this.tilesIndex[zone.x][zone.y];
+    }.bind(this));
   }
 
-  at (x, y) {
-    return HexJs.utils.findTile(this.tiles, x, y);
+  tileAt (x, y) {
+    if (!this.tilesIndex[x]) {
+      this.tilesIndex[x] = [];
+    }
+
+    if (this.tilesIndex[x][y] === undefined) {
+      const zone = this.zoneAt(x, y);
+      this.tilesIndex[x][y] = zone ? new Tile({zone, world: this}) : null;
+    }
+
+    return this.tilesIndex[x][y];
+  }
+
+  zoneAt (x, y) {
+    return this.zonesIndex[x] && this.zonesIndex[x][y];
   }
 
   neighbors (tile) {
-    return HexJs.utils.neighbors(this.tiles, zone.x, zone.y);
+    return HexJs.utils.neighbors(this.tileAt.bind(this), tile.x, tile.y);
   }
 
   hex_round (pos) {
     const x = Math.ceil(pos[0]);
     const y = Math.ceil(pos[1]);
-    return at(x, y);
+    return this.tileAt(x, y);
   }
 
   tileEqual (tile1, tile2) {
@@ -33,17 +62,16 @@ export default class World {
   }
 
   inNeighborhood (tile1, tile2) {
-    const _neighbors = cubeNeighbors(tile1);
-    let i;
-    for (i = 0; i < _neighbors.length; i++) {
-      if (this.tileEqual(_neighbors[i], tile2)) {
-        return true;
-      }
-    }
-    return false;
+    return this.cubeNeighbors(tile1).reduce(function (result, neighbor) {
+      return result || this.tileEqual(neighbor, tile2);
+    }, false);
   }
 
   interpolate(px, py) {
-    return HexJs.utils.interpolate(this.tiles, px, py);
+    return HexJs.utils.interpolate(this.tileAt.bind(this), px, py);
   }
 }
+
+const world = new World();
+
+export default world;
