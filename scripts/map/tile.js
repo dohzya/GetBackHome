@@ -2,7 +2,11 @@ import HexJs from '../hexjs/hexjs.js';
 import HexTile from '../hexjs/tile.js';
 import Utils from '../utils/utils.js';
 import Config from '../utils/config.js';
-import Selection from '../user/selection.js';
+
+const defaultStatus = {
+  selected: false,
+  inPath: false
+};
 
 export default class Tile extends HexTile {
   constructor (args) {
@@ -10,7 +14,7 @@ export default class Tile extends HexTile {
     this.zone = args.zone;
     this.world = args.world;
     this.zone.tile = this;
-    this.status = {};
+    this.status = defaultStatus;
 
     super(this.zone.x, this.zone.y, this.zone.z || 0);
   }
@@ -52,26 +56,16 @@ export default class Tile extends HexTile {
     return Math.min(60, 0); //$rootScope.engine.turnNb - memory.ts);
   }
 
-  updateStatus () {
-    var mission = undefined; //Selection.getMission();
-
-    var inPath = mission && mission.anyOrders(function (o) {
-      return Utils.contains(o.path, this.zone);
-    }, this);
-
-    var order;
-    mission && mission.forEachOrders(function (o) {
-      if (this.zone === o.targetPlace()) {
-        order = o;
-      }
-    }, this);
-
-    this.status = Utils.extend(this.status, {
-      selected: false, //Selection.isInPath(this.zone),
-      highlighted: !!this.zone.missions.length,
-      inPath: inPath || Selection.path.indexOf(this) >= 0,
-      orderItem: order
-    });
+  updateStatus (selection) {
+    if (!selection) {
+      this.status = defaultStatus;
+    } else {
+      this.status = {
+        selected: selection.tile === this,
+        inPath: selection.path.indexOf(this) >= 0,
+        order: null
+      };
+    }
   }
 
   drawBackground (ctx, x, y, memory) {
@@ -83,9 +77,8 @@ export default class Tile extends HexTile {
     } else {
       style = 'rgb(238, 238, 207)';
     }
-    if (this.status.inPath) { style = 'rgba(255, 250, 71, 0.6)'; }
-    if (this.status.selected) { style = 'rgb(255, 250, 71)'; }
-    if (this.status.highlighted) { style = 'rgb(0, 0, 255)'; }
+    if (this.status.inPath) { style = 'rgba(243, 156, 18, 0.5)'; }
+    if (this.status.selected) { style = 'rgb(192, 57, 43)'; }
     ctx.fillStyle = style;
     ctx.strokeStyle = style;
     ctx.beginPath();
@@ -97,6 +90,17 @@ export default class Tile extends HexTile {
     }
     ctx.lineTo(points[0].x, points[0].y);
     ctx.closePath();
+
+    // if (this.status.inPath || this.status.selected) {
+    //   // Reset original background color
+    //   ctx.fillStyle = 'rgb(0,0,0)';
+    //   ctx.strokeStyle = 'rgb(0,0,0)';
+    //   ctx.stroke();
+    //   ctx.fill();
+    //   ctx.fillStyle = style;
+    //   ctx.strokeStyle = style;
+    // }
+
     ctx.stroke();
     ctx.fill();
   }
@@ -168,8 +172,8 @@ export default class Tile extends HexTile {
     ctx.fillText(this.zone.z, cx + HexJs.config.width / 2 - 5, cy + HexJs.config.height - 10);
   }
 
-  draw (ctx, x, y) {
-    this.updateStatus();
+  draw (ctx, x, y, selection) {
+    this.updateStatus(selection);
     var memory = this.memory();
     this.drawBackground(ctx, x, y, memory);
     // this.drawImage(ctx, x, y, memory);

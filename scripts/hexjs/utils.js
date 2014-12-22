@@ -123,22 +123,22 @@ function buildPoints (px, py) {
   return points;
 }
 
-function neighbors(tileAt, x, y, z) {
+function neighbors(at, x, y, z) {
   return cubeNeighbors(x, y, z).map(function (neighbor) {
-    return tileAt(neighbor.x, neighbor.y, neighbor.z);
+    return at(neighbor.x, neighbor.y, neighbor.z);
   }).filter(function (tile) {
     return !!tile;
   });
 }
 
-function interpolate(tileAt, px, py) {
+function interpolate(at, px, py) {
   const coords = pixelToCube(px, py);
-  return tileAt(coords.x, coords.y);
+  return at(coords.x, coords.y);
 }
 
-function interpolateNeighbors(tileAt, px, py) {
+function interpolateNeighbors(at, px, py) {
   return cubeNeighbors(px, py).map(function (neighbor) {
-    return interpolate(tileAt, neighbor.x, neighbor.y);
+    return interpolate(at, neighbor.x, neighbor.y);
   }).filter(function (tile) {
     return !!tile;
   });

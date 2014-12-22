@@ -10,19 +10,26 @@
 import * as React from 'react/addons';
 import CustomEventsMixin from '../mixins/customEventsMixin.js';
 import Aside from './aside.js';
+import Router from '../router.js';
+import Signals from '../signals.js';
 import TileDisplay from './tileDisplay.js';
 import SurvivorsDisplay from './survivorsDisplay.js';
+import BaseDisplay from './baseDisplay.js';
 import ButtonAction from './buttonAction.js';
 import Map from '../map/map.js';
 import Selection from '../user/selection.js';
-import Router from '../router.js';
-import Signals from '../signals.js';
+import Mission from '../alive/mission.js';
+import Actions from '../actions.js';
+import World from '../map/world.js';
 
 const bottomSize = 150;
 
 const actions = [
   { label: 'Next turn', icon: 'T', callback: ()=> console.log('Next turn') },
-  { label: 'Create mission', icon: 'M', callback: ()=> console.log('Create mission') },
+  { label: 'Create mission', icon: 'M', callback: function () {
+    const newMission = new Mission(World.zoneAt(0, 0));
+    Actions.missionSelect(newMission);
+  } },
   { label: 'Do something fun', icon: 'F', callback: ()=> console.log('So much fun') }
 ];
 
@@ -31,7 +38,8 @@ export const Game = React.createClass({
 
   getInitialState: function () {
     return {
-      selection: Selection
+      selection: Selection,
+      aside: {}
     }
   },
 
@@ -48,17 +56,17 @@ export const Game = React.createClass({
 
     this.on('block', function (event) {
       if (event.detail === 'asides') {
-        this.refs.leftAside.block();
-        this.refs.rightAside.block();
-        this.refs.bottomAside.block();
+        this.refs.mainAside.block();
+        this.refs.bisAside.block();
+        this.refs.terAside.block();
       }
     }.bind(this));
 
     this.on('unblock', function (event) {
       if (event.detail === 'asides') {
-        this.refs.leftAside.unblock();
-        this.refs.rightAside.unblock();
-        this.refs.bottomAside.unblock();
+        this.refs.mainAside.unblock();
+        this.refs.bisAside.unblock();
+        this.refs.terAside.unblock();
       }
     }.bind(this));
 
@@ -69,26 +77,46 @@ export const Game = React.createClass({
     Signals.aside.closed.add(function (e) {
       this.refs[e.position+'Aside'].close();
     }.bind(this));
+
+    Signals.aside.changed.add(function (e) {
+      const newState = {aside: this.state.aside};
+      newState.aside[e.position] = e.value;
+      this.setState(newState);
+    }.bind(this));
+
+    Signals.buttonAction.opened.add(function (e) {
+      this.refs.buttonAction.open();
+    }.bind(this));
+
+    Signals.buttonAction.closed.add(function (e) {
+      this.refs.buttonAction.close();
+    }.bind(this));
   },
 
   onOpenAside: function (aside) {
-    const search = {};
-    search[aside.props.position] = 'default';
-    Router.search(search);
+    Router.goToLast(aside.props.role);
   },
 
   onCloseAside: function (aside) {
     const search = {};
-    search[aside.props.position] = null;
+    search[aside.props.role] = null;
     Router.search(search);
   },
 
   onOpenMainAside: function (aside) {
-    Router.goToLastMain();
+    Router.goToLast('main');
   },
 
   onCloseMainAside: function (aside) {
-    Router.state('/');
+    Router.goTo('root.home');
+  },
+
+  onOpenButtonAction: function () {
+    Router.search({action: 'default'});
+  },
+
+  onCloseButtonAction: function () {
+    Router.search({action: null});
   },
 
   render: function() {
@@ -100,22 +128,23 @@ export const Game = React.createClass({
 
     return (
       <div className="container">
-        <Map game={this.props.game} selection={this.state.selection} bottom={bottomSize} />
+        <Map selection={this.state.selection} bottom={bottomSize} />
 
-        <Aside ref="bottomAside" position="bottom" overflow={bottomSize} grap={0} onOpen={this.onOpenAside} onClose={this.onCloseAside}>
+        <Aside ref="terAside" role="ter" position="bottom" overflow={bottomSize} grap={0} onOpen={this.onOpenAside} onClose={this.onCloseAside}>
           <a href="/">Home</a>
           <a href="/base">Base</a>
+          <a href="/missions">Missions</a>
           {bottom}
         </Aside>
 
-        <ButtonAction actions={actions} />
+        <ButtonAction ref="buttonAction" actions={actions} onOpen={this.onOpenButtonAction} onClose={this.onCloseButtonAction} />
 
-        <Aside ref="leftAside" position="left" onOpen={this.onOpenMainAside} onClose={this.onCloseMainAside}>
-          Left
+        <Aside ref="mainAside" role="main" position="left" onOpen={this.onOpenMainAside} onClose={this.onCloseMainAside}>
+          {this.state.aside.main}
         </Aside>
 
-        <Aside ref="rightAside" position="right" onOpen={this.onOpenAside} onClose={this.onCloseAside}>
-          <SurvivorsDisplay survivors={this.props.game.player.primaryBase.survivors}/>
+        <Aside ref="bisAside" role="bis" position="right" onOpen={this.onOpenAside} onClose={this.onCloseAside}>
+          {this.state.aside.bis}
         </Aside>
       </div>
     );

@@ -26,7 +26,14 @@ class World {
     }.bind(this));
   }
 
-  tileAt (x, y) {
+  at (x, y) {
+    if (x instanceof Tile) {
+      return x;
+    } else if (x instanceof Zone) {
+      y = x.y;
+      x = x.x;
+    }
+
     if (!this.tilesIndex[x]) {
       this.tilesIndex[x] = [];
     }
@@ -44,13 +51,13 @@ class World {
   }
 
   neighbors (tile) {
-    return HexJs.utils.neighbors(this.tileAt.bind(this), tile.x, tile.y);
+    return HexJs.utils.neighbors(this.at.bind(this), tile.x, tile.y);
   }
 
   hex_round (pos) {
     const x = Math.ceil(pos[0]);
     const y = Math.ceil(pos[1]);
-    return this.tileAt(x, y);
+    return this.at(x, y);
   }
 
   tileEqual (tile1, tile2) {
@@ -68,7 +75,7 @@ class World {
   }
 
   interpolate(px, py) {
-    return HexJs.utils.interpolate(this.tileAt.bind(this), px, py);
+    return HexJs.utils.interpolate(this.at.bind(this), px, py);
   }
 }
 

@@ -1,10 +1,13 @@
 import * as React from 'react/addons';
+import * as Reflux from 'reflux';
 import * as Hammer from 'hammerjs';
 import CustomEventsMixin from '../mixins/customEventsMixin.js';
+import World from './world.js';
+import Actions from '../actions.js';
 import Selection from '../user/selection.js';
 
 export default React.createClass({
-  mixins: [CustomEventsMixin],
+  mixins: [CustomEventsMixin, Reflux.listenTo(Selection, 'onSelectionChange')],
 
   getDefaultProps: function () {
     return {
@@ -75,11 +78,12 @@ export default React.createClass({
 
   draw: function () {
     this.drawBackground();
-    this.props.game.world.tiles.forEach(function (tile) {
+    World.tiles.forEach(function (tile) {
       if (tile.isContained(this.x, this.y, this.width, this.height)) {
         tile.draw(this.ctx, this.x, this.y);
       }
     }.bind(this));
+    Selection.draw(this.ctx, this.x, this.y);
   },
 
   globalToRelativeX: function (x) {
@@ -115,7 +119,7 @@ export default React.createClass({
   },
 
   getDrawable: function (x, y) {
-    return this.props.game.world.interpolate(x, y);
+    return World.interpolate(x, y);
   },
 
   onStart: function (e) {
@@ -153,12 +157,10 @@ export default React.createClass({
 
   onTap: function (e) {
     this.handlePointerEvent(e);
-    this.underMouse = this.getDrawable(e.localX, e.localY);
-    // TODO: select(this.underMouse);
-    Selection.setTile(this.underMouse);
-    Selection.setPath(this.props.game.world.tileAt(0, 0).pathTo(this.underMouse));
+    Actions.tileSelect(this.getDrawable(e.localX, e.localY));
+  },
 
-    this.dispatch('select', {type: 'tile', value: this.underMouse});
+  onSelectionChange: function () {
     this.draw();
   }
 });

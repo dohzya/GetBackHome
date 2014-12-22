@@ -21,7 +21,6 @@ export default React.createClass({
   },
 
   componentDidMount: function () {
-    // this.aside = this.getDOMNode().querySelector('.aside');
     const element = this.getDOMNode();
 
     this.elements = {
@@ -120,6 +119,7 @@ export default React.createClass({
       }.bind(this),
       done: function (progress) {
         this.setState({progress});
+        this.props.onOpen && this.props.onOpen();
       }.bind(this)
     });
   },
@@ -136,6 +136,7 @@ export default React.createClass({
       }.bind(this),
       done: function (progress) {
         this.setState({open: false, progress});
+        this.props.onClose && this.props.onClose();
         this.dispatch('unblock', 'asides');
       }.bind(this)
     });

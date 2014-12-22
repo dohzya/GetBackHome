@@ -47,8 +47,8 @@ export default class Tile {
     return Utils.cubeNeighbors(this.x, this.y, this.z);
   }
 
-  neighbors (tileAt) {
-    return Utils.neighbors(tileAt, this.x, this.y, this.z);
+  neighbors (at) {
+    return Utils.neighbors(at, this.x, this.y, this.z);
   }
 
   axialNeighbors () {
